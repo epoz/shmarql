@@ -1,0 +1,2 @@
+# shmarql
+SPARQL endpoint explorer
