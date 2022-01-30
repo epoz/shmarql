@@ -10,6 +10,8 @@ If you would like to modify/run this code yourself, you thus need to first insta
 
 ## TODO
 
+[ ] Bootstrap the display with a different query, when s, p an do are all empty. For large endpoints an empty query just leads to timeouts. Maybe a distinct over the predicates?
+
 [ ] Add a Dockerfile that builds the environment in a runnable form for users not experienced with Python and/or Transcrypt.
 
 [ ] Make searching possible for literals.
