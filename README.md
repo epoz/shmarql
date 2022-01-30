@@ -1,5 +1,7 @@
 # SPARQL-SHMARQL
 
+Running example can be viewed here: [https://epoz.org/shmarql](https://epoz.org/shmarql)
+
 A SPARQL endpoint explorer, that allows you to "bounce" the _subject_, _predicate_ or _object_ around for a public SPARQL endpoint so that you can explore the shape of the data.
 useful if you encounter a new dataset that you do not know and would like to quickly get a feel of what the data looks like.
 
