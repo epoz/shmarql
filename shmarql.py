@@ -73,12 +73,20 @@ def snippet(param, elem):
                 display_value = value.replace(prefix, replacement)
 
         d.C.append(
+            Span(
+                display_value + "&nbsp;&nbsp;",
+                uri=value,
+                wanted="_",
+                style={"cursor": "pointer"},
+            )
+        )
+        d.C.append(
             A(
-                display_value,
+                "&nearr;",
                 href=value,
                 target="other",
                 style={"text-decoration": "none", "color": "black"},
-            ),
+            )
         )
     else:
         d.C.append(Span(value))
@@ -145,11 +153,30 @@ def flash(msg):
     status_box.style.display = "block"
 
 
+def uri_or_literal(value):
+    if value.lower().startswith("http"):
+        return "<" + value + "> "
+    else:
+        return '"' + value + '" '
+
+
 async def change_endpoint():
     ep = endpoint.value
     if not ep.lower().startswith("http"):
         flash("The endpoint has to start with http")
     results_element.innerHTML = '<div style="margin-top: 20px" class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>'
+    new_url = (
+        "?endpoint="
+        + encodeURIComponent(endpoint.value)
+        + "&s="
+        + encodeURIComponent(document.curr_s)
+        + "&p="
+        + encodeURIComponent(document.curr_p)
+        + "&o="
+        + encodeURIComponent(document.curr_o)
+    )
+
+    history.pushState({}, "", new_url)
 
     # See if any bootstrap s, p, o were used
     if b_s.value:
@@ -164,15 +191,15 @@ async def change_endpoint():
 
     q = "SELECT * WHERE { "
     if document.curr_s != "?s":
-        q += "<" + document.curr_s + "> "
+        q += uri_or_literal(document.curr_s)
     else:
         q += document.curr_s + " "
     if document.curr_p != "?p":
-        q += "<" + document.curr_p + "> "
+        q += uri_or_literal(document.curr_p)
     else:
         q += document.curr_p + " "
     if document.curr_o != "?o":
-        q += "<" + document.curr_o + ">"
+        q += uri_or_literal(document.curr_o)
     else:
         q += document.curr_o
     q += " } ORDER BY ?s LIMIT 999"
@@ -192,11 +219,17 @@ async def endpoint_keyup(event):
 async def results_clicker(event):
     wanted = find_attr_parents(event.target, "wanted")  # One of: S, P, O
     uri = find_attr_parents(event.target, "uri")
-    if wanted == "S":
+    if wanted == "_":
         document.curr_s = uri
-    if wanted == "P":
+        document.curr_p = "?p"
+        document.curr_o = "?o"
+        change_endpoint()
+        return
+    elif wanted == "S":
+        document.curr_s = uri
+    elif wanted == "P":
         document.curr_p = uri
-    if wanted == "O":
+    elif wanted == "O":
         document.curr_o = uri
     if wanted and uri:
         event.preventDefault()
@@ -213,9 +246,12 @@ async def init():
     for s_param in params.getAll("s"):
         b_s.value = s_param
     for p_param in params.getAll("p"):
-        b_s.value = p_param
-    for s_param in params.getAll("s"):
-        b_s.value = s_param
+        b_p.value = p_param
+    for o_param in params.getAll("o"):
+        b_o.value = o_param
+
+    if endpoint.value and (b_s.value or b_p.value or b_o.value):
+        change_endpoint()
 
 
 window.addEventListener("load", init)

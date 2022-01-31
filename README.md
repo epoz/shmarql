@@ -14,8 +14,16 @@ If you would like to modify/run this code yourself, you thus need to first insta
 
 [ ] Add a Dockerfile that builds the environment in a runnable form for users not experienced with Python and/or Transcrypt.
 
-[ ] Make searching possible for literals.
+[x] Make searching possible for literals.
 
-[ ] Add one-click search for subjects and objects
+[x] Add one-click search for subjects and objects
 
-[ ] Add an icon to make URIs open by choice and not the default click.
+[x] Add an icon to make URIs open by choice and not the default click.
+
+## Data Sources
+
+A list of some nice endpoints that are worth adding.
+
+https://rds-qa.swissartresearch.net/sparql <- Returning double acces-control-allow-origin headers
+
+https://data.create.humanities.uva.nl/sparql
