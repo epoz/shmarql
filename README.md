@@ -8,22 +8,22 @@ useful if you encounter a new dataset that you do not know and would like to qui
 This makes use of [Transcrypt](https://www.transcrypt.org/) to manipulate and format the results using Python in stead of Javascript.
 If you would like to modify/run this code yourself, you thus need to first install Transcrypt in a suitable Python environment, and then transpile the code to Javascript so that it can be loaded in the browser.
 
-## TODO
+## Development instructions
 
-[ ] Bootstrap the display with a different query, when s, p an do are all empty. For large endpoints an empty query just leads to timeouts. Maybe a distinct over the predicates?
+If you would like to run and modify the code in this repo, there is a [Dockerfile](Dockerfile) which includes the necessary versions of the required libraries.
 
-[ ] Add a Dockerfile that builds the environment in a runnable form for users not experienced with Python and/or Transcrypt.
+First, build the Docker image like so:
 
-[x] Make searching possible for literals.
+```shell
+docker build -t shmarql_dev .
+```
 
-[x] Add one-click search for subjects and objects
+If all goes well, this should give you a "shmarql_dev" image which you can use to compile your own copy of the Javascript code to run SHMARQL on a webpage.
 
-[x] Add an icon to make URIs open by choice and not the default click.
+To compile the file `shmarql.py` you need to run:
 
-## Data Sources
+```shell
+docker run --rm -it -v $(pwd):/out shmarql_dev -bm -od s shmarql.py
+```
 
-A list of some nice endpoints that are worth adding.
-
-https://rds-qa.swissartresearch.net/sparql <- Returning double acces-control-allow-origin headers
-
-https://data.create.humanities.uva.nl/sparql
+Which should compile the Python code and place the output in a sub-directory `./s/`
