@@ -1,0 +1,16 @@
+version: '3.0'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile_web
+    ports:
+      - "42001:80"
+    volumes:
+      - ./www:/data
+  virtuoso:
+    image: "openlink/virtuoso-opensource-7"
+    ports:
+      - "42002:8890"
+    volumes:
+      - ./www:/data

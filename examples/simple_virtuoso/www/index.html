@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />    
+    <title>Demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    <script type="module">import * as frontend from './s/shmarql.js';</script>
+  </head>
+
+  <body>
+    <div class="container">
+        <h1><a href="/" style="text-decoration: none">Demo</a></h1>
+    </div> 
+    
+    <div class="container-fluid" id="shmarql" data-endpoint="/sparql">
+    select ?person ?label where { ?person ?p &lt;http://xmlns.com/foaf/0.1/Person&gt; . 
+?person &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; ?label } LIMIT 500</div>
+  </body>
+
+<script>
+document.shmarql_prefix = {
+    "ddb":"https://www.deutsche-digitale-bibliothek.de/",
+    "gnd": "https://d-nb.info/gnd/",
+    "viaf": "http://viaf.org/viaf/"
+}
+</script>
+</html>
