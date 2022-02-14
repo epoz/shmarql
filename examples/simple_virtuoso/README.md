@@ -16,7 +16,7 @@ This will then give you a simple web interface running on `http://localhost:4200
 
 Load some data into the triplestore, and then you can use the web interface to tailor what the initial display of the data is.
 
-There are some default preixes defined in the SHMARQL, but you can also add some more if you need to extend it, see this part:
+There are some default prefixes defined in the SHMARQL, but you can also add some more if you need to extend it, see this part:
 
 ```
 document.shmarql_prefix = {
