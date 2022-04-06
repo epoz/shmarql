@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% macro snippet(param, elem) %}
+<div class="snippet">    
+
+{% if elem["type"] == "uri" %}
+
+{% if param == "s" and elem["value"] == s %}
+    <a href="/schmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+{% else %}
+    <a href="/schmarql?endpoint={{endpoint}}&s=<{{elem['value']|urlencode}}>&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>&nbsp;
+{% endif %}
+
+{% if param == "p" and elem["value"] == p %}
+    <a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+{% else %}
+    <a href="/schmarql?endpoint={{endpoint}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>&nbsp;
+{% endif %}
+
+{% if param == "o" and elem["value"] == o %}
+    <a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>&nbsp;
+{% else %}
+    <a href="/schmarql?endpoint={{endpoint}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>&nbsp;
+{% endif %}
+
+{% endif %}{{elem["value"]|prefixes}}
+</div>
+{% endmacro %}
+
+
+{% block content %}
+
+{% if results %}
+    <div class="container-fluid">
+    <div class="p-4">
+
+    <h1>{{obj.get("rdfs:label", [s])[0]}}</h1>
+
+    <table class="table">
+    <thead>
+        <tr>
+            <th><a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
+            <th><a href="/schmarql?endpoint={{endpoint}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in results["results"]['bindings'] %}<tr>
+    <td>
+        {{snippet("p", row["p"])}}
+    </td>
+    <td>
+        {{snippet("o", row["o"])}}
+    </td>
+    </tr>{% endfor %}
+    </tbody>
+    </table>
+    </div>
+{% endif %}
+
+{% endblock %}
