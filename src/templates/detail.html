@@ -59,6 +59,15 @@
     </td>
     <td>
         {{snippet("o", row["o"])}}
+        {% for IMAGE_PREDICATE in IMAGE_PREDICATES %}
+        {% if row["p"]["value"] == IMAGE_PREDICATE %}
+        <img src='{{row["o"]["value"]}}' style="width: 20vw">
+        {% endif %}
+
+        {% endfor %}
+
+
+
     </td>
     </tr>{% endif %}
     {% endfor %}

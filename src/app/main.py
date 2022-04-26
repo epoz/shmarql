@@ -207,6 +207,10 @@ async def schmarql(
                 "http://schema.org/name",
             ],
             "TITLE_PREDICATES": ["rdfs:label", "schema:name", "skos:preflabel"],
+            "IMAGE_PREDICATES": [
+                "http://schema.org/thumbnail",
+                "http://xmlns.com/foaf/0.1/depiction",
+            ],
             "obj": obj,
         },
     )
