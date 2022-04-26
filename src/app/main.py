@@ -50,7 +50,21 @@ GRAPH = ConjunctiveGraph(store="Oxigraph")
 logging.debug(f"Opening store from {STORE_PATH}")
 GRAPH.open(STORE_PATH)
 
-PREFIXES = {}
+PREFIXES = {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
+    "http://www.w3.org/2002/07/owl#": "owl:",
+    "http://schema.org/": "schema:",
+    "http://www.wikidata.org/entity/": "wd:",
+    "http://www.wikidata.org/entity/statement/": "wds:",
+    "http://wikiba.se/ontology#": "wikibase:",
+    "http://www.wikidata.org/prop/direct/": "wdt:",
+    "http://www.w3.org/2004/02/skos/core#": "skos:",
+    "http://purl.org/dc/terms/": "dct:",
+    "http://dbpedia.org/resource/": "dbr:",
+}
+
+
 try:
     if PREFIXES_FILEPATH:
         PREFIXES = json.load(open(PREFIXES_FILEPATH))
@@ -136,15 +150,20 @@ async def start(endpoint: str):
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
 async def schmarql(
     request: Request,
-    endpoint: str = "",
+    e: str = "",
     s: str = "?s",
     p: str = "?p",
     o: str = "?o",
     order: str = "?s",
     fmt: str = "",
 ):
-    if not endpoint and not ENDPOINT:
-        return templates.TemplateResponse("choose_endpoint.html", {"request": request})
+    if len(e) < 1:
+        if not ENDPOINT:
+            return templates.TemplateResponse(
+                "choose_endpoint.html", {"request": request}
+            )
+        else:
+            e = ENDPOINT
     if s or p or o:
         q = (
             "SELECT ?s ?p ?o WHERE { "
@@ -156,9 +175,9 @@ async def schmarql(
             + "}"
             + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
         )
-        results = await external_sparql(endpoint, q)
+        results = await external_sparql(e, q)
     else:
-        results = await start(endpoint)
+        results = await start(e)
 
     if fmt == "json":
         return JSONResponse(results)
@@ -185,7 +204,7 @@ async def schmarql(
         {
             "request": request,
             "results": results,
-            "endpoint": endpoint,
+            "e": e,
             "s": s,
             "p": p,
             "o": o,
@@ -201,7 +220,7 @@ async def schmarql(
 
 @app.get("/", response_class=RedirectResponse, include_in_schema=False)
 async def homepage(request: Request):
-    return RedirectResponse("/schmarql")
+    return RedirectResponse("/shmarql")
 
 
 def rec_usage(request: Request, path: str):
