@@ -2,11 +2,34 @@
 
 {% block content %}
 
-<div class="container p-1" style="margin-bottom: 10vh">
-<h1>Please specify an endpoint to use</h1>
+<div class="container" style="margin-bottom: 10vh;">
 
-<input type="text" id="endpoint" style="width: 80ch">
+<table>
+<tbody>
+<tr>
+    <td>Endpoint: </td><td><input type="text" id="endpoint" style="width: 80ch"></td>
+    </tr>
+<tr>
+    <td>Subject:</td><td><input type="text" id="subject" style="width: 80ch" title="(You can leave out the &lt; and &gt; they are added automatically)"></td>
+</tr>
+</tbody></table>
 <a id="go" href="#" class="btn btn-large btn-primary">GO</a>
+
+    <div style="padding: 3ch; margin: 2ch" class="shadow">
+    <p>You can "bootstrap" a SPARQL endpoint by specifying a subject, predicate or object URI to start with.
+        This can be specified with a URL param for this page in the endpoint= s= p= or o= manner.</p>
+        <p>For example, let's start with <a href="/shmarql/?e=https://query.wikidata.org/sparql&s=%3Chttp://www.wikidata.org/entity/Q185372%3E">Wikidata</a></p>                                      
+        <p>Or the<a href="/shmarql/?e=https://dbpedia.org/sparql&s=%3Chttp://dbpedia.org/resource/Girl_With_a_Pearl_Earring%3E"> same thing on dbpedia </a></p>
+        <p>Or more interesting <a href="/shmarql/?e=https://dbpedia.org/sparql&s=%3Chttp://dbpedia.org/resource/Paris%3E">Paris</a></p>
+        <p>Or, let's look at some <a href="?e=https://data.bibliotheken.nl/sparql&s=%3Chttp://data.bibliotheken.nl/id/nbt/p192741446%3E">KB Data</a>
+        <p>Datasets at <a href="?e=https://data.create.humanities.uva.nl/sparql&p=%3Fp&o=<https%3A//data.create.humanities.uva.nl/id/datasets/>">UVA CREATE</a>, like <a href="?e=https://data.create.humanities.uva.nl/sparql&p=%3Fp&s=<https://data.create.humanities.uva.nl/id/onstage/>">onstage</a></p>
+        <p><a href="?e=https://dati.cultura.gov.it/sparql&s=%3Chttps://w3id.org/arco/resource/ArchaeologicalProperty/0600003054%3E">Beniculturali</a></p>
+        <p><a href="?e=https://ldf.fi/mmm/sparql&s=%3Chttp://ldf.fi/mmm/manifestation_singleton/bibale_10000%3E">Mapping Manuscript Migrations</a></p>
+        <p><a href="?e=https://imagesnippets.com/sparql/images&p=%3Fp&s=<https%3A//imagesnippets.com/imgtag/images/info%40margaretwarren.us/P1030103.JPG>">ImageSnippets</a></p>
+
+    </div>
+
+
 
 </div>
 
@@ -15,7 +38,12 @@ go = document.getElementById("go")
 go.addEventListener("click", (event) => {
     endpoint = document.getElementById("endpoint")
     if(endpoint.value) {
-        document.location = '/shmarql/?endpoint=' + encodeURIComponent(endpoint.value)
+        subject = document.getElementById("subject")
+        let url = '/shmarql/?e=' + encodeURIComponent(endpoint.value)
+        if(subject.value) {
+            url = url + '&s=%3C' + encodeURIComponent(subject.value) + "%3E"
+        }
+        document.location = url
     }
 })
 

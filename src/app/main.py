@@ -19,6 +19,7 @@ from .config import (
     SERVICE_DESCRIPTION,
     QUERY_DEFAULT_LIMIT,
     PREFIXES_FILEPATH,
+    DEFAULT_PREFIXES,
     ENDPOINT,
 )
 import httpx
@@ -50,21 +51,7 @@ GRAPH = ConjunctiveGraph(store="Oxigraph")
 logging.debug(f"Opening store from {STORE_PATH}")
 GRAPH.open(STORE_PATH)
 
-PREFIXES = {
-    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
-    "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
-    "http://www.w3.org/2002/07/owl#": "owl:",
-    "http://schema.org/": "schema:",
-    "http://www.wikidata.org/entity/": "wd:",
-    "http://www.wikidata.org/entity/statement/": "wds:",
-    "http://wikiba.se/ontology#": "wikibase:",
-    "http://www.wikidata.org/prop/direct/": "wdt:",
-    "http://www.w3.org/2004/02/skos/core#": "skos:",
-    "http://purl.org/dc/terms/": "dct:",
-    "http://dbpedia.org/resource/": "dbr:",
-}
-
-
+PREFIXES = DEFAULT_PREFIXES
 try:
     if PREFIXES_FILEPATH:
         PREFIXES = json.load(open(PREFIXES_FILEPATH))
@@ -182,7 +169,12 @@ async def schmarql(
     if fmt == "json":
         return JSONResponse(results)
 
-    if "results" in results:
+    if "exception" in results:
+        return templates.TemplateResponse(
+            "error.html", {"request": request, "results": results}
+        )
+
+    if "results" in results and "bindings" in results["results"]:
         for row in results["results"]["bindings"]:
             if s != "?s":
                 row["s"] = {"type": "uri", "value": s.strip("<>")}
@@ -212,7 +204,9 @@ async def schmarql(
             "IGNORE_FIELDS": [
                 "http://www.w3.org/2000/01/rdf-schema#label",
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+                "http://schema.org/name",
             ],
+            "TITLE_PREDICATES": ["rdfs:label", "schema:name", "skos:preflabel"],
             "obj": obj,
         },
     )

@@ -12,6 +12,21 @@ QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 ENDPOINT = os.environ.get("ENDPOINT")
 
+DEFAULT_PREFIXES = {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
+    "http://www.w3.org/2002/07/owl#": "owl:",
+    "http://schema.org/": "schema:",
+    "http://www.wikidata.org/entity/": "wd:",
+    "http://www.wikidata.org/entity/statement/": "wds:",
+    "http://wikiba.se/ontology#": "wikibase:",
+    "http://www.wikidata.org/prop/direct/": "wdt:",
+    "http://www.w3.org/2004/02/skos/core#": "skos:",
+    "http://purl.org/dc/terms/": "dct:",
+    "http://dbpedia.org/resource/": "dbr:",
+}
+
+
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")
 else:

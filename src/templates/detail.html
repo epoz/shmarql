@@ -34,11 +34,20 @@
     <div class="container-fluid">
     <div class="p-4">
 
-    <h1>{{obj("rdfs:label")}}</h1>
-    <h3><em>rdf:type</em> {% for t in obj.get("rdf:type", []) %}
-    <a href="?o={{t['value']}}">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
-    {% endfor %}</h3>
+    {% for TITLE_PREDICATE in TITLE_PREDICATES %}
+        {% if obj(TITLE_PREDICATE) %}
+            <h1>{{obj(TITLE_PREDICATE)}}</h1>
+        {% endif %}
+    {% endfor %}
+    
 
+    {% if obj.get("rdf:type") %}
+    <h3><em>rdf:type</em> {% for t in obj.get("rdf:type", []) %}    
+    <a href="?e={{e}}&o=%3C{{t['value']}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
+    {% endfor %}</h3>
+    {% endif %}
+
+ 
     <table class="table">
     <tbody>
     {% for row in results["results"]['bindings'] %}
