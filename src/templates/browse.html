@@ -6,21 +6,21 @@
 {% if elem["type"] == "uri" %}
 
 {% if param == "s" and elem["value"] == s %}
-    <a href="/schmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/schmarql?endpoint={{endpoint}}&s=<{{elem['value']|urlencode}}>&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&s=<{{elem['value']|urlencode}}>&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>&nbsp;
 {% endif %}
 
 {% if param == "p" and elem["value"] == p %}
-    <a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/schmarql?endpoint={{endpoint}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>&nbsp;
 {% endif %}
 
 {% if param == "o" and elem["value"] == o %}
-    <a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/schmarql?endpoint={{endpoint}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>&nbsp;
+    <a href="/shmarql?endpoint={{endpoint}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>&nbsp;
 {% endif %}
 
 {% endif %}{{elem["value"]|prefixes}}
@@ -35,7 +35,7 @@
     <div class="row">
         <div class="col p-5">
         <h4>Start</h4>
-            <form action="/schmarql">
+            <form action="/shmarql">
                 <input type="text" name="endpoint" class="form-control form-control-dark" placeholder="Enter an endpoint URL to start exploring">
             </form>
         </div>
@@ -50,9 +50,9 @@
     <table class="table">
     <thead>
         <tr>
-            <th><a href="/schmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>
-            <th><a href="/schmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
-            <th><a href="/schmarql?endpoint={{endpoint}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
+            <th><a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>
+            <th><a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
+            <th><a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
         </tr>
     </thead>
     <tbody>

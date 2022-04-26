@@ -19,12 +19,18 @@ from .config import (
     SERVICE_DESCRIPTION,
     QUERY_DEFAULT_LIMIT,
     PREFIXES_FILEPATH,
+    ENDPOINT,
 )
 import httpx
 import logging, os, json
 from typing import Optional
 from urllib.parse import quote
 from rdflib import Graph, ConjunctiveGraph
+from .rdfer import prefixes, RDFer
+
+from rich.traceback import install
+
+install(show_locals=True)
 
 app = FastAPI(openapi_url="/openapi")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -37,19 +43,6 @@ app.add_middleware(
 )
 templates = Jinja2Templates(directory="templates")
 
-
-PREFIXES = {}  # Normally this gets initiliazed by config values later on
-
-
-def prefixes(value):
-    vv = value.lower()
-    for uri, prefix in PREFIXES.items():
-        replaced = vv.replace(uri, prefix)
-        if replaced != vv:
-            return replaced
-    return value
-
-
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
@@ -57,10 +50,12 @@ GRAPH = ConjunctiveGraph(store="Oxigraph")
 logging.debug(f"Opening store from {STORE_PATH}")
 GRAPH.open(STORE_PATH)
 
+PREFIXES = {}
 try:
-    PREFIXES = json.load(open(PREFIXES_FILEPATH))
-    for uri, prefix in PREFIXES.items():
-        GRAPH.bind(prefix.strip(":"), uri)
+    if PREFIXES_FILEPATH:
+        PREFIXES = json.load(open(PREFIXES_FILEPATH))
+        for uri, prefix in PREFIXES.items():
+            GRAPH.bind(prefix.strip(":"), uri)
 except:
     logging.exception(f"Problem binding PREFIXES from {PREFIXES_FILEPATH}")
 
@@ -76,15 +71,6 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS:
 
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
-
-
-def results_to_object(results):
-    obj = {}
-    for row in results:
-        field = row.get("p").get("value")
-        value = row.get("o").get("value")
-        obj.setdefault(prefixes(field), []).append(prefixes(value))
-    return obj
 
 
 @app.post("/sparql")
@@ -147,7 +133,7 @@ async def start(endpoint: str):
     return await external_sparql(endpoint, q)
 
 
-@app.get("/schmarql", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
 async def schmarql(
     request: Request,
     endpoint: str = "",
@@ -157,22 +143,22 @@ async def schmarql(
     order: str = "?s",
     fmt: str = "",
 ):
-    results = {"results": {"bindings": []}}
-    if endpoint:
-        if s or p or o:
-            q = (
-                "SELECT ?s ?p ?o WHERE { "
-                + s
-                + " "
-                + p
-                + " "
-                + o
-                + "}"
-                + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
-            )
-            results = await external_sparql(endpoint, q)
-        else:
-            results = await start(endpoint)
+    if not endpoint and not ENDPOINT:
+        return templates.TemplateResponse("choose_endpoint.html", {"request": request})
+    if s or p or o:
+        q = (
+            "SELECT ?s ?p ?o WHERE { "
+            + s
+            + " "
+            + p
+            + " "
+            + o
+            + "}"
+            + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+        )
+        results = await external_sparql(endpoint, q)
+    else:
+        results = await start(endpoint)
 
     if fmt == "json":
         return JSONResponse(results)
@@ -186,7 +172,9 @@ async def schmarql(
             if o != "?o":
                 row["o"] = {"type": "uri", "value": o.strip("<>")}
 
-    obj = results_to_object(results["results"]["bindings"])
+        obj = RDFer(results["results"]["bindings"])
+    else:
+        obj = {}
     if s != "?s" and p == "?p" and o == "?o":
         templatename = "detail.html"
     else:
@@ -202,7 +190,11 @@ async def schmarql(
             "p": p,
             "o": o,
             "PREFIXES": PREFIXES,
-            "obj": results_to_object(results["results"]["bindings"]),
+            "IGNORE_FIELDS": [
+                "http://www.w3.org/2000/01/rdf-schema#label",
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            ],
+            "obj": obj,
         },
     )
 

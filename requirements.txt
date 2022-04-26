@@ -1,0 +1,11 @@
+fastapi==0.65.2
+oxrdflib==0.3.0
+rdflib==6.1.1
+uvicorn>=0.11.3
+aiofiles==0.4.0
+httpx==0.21.1
+starlette==0.14.2
+h11==0.12.0
+Jinja2==3.0.3
+python-multipart==0.0.5
+rich==11.1.0

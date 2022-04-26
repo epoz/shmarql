@@ -1,12 +1,14 @@
-FROM ubuntu:focal
+FROM python:3.9.7
 
-ARG DEBIAN_FRONTEND=noninteractive
+RUN mkdir -p /app
+ENV HOME=/app
 
-RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get -y install python3 python3-pip default-jre-headless
-RUN pip3 install transcrypt==3.9.0 htmltree==0.7.6
+WORKDIR $HOME
 
-RUN mkdir /out
-WORKDIR /out
+RUN pip install --upgrade pip
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-ENTRYPOINT ["transcrypt"]
+COPY src .
+
+ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "app:app"]

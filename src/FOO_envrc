@@ -1,0 +1,6 @@
+export DOMAIN=epoz.org
+export STORE_PATH=/Users/etienne/Documents/nfdico/oxi_db
+export DATA_LOAD_PATHS=/Users/etienne/Documents/nfdico/databases
+export PREFIXES_FILEPATH=/Users/etienne/Documents/nfdico/prefixes.json
+export SENDPOINT=https://ddbkg.fiz-karlsruhe.de/sparql
+export ENDPOINT=http://localhost:8000/sparql

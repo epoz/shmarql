@@ -9,8 +9,8 @@ ORIGINS = os.environ.get(
 DOMAIN = os.environ.get("DOMAIN", "localhost")
 STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
-PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH", {})
-
+PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
+ENDPOINT = os.environ.get("ENDPOINT")
 
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")

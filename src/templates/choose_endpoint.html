@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container p-1" style="margin-bottom: 10vh">
+<h1>Please specify an endpoint to use</h1>
+
+<input type="text" id="endpoint" style="width: 80ch">
+<a id="go" href="#" class="btn btn-large btn-primary">GO</a>
+
+</div>
+
+<script>
+go = document.getElementById("go")
+go.addEventListener("click", (event) => {
+    endpoint = document.getElementById("endpoint")
+    if(endpoint.value) {
+        document.location = '/shmarql/?endpoint=' + encodeURIComponent(endpoint.value)
+    }
+})
+
+</script>
+{% endblock %}
