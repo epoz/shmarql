@@ -6,21 +6,21 @@
 {% if elem["type"] == "uri" %}
 
 {% if param == "s" and elem["value"] == s %}
-    <a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/shmarql?endpoint={{endpoint}}&s=<{{elem['value']|urlencode}}>&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>&nbsp;
+    <a href="/shmarql?e={{e}}&s=<{{elem['value']|urlencode}}>&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>&nbsp;
 {% endif %}
 
 {% if param == "p" and elem["value"] == p %}
-    <a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/shmarql?endpoint={{endpoint}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>&nbsp;
+    <a href="/shmarql?e={{e}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>&nbsp;
 {% endif %}
 
 {% if param == "o" and elem["value"] == o %}
-    <a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>&nbsp;
+    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>&nbsp;
 {% else %}
-    <a href="/shmarql?endpoint={{endpoint}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>&nbsp;
+    <a href="/shmarql?e={{e}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>&nbsp;
 {% endif %}
 
 {% endif %}{{elem["value"]|prefixes}}
@@ -30,29 +30,16 @@
 
 {% block content %}
 
-{% if not endpoint %}
-<div class="container">
-    <div class="row">
-        <div class="col p-5">
-        <h4>Start</h4>
-            <form action="/shmarql">
-                <input type="text" name="endpoint" class="form-control form-control-dark" placeholder="Enter an endpoint URL to start exploring">
-            </form>
-        </div>
-    </div>
-</div>
-{% endif %}
-
 {% if results %}
     <div class="container-fluid">
     <div class="p-4">        
 
-    <table class="table">
+    <table class="table table-striped">
     <thead>
         <tr>
-            <th><a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>
-            <th><a href="/shmarql?endpoint={{endpoint}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
-            <th><a href="/shmarql?endpoint={{endpoint}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
+            <th><a href="/shmarql?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>
+            <th><a href="/shmarql?e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
+            <th><a href="/shmarql?e={{e}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
         </tr>
     </thead>
     <tbody>
