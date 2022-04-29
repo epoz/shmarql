@@ -11,6 +11,8 @@ STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 ENDPOINT = os.environ.get("ENDPOINT")
+SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
+
 
 DEFAULT_PREFIXES = {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
@@ -29,6 +31,8 @@ DEFAULT_PREFIXES = {
 
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")
+    if not ENDPOINT:
+        ENDPOINT = "http://localhost:8000/sparql"
 else:
     DATA_LOAD_PATHS = []
 

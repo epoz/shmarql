@@ -27,7 +27,6 @@ from typing import Optional
 from urllib.parse import quote
 from rdflib import Graph, ConjunctiveGraph
 from .rdfer import prefixes, RDFer
-
 from rich.traceback import install
 
 install(show_locals=True)
@@ -41,6 +40,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 templates = Jinja2Templates(directory="templates")
+
+from .schpiel import *
 
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
@@ -135,6 +136,7 @@ async def start(endpoint: str):
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
 async def schmarql(
     request: Request,
+    background_tasks: BackgroundTasks,
     e: str = "",
     s: str = "?s",
     p: str = "?p",
@@ -142,6 +144,7 @@ async def schmarql(
     order: str = "?s",
     fmt: str = "",
 ):
+    background_tasks.add_task(rec_usage, request, "/shmarql")
     if len(e) < 1:
         if not ENDPOINT:
             return templates.TemplateResponse(
@@ -220,6 +223,8 @@ async def homepage(request: Request):
 
 
 def rec_usage(request: Request, path: str):
+    if DOMAIN == "localhost":
+        return
     xff = request.headers.get("x-forwarded-for")
     headers = {
         "Content-Type": "application/json",
