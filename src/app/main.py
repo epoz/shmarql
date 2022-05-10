@@ -129,11 +129,6 @@ async def external_sparql(endpoint: str, query: str):
     return {"exception": r.status_code, "txt": r.text}
 
 
-async def start(endpoint: str):
-    q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
-    return await external_sparql(endpoint, q)
-
-
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
 async def schmarql(
     request: Request,
@@ -166,7 +161,8 @@ async def schmarql(
         )
         results = await external_sparql(e, q)
     else:
-        results = await start(e)
+        q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+        results = await external_sparql(e, q)
 
     if fmt == "json":
         return JSONResponse(results)
