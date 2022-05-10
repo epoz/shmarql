@@ -16,6 +16,7 @@ from .config import (
     STORE_PATH,
     DOMAIN,
     SERVICE_DESCRIPTION,
+    SERVICE_DESCRIPTION_TITLE,
     QUERY_DEFAULT_LIMIT,
     PREFIXES_FILEPATH,
     DEFAULT_PREFIXES,
@@ -197,6 +198,7 @@ async def schmarql(
         {
             "request": request,
             "results": results,
+            "SERVICE_DESCRIPTION_TITLE": SERVICE_DESCRIPTION_TITLE,
             "e": e,
             "s": s,
             "p": p,
