@@ -66,12 +66,18 @@ except:
 
 if len(GRAPH) < 1 and DATA_LOAD_PATHS:
     for DATA_LOAD_PATH in DATA_LOAD_PATHS:
-        for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
-            for filename in filenames:
-                if filename.lower().endswith(".ttl"):
-                    filepath = os.path.join(dirpath, filename)
-                    logging.debug(f"Parsing {filepath}")
-                    GRAPH.parse(filepath)
+        if DATA_LOAD_PATH.startswith("http://") or DATA_LOAD_PATH.startswith(
+            "https://"
+        ):
+            logging.debug(f"Parsing {DATA_LOAD_PATH}")
+            GRAPH.parse(DATA_LOAD_PATH)
+        else:
+            for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
+                for filename in filenames:
+                    if filename.lower().endswith(".ttl"):
+                        filepath = os.path.join(dirpath, filename)
+                        logging.debug(f"Parsing {filepath}")
+                        GRAPH.parse(filepath)
 
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
