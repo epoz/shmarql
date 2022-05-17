@@ -8,6 +8,7 @@ from fastapi import (
     Query,
 )
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import (
@@ -41,6 +42,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 from .schpiel import *
 
@@ -134,11 +137,13 @@ async def schmarql(
     request: Request,
     background_tasks: BackgroundTasks,
     e: str = "",
+    q: str = "",
     s: str = "?s",
     p: str = "?p",
     o: str = "?o",
     order: str = "?s",
     fmt: str = "",
+    showq: bool = False,
 ):
     background_tasks.add_task(rec_usage, request, "/shmarql")
     if len(e) < 1:
@@ -156,13 +161,13 @@ async def schmarql(
             + p
             + " "
             + o
-            + "}"
+            + " }"
             + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
         )
-        results = await external_sparql(e, q)
-    else:
+    elif len(q) < 1:
         q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
-        results = await external_sparql(e, q)
+
+    results = await external_sparql(e, q)
 
     if fmt == "json":
         return JSONResponse(results)
@@ -196,6 +201,8 @@ async def schmarql(
             "results": results,
             "SERVICE_DESCRIPTION_TITLE": SERVICE_DESCRIPTION_TITLE,
             "e": e,
+            "q": q,
+            "showq": showq,
             "s": s,
             "p": p,
             "o": o,
