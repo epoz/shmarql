@@ -102,6 +102,7 @@ async def sparql_get(
     if not query:
         result = Graph()
         result.parse(data=SERVICE_DESCRIPTION, format="ttl")
+        return Response(result.serialize(format="ttl"), media_type="text/turtle")
     else:
         result = GRAPH.query(query)
 
@@ -117,6 +118,7 @@ async def sparql_get(
         )
     if accept_header == "text/turtle":
         return Response(result.serialize(format="ttl"), media_type="text/turtle")
+    return Response(result.serialize(format="json"), media_type="application/ld+json")
 
 
 async def external_sparql(endpoint: str, query: str):
