@@ -1,0 +1,11 @@
+version: "3"
+services:
+  shmarql:
+    image: ghcr.io/epoz/shmarql:latest
+    environment:
+      - DATA_LOAD_PATHS=your-url
+    volumes:
+      # - 
+    ports:
+      - "8000:8000"
+
