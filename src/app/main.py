@@ -28,6 +28,7 @@ import logging, os, json
 from typing import Optional
 from urllib.parse import quote
 from rdflib import Graph, ConjunctiveGraph
+from rdflib.plugin import PluginException
 from .rdfer import prefixes, RDFer
 from rich.traceback import install
 
@@ -70,7 +71,28 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS:
             "https://"
         ):
             logging.debug(f"Parsing {DATA_LOAD_PATH}")
-            GRAPH.parse(DATA_LOAD_PATH)
+            try:
+                GRAPH.parse(DATA_LOAD_PATH)
+            except PluginException:
+                logging.debug(
+                    "Content-Type for plugin failed, downloading the file directly."
+                )
+                # Try downloading this file and parsing it as a string
+                r = httpx.get(DATA_LOAD_PATH)
+                if r.status_code == 200:
+                    d = r.content
+                    # Try and guess content type from extention, default is turtle
+                    # if .rdf or .nt use on of those
+                    if DATA_LOAD_PATH.endswith(".rdf") or DATA_LOAD_PATH.endswith(
+                        ".xml"
+                    ):
+                        GRAPH.parse(data=r.content, format="xml")
+                    elif DATA_LOAD_PATH.endswith(".nt"):
+                        GRAPH.parse(data=r.content, format="nt")
+                    else:
+                        GRAPH.parse(
+                            data=r.content,
+                        )
         else:
             for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
                 for filename in filenames:
