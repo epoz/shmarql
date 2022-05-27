@@ -54,7 +54,7 @@
 
     {% if obj.get("rdf:type") %}
     <h3><em>rdf:type</em> {% for t in obj.get("rdf:type", []) %}    
-    <a href="?e={{e}}&o=%3C{{t['value']}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
+    <a href="?e={{e}}&o=%3C{{t['value']|urlencode}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
     {% endfor %}</h3>
     {% endif %}
 
