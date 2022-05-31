@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import (
     ORIGINS,
     DATA_LOAD_PATHS,
+    STORE,
     STORE_PATH,
     DOMAIN,
     SERVICE_DESCRIPTION,
@@ -51,9 +52,12 @@ from .schpiel import *
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
-GRAPH = ConjunctiveGraph(store="Oxigraph")
-logging.debug(f"Opening store from {STORE_PATH}")
-GRAPH.open(STORE_PATH)
+if STORE == "oxigraph":
+    GRAPH = ConjunctiveGraph(store="Oxigraph")
+    logging.debug(f"Opening store from {STORE_PATH}")
+    GRAPH.open(STORE_PATH)
+else:
+    GRAPH = ConjunctiveGraph()
 
 PREFIXES = DEFAULT_PREFIXES
 try:
@@ -128,19 +132,34 @@ async def sparql_get(
     else:
         result = GRAPH.query(query)
 
-    if accept_header == "application/xml":
-        return Response(result.serialize(format="xml"), media_type="application/xml")
+    if (
+        accept_header == "application/xml"
+        or accept_header == "application/sparql-results+xml"
+    ):
+        return Response(
+            result.serialize(format="xml"),
+            media_type="application/xml",
+            headers={"Access-Control-Allow-Origin": "*"},
+        )
     if accept_header == "application/ld+json":
         return Response(
-            result.serialize(format="json-ld"), media_type="application/ld+json"
+            result.serialize(format="json-ld"),
+            media_type="application/ld+json",
+            headers={"Access-Control-Allow-Origin": "*"},
         )
     if accept_header == "application/sparql-results+json":
         return Response(
-            result.serialize(format="json"), media_type="application/ld+json"
+            result.serialize(format="json"),
+            media_type="application/sparql-results+json",
+            headers={"Access-Control-Allow-Origin": "*"},
         )
     if accept_header == "text/turtle":
         return Response(result.serialize(format="ttl"), media_type="text/turtle")
-    return Response(result.serialize(format="json"), media_type="application/ld+json")
+    return Response(
+        result.serialize(format="json"),
+        media_type="application/sparql-results+json",
+        headers={"Access-Control-Allow-Origin": "*"},
+    )
 
 
 async def external_sparql(endpoint: str, query: str):

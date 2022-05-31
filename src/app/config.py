@@ -6,6 +6,7 @@ ORIGINS = os.environ.get(
     "http://localhost:8000",
 ).split(" ")
 
+STORE = os.environ.get("STORE", "oxigraph")
 DOMAIN = os.environ.get("DOMAIN", "localhost")
 STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
