@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import (
+    DEBUG,
     ORIGINS,
     DATA_LOAD_PATHS,
     STORE,
@@ -23,6 +24,7 @@ from .config import (
     PREFIXES_FILEPATH,
     DEFAULT_PREFIXES,
     ENDPOINT,
+    FTS_FILEPATH,
 )
 import httpx
 import logging, os, json
@@ -32,8 +34,13 @@ from rdflib import Graph, ConjunctiveGraph
 from rdflib.plugin import PluginException
 from .rdfer import prefixes, RDFer
 from rich.traceback import install
+from .fts import init_fts
 
 install(show_locals=True)
+
+logging.basicConfig()
+if DEBUG:
+    logging.root.setLevel(logging.DEBUG)
 
 app = FastAPI(openapi_url="/openapi")
 app.add_middleware(
@@ -107,6 +114,10 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS:
 
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
+
+if FTS_FILEPATH:
+    logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
+    init_fts(GRAPH, FTS_FILEPATH)
 
 
 @app.post("/sparql")

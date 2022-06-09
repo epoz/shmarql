@@ -1,9 +1,13 @@
 import os, sqlite3, sys, argparse, gzip
-from rdflib import Literal
+from rdflib import Literal, URIRef, Namespace
 import rdflib.plugins.parsers.ntriples as NT
+from rdflib.plugins.sparql.evaluate import evalBGP
+from rdflib.plugins.sparql import CUSTOM_EVALS
+from rdflib.term import Variable
 import rdflib.parser
 import logging
 from rich.progress import wrap_file
+from .config import FTS_FILEPATH
 
 """Allows Fulltext searches over all the literals in the triplestore
 Uses the language to choose the stemming algorithm, for now only does English and German.
@@ -17,6 +21,46 @@ CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_de USING fts5(uri UNINDEXED, tx
 """
 
 INDEX_BUF_SIZE = 999
+
+SHMARQL_NS = Namespace("https://epoz.org/shmarql/")
+
+
+def search(q: Literal):
+    cursor = sqlite3.connect(FTS_FILEPATH).cursor()
+    cursor.execute("SELECT uri FROM literal_index WHERE txt MATCH ?", (str(q),))
+    # TODO f"SELECT uri FROM literal_index{q.language} WHERE txt MATCH ?", (str(q),) taking the language into account
+    return [x[0] for x in cursor.fetchall()]
+
+
+def get_q(ctx, s, uris):
+    for uri in uris:
+        if isinstance(s, URIRef):
+            if str(s) != uri:
+                continue
+        c = ctx.push()
+        c[s] = URIRef(uri)
+        yield c.solution()
+
+
+def fts_eval(ctx, part):
+    if part.name != "BGP":
+        raise NotImplementedError()
+    rest = []
+
+    for s, p, o in part.triples:
+        if p == SHMARQL_NS.fts_match:
+            if isinstance(o, Literal):
+                return get_q(
+                    ctx, s, search(o)
+                )  # but this will only do the first query found... need to support > 1
+        else:
+            rest.append((s, p, o))
+
+    if rest:
+        return evalBGP(ctx, rest)
+
+
+CUSTOM_EVALS["fts_eval"] = fts_eval
 
 
 def check(bufs, db, size_limit=0):
@@ -51,7 +95,7 @@ def init_fts(graph, fts_filepath):
                     bufs["_en"].append(uri_txt)
             check(bufs, db, INDEX_BUF_SIZE)
         check(bufs, db)
-    db.commit()
+        db.commit()
 
 
 class NTFileReader:
