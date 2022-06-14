@@ -1,4 +1,4 @@
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi import Request, BackgroundTasks
 from .config import SCHPIEL_PATH
 from .main import app, templates
@@ -14,16 +14,20 @@ def find_md_file(pagename):
             yield filepath
 
 
-@app.get(
-    "/schpiel/{pagename:path}", response_class=HTMLResponse, include_in_schema=False
-)
+@app.get("/{pagename:path}", response_class=HTMLResponse, include_in_schema=False)
 def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
+    if pagename == "":
+        pagename = "index"
     for filepath in find_md_file(pagename):
         filepath_ = filepath.replace(SCHPIEL_PATH, "").strip("/")
-        if filepath_ == pagename:
+        if filepath_ == f"{pagename}.md":
             md_content = open(filepath).read()
             md = MarkdownIt()
             contents = md.render(md_content)
             return templates.TemplateResponse(
                 "schpiel.html", {"request": request, "contents": Markup(contents)}
             )
+        if filepath_ == pagename:
+            return HTMLResponse(open(filepath).read())
+
+    return RedirectResponse("/shmarql")
