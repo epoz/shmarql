@@ -27,7 +27,7 @@ def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
             return templates.TemplateResponse(
                 "schpiel.html", {"request": request, "contents": Markup(contents)}
             )
-        if filepath_ == pagename:
+        if filepath_ == pagename or filepath_ == f"{pagename}.html":
             return HTMLResponse(open(filepath).read())
 
     return RedirectResponse("/shmarql")
