@@ -1,5 +1,5 @@
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi import Request, BackgroundTasks
+from fastapi import Request, BackgroundTasks, HTTPException
 from .config import SCHPIEL_PATH
 from .main import app, templates
 from markdown_it import MarkdownIt
@@ -30,4 +30,8 @@ def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
         if filepath_ == pagename or filepath_ == f"{pagename}.html":
             return HTMLResponse(open(filepath).read())
 
-    return RedirectResponse("/shmarql")
+    if pagename == "index":
+        return RedirectResponse("/shmarql")
+        
+    raise HTTPException(status_code=404, detail=f"[{pagename}] not found")
+    
