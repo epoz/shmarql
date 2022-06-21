@@ -13,7 +13,7 @@ QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 ENDPOINT = os.environ.get("ENDPOINT")
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
-
+FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 
 DEFAULT_PREFIXES = {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
