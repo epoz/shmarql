@@ -10,14 +10,14 @@ from rich.progress import wrap_file
 from .config import FTS_FILEPATH
 
 """Allows Fulltext searches over all the literals in the triplestore
-Uses the language to choose the stemming algorithm, for now only does English and German.
-All literals _without_ a specified language go into a non-stemmed catch-all, which also includes German and English.
+
+Later: Add some options to do language-specific stemming.
 """
 
 DB_SCHEMA = """
-CREATE VIRTUAL TABLE IF NOT EXISTS literal_index USING fts5(uri UNINDEXED, txt)
-CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_en USING fts5(uri UNINDEXED, txt, tokenize = 'snowball english unicode61')
-CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_de USING fts5(uri UNINDEXED, txt, tokenize = 'snowball german unicode61')
+CREATE VIRTUAL TABLE IF NOT EXISTS literal_index USING fts5(uri UNINDEXED, txt);
+CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_vocab USING fts5vocab('literal_index', 'row');
+CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_spellfix USING spellfix1;
 """
 
 INDEX_BUF_SIZE = 999
@@ -26,10 +26,20 @@ SHMARQL_NS = Namespace("https://epoz.org/shmarql/")
 
 
 def search(q: Literal):
-    cursor = sqlite3.connect(FTS_FILEPATH).cursor()
-    cursor.execute("SELECT uri FROM literal_index WHERE txt MATCH ?", (str(q),))
-    # TODO f"SELECT uri FROM literal_index{q.language} WHERE txt MATCH ?", (str(q),) taking the language into account
-    return [x[0] for x in cursor.fetchall()]
+    db = sqlite3.connect(FTS_FILEPATH)
+    db.enable_load_extension(True)
+    if sys.platform == "darwin":
+        db.load_extension("/usr/local/lib/fts5stemmer.dylib")
+        db.load_extension("/usr/local/lib/spellfix.dylib")
+    else:
+        db.load_extension("/usr/local/lib/spellfix")
+        db.load_extension("/usr/local/lib/fts5stemmer")
+
+    cursor = db.execute(
+        "SELECT distinct uri FROM literal_index WHERE txt match (SELECT word FROM literal_index_spellfix WHERE word MATCH ? LIMIT 1)",
+        (str(q),),
+    )
+    return [row[0] for row in cursor.fetchall()]
 
 
 def get_q(ctx, s, uris):
@@ -63,12 +73,12 @@ def fts_eval(ctx, part):
 CUSTOM_EVALS["fts_eval"] = fts_eval
 
 
-def check(bufs, db, size_limit=0):
-    for lang, buf in bufs.items():
-        if len(buf) > size_limit:
-            db.executemany(f"INSERT INTO literal_index{lang} VALUES (?, ?)", buf)
-            logging.info(f"Inserted {len(buf)} items into {lang} index")
-            bufs[lang] = []
+def check(buf, db, size_limit=0):
+    if len(buf) > size_limit:
+        logging.debug(f"Doing an insert into literal_index of {len(buf)} entries")
+        db.executemany(f"INSERT INTO literal_index VALUES (?, ?)", buf)
+        buf = []
+    return buf
 
 
 def init_fts(graph, fts_filepath):
@@ -76,25 +86,28 @@ def init_fts(graph, fts_filepath):
     db.enable_load_extension(True)
     if sys.platform == "darwin":
         db.load_extension("/usr/local/lib/fts5stemmer.dylib")
+        db.load_extension("/usr/local/lib/spellfix.dylib")
     else:
+        db.load_extension("/usr/local/lib/spellfix")
         db.load_extension("/usr/local/lib/fts5stemmer")
-    cursor = db.cursor()
-    for s in filter(None, DB_SCHEMA.split("\n")):
-        cursor.execute(s)
-    count = db.execute("SELECT count(*) FROM literal_index_en").fetchone()[0]
+    db.executescript(DB_SCHEMA)
+
+    count = db.execute("SELECT count(*) FROM literal_index").fetchone()[0]
     if count < 1:
         # There are no literals in the DB yet, let's index
-        bufs = {"_en": [], "_de": [], "": []}
+        logging.debug("Nothing found in FTS, now indexing...")
+        buf = []
         for s, p, o in graph.triples((None, None, None)):
             uri_txt = (str(s), str(o))
             if isinstance(o, Literal):
-                bufs[""].append(uri_txt)
-                if o.language == "de":
-                    bufs["_de"].append(uri_txt)
-                elif o.language == "en":
-                    bufs["_en"].append(uri_txt)
-            check(bufs, db, INDEX_BUF_SIZE)
-        check(bufs, db)
+                buf.append(uri_txt)
+            buf = check(buf, db, INDEX_BUF_SIZE)
+        check(buf, db)
+
+        db.execute(
+            "INSERT INTO literal_index_spellfix(word) select term from literal_index_vocab"
+        )
+
         db.commit()
 
 

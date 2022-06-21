@@ -9,7 +9,7 @@ from fastapi import (
 )
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import (
     DEBUG,
@@ -38,9 +38,10 @@ from .fts import init_fts
 
 install(show_locals=True)
 
-logging.basicConfig()
-if DEBUG:
-    logging.root.setLevel(logging.DEBUG)
+if DEBUG:    
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig()
 
 app = FastAPI(openapi_url="/openapi")
 app.add_middleware(
@@ -52,9 +53,6 @@ app.add_middleware(
 )
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-
-from .schpiel import *
 
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
@@ -89,7 +87,7 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS:
                     "Content-Type for plugin failed, downloading the file directly."
                 )
                 # Try downloading this file and parsing it as a string
-                r = httpx.get(DATA_LOAD_PATH)
+                r = httpx.get(DATA_LOAD_PATH, follow_redirects=True)
                 if r.status_code == 200:
                     d = r.content
                     # Try and guess content type from extention, default is turtle
@@ -282,11 +280,6 @@ async def schmarql(
     )
 
 
-@app.get("/", response_class=RedirectResponse, include_in_schema=False)
-async def homepage(request: Request):
-    return RedirectResponse("/shmarql")
-
-
 def rec_usage(request: Request, path: str):
     if DOMAIN == "localhost":
         return
@@ -310,3 +303,8 @@ def rec_usage(request: Request, path: str):
             }
         ),
     )
+
+
+# Import this at the end, so other more specific path definitions get priority
+# TODO: confirm that this matters?
+from .schpiel import *
