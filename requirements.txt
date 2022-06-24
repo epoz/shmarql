@@ -12,3 +12,4 @@ python-multipart==0.0.5
 rich==12.4.1
 markdown-it-py==2.1.0
 aiosqlite==0.17.0
+pylode==3.0.4
