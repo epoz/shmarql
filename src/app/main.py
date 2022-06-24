@@ -38,7 +38,7 @@ from .fts import init_fts
 
 install(show_locals=True)
 
-if DEBUG:    
+if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
 else:
     logging.basicConfig()
@@ -135,9 +135,13 @@ async def sparql_get(
     accept_header = request.headers.get("accept", "")
 
     if not query:
-        result = Graph()
-        result.parse(data=SERVICE_DESCRIPTION, format="ttl")
-        return Response(result.serialize(format="ttl"), media_type="text/turtle")
+        if accept_header == "text/turtle":
+            result = Graph()
+            result.parse(data=SERVICE_DESCRIPTION, format="ttl")
+            return Response(result.serialize(format="ttl"), media_type="text/turtle")
+        return templates.TemplateResponse(
+            "sparql.html", {"request": request, "ENDPOINT": ENDPOINT}
+        )
     else:
         result = GRAPH.query(query)
 
@@ -307,4 +311,5 @@ def rec_usage(request: Request, path: str):
 
 # Import this at the end, so other more specific path definitions get priority
 # TODO: confirm that this matters?
+from .lode import show_lode
 from .schpiel import *
