@@ -3,7 +3,7 @@ from .config import PREFIXES_FILEPATH, DEFAULT_PREFIXES
 
 try:
     if PREFIXES_FILEPATH:
-        PREFIXES = json.load(open(PREFIXES_FILEPATH))
+        PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
     else:
         PREFIXES = DEFAULT_PREFIXES
 except:
@@ -24,12 +24,17 @@ def prefixes(value):
 
 class RDFer:
     def __init__(self, results):
-        self.data = {}
+        self._data = {}
+        self._data_prefixed = {}
+        self._fields = set()
+        self._length = 0
         for row in results:
+            self._length += 1
             field = row.get("p")
             value = row.get("o")
-            self.data.setdefault(field["value"], []).append(value)
-            self.data.setdefault(prefixes(field["value"]), []).append(value)
+            self._fields.add(field["value"])
+            self._data.setdefault(field["value"], []).append(value)
+            self._data_prefixed.setdefault(prefixes(field["value"]), []).append(value)
 
     def get(self, key, default=None):
         tmp = self.__getitem__(key)
@@ -37,10 +42,16 @@ class RDFer:
             return default
         return tmp
 
+    def __iter__(self):
+        return iter(self._fields)
+
+    def __len__(self):
+        return self._length
+
     def __getitem__(self, key):
-        tmp = self.data.get(key)
+        tmp = self._data.get(key)
         if not tmp:
-            tmp = self.data.get(prefixes(key))
+            tmp = self._data_prefixed.get(prefixes(key))
         return tmp
 
     def __call__(self, field, whole=False):

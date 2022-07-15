@@ -16,6 +16,9 @@ def find_md_file(pagename):
 
 @app.get("/{pagename:path}", response_class=HTMLResponse, include_in_schema=False)
 def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
+    if SCHPIEL_PATH is None:
+        return RedirectResponse("/shmarql")
+
     if pagename == "":
         pagename = "index"
     for filepath in find_md_file(pagename):
@@ -32,6 +35,5 @@ def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
 
     if pagename == "index":
         return RedirectResponse("/shmarql")
-        
+
     raise HTTPException(status_code=404, detail=f"[{pagename}] not found")
-    

@@ -67,7 +67,7 @@ else:
 PREFIXES = DEFAULT_PREFIXES
 try:
     if PREFIXES_FILEPATH:
-        PREFIXES = json.load(open(PREFIXES_FILEPATH))
+        PREFIXES = PREFIXES | json.load(open(PREFIXES_FILEPATH))
         for uri, prefix in PREFIXES.items():
             GRAPH.bind(prefix.strip(":"), uri)
 except:
@@ -167,7 +167,11 @@ async def sparql_get(
             headers={"Access-Control-Allow-Origin": "*"},
         )
     if accept_header == "text/turtle":
-        return Response(result.serialize(format="ttl"), media_type="text/turtle")
+        return Response(
+            result.serialize(format="ttl"),
+            media_type="text/turtle",
+            headers={"Access-Control-Allow-Origin": "*"},
+        )
     return Response(
         result.serialize(format="json"),
         media_type="application/sparql-results+json",
