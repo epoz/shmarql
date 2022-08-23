@@ -15,6 +15,13 @@ ENDPOINT = os.environ.get("ENDPOINT")
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 
+# space-separated list of sqlite3 DB files containing sources, in the format:
+# CREATE TABLE source (id PRIMARY KEY, last_download, xml) as per the DDB
+SHOW_PATHS = os.environ.get("SHOW_PATHS")
+if SHOW_PATHS:
+    SHOW_PATHS = SHOW_PATHS.split(" ")
+
+
 DEFAULT_PREFIXES = {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
     "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
@@ -26,6 +33,7 @@ DEFAULT_PREFIXES = {
     "http://www.wikidata.org/prop/direct/": "wdt:",
     "http://www.w3.org/2004/02/skos/core#": "skos:",
     "http://purl.org/dc/terms/": "dct:",
+    "http://purl.org/dc/elements/1.1/": "dc:",
     "http://dbpedia.org/resource/": "dbr:",
 }
 
@@ -36,6 +44,8 @@ if "DATA_LOAD_PATHS" in os.environ:
         ENDPOINT = "http://localhost:8000/sparql"
 else:
     DATA_LOAD_PATHS = []
+TBOX_PATH = os.environ.get("TBOX_PATH")
+
 
 SERVICE_DESCRIPTION_TITLE = os.environ.get(
     "SERVICE_DESCRIPTION_TITLE", "SPARQL SCHMARQL"

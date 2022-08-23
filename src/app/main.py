@@ -316,4 +316,5 @@ def rec_usage(request: Request, path: str):
 # Import this at the end, so other more specific path definitions get priority
 # TODO: confirm that this matters?
 from .lode import show_lode
+from .show import *
 from .schpiel import *
