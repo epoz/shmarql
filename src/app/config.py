@@ -6,8 +6,17 @@ ORIGINS = os.environ.get(
     "http://localhost:8000",
 ).split(" ")
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "foobarbaz")
+ACCESS_TOKEN_EXPIRE_DAYS = int(os.environ.get("ACCESS_TOKEN_EXPIRE_DAYS", "30"))
+SP_X509_CERT = os.environ.get("SP_X509_CERT")
+IDP_X509_CERT = os.environ.get("IDP_X509_CERT")
+IDP_URI = os.environ.get("IDP_URI")
+IDP_ENTITY = os.environ.get("IDP_ENTITY")
+SP_ENTITY = os.environ.get("SP_ENTITY")
+SITE_URI = os.environ.get("SITE_URI", "http://127.0.0.1:8000/")
+
 STORE = os.environ.get("STORE", "oxigraph")
-DOMAIN = os.environ.get("DOMAIN", "localhost")
+DOMAIN = os.environ.get("DOMAIN", "127.0.0.1:8000")
 STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")

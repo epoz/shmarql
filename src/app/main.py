@@ -283,6 +283,7 @@ async def schmarql(
                 "http://schema.org/thumbnail",
                 "http://schema.org/image",
                 "http://xmlns.com/foaf/0.1/depiction",
+                "http://www.europeana.eu/schemas/edm/isShownBy",
             ],
             "obj": obj,
         },
@@ -316,6 +317,7 @@ def rec_usage(request: Request, path: str):
 
 # Import this at the end, so other more specific path definitions get priority
 # TODO: confirm that this matters?
+from .am import *
 from .lode import show_lode
 from .show import *
 from .schpiel import *
