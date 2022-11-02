@@ -11,6 +11,7 @@ from .config import (
     SECRET_KEY,
     ACCESS_TOKEN_EXPIRE_DAYS,
     SP_X509_CERT,
+    SP_CERT_PK,
     IDP_X509_CERT,
     IDP_ENTITY,
     SITE_URI,
@@ -37,6 +38,7 @@ saml_settings = {
             "binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
         },
         "x509cert": SP_X509_CERT,
+        "privateKey": SP_CERT_PK,
     },
 }
 

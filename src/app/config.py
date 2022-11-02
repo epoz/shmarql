@@ -9,6 +9,7 @@ ORIGINS = os.environ.get(
 SECRET_KEY = os.environ.get("SECRET_KEY", "foobarbaz")
 ACCESS_TOKEN_EXPIRE_DAYS = int(os.environ.get("ACCESS_TOKEN_EXPIRE_DAYS", "30"))
 SP_X509_CERT = os.environ.get("SP_X509_CERT")
+SP_CERT_PK = os.environ.get("SP_CERT_PK")
 IDP_X509_CERT = os.environ.get("IDP_X509_CERT")
 IDP_URI = os.environ.get("IDP_URI")
 IDP_ENTITY = os.environ.get("IDP_ENTITY")
