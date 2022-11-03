@@ -16,6 +16,7 @@ from .config import (
     IDP_ENTITY,
     SITE_URI,
     IDP_URI,
+    DOMAIN,
 )
 
 ALGORITHM = "HS256"
@@ -46,7 +47,8 @@ saml_settings = {
 async def prepare_from_fastapi_request(request, debug=False):
     form_data = await request.form()
     rv = {
-        "http_host": request.client.host,
+        "http_host": DOMAIN,
+        "https": "on",
         "server_port": request.url.port,
         "script_name": request.url.path,
         "post_data": {},
@@ -98,13 +100,13 @@ async def saml_login_callback(request: Request):
         else:
             # Attributes we are using:
             A = {
-                "email": "urn:oid:0.9.2342.19200300.100.1.3",
                 "displayName": "urn:oid:2.16.840.1.113730.3.1.241",
             }
+            # Remove "email": "urn:oid:0.9.2342.19200300.100.1.3", from A, we do not have access to it.
             auth_attrs = auth.get_attributes()
-            email = auth_attrs.get(A["email"])[0]
+            # email = auth_attrs.get(A["email"])[0]
             displayName = auth_attrs.get(A["displayName"])[0]
-            access_token = create_access_token(data={"sub": email})
+            access_token = create_access_token(data={"sub": displayName})
 
             r = HTMLResponse(
                 """<script>document.location = '/'</script><div>OK, SAML login succeeded</div>"""
