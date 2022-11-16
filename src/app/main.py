@@ -9,7 +9,7 @@ from fastapi import (
 )
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from .config import (
     DEBUG,
@@ -32,7 +32,7 @@ from typing import Optional
 from urllib.parse import quote
 from rdflib import Graph, ConjunctiveGraph
 from rdflib.plugin import PluginException
-from .rdfer import prefixes, RDFer
+from .rdfer import prefixes, RDFer, results_to_triples
 from rich.traceback import install
 from .fts import init_fts
 
@@ -237,6 +237,19 @@ async def schmarql(
 
     if fmt == "json":
         return JSONResponse(results)
+
+    if fmt in ("ttl", "nt"):
+        triplebuf = "\n".join(
+            [
+                f"{s_} {p_} {o_} ."
+                for s_, p_, o_ in results_to_triples(results, {"s": s, "p": p, "o": o})
+            ]
+        )
+        if fmt == "ttl":
+            tmpgraph = rdflib.Graph()
+            tmpgraph.parse(format="nt", data=triplebuf)
+            triplebuf = tmpgraph.serialize()
+        return PlainTextResponse(triplebuf)
 
     if "exception" in results:
         return templates.TemplateResponse(

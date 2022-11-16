@@ -60,3 +60,21 @@ class RDFer:
             if whole:
                 return tmp[0]
             return prefixes(tmp[0]["value"])
+
+
+def results_to_triples(results: dict, bind={}):
+    buf = []
+    if "results" in results and "bindings" in results["results"]:
+        for row in results["results"]["bindings"]:
+            line = []
+            for tmp in ("s", "p", "o"):
+                x = row.get(tmp)
+                if x is None:
+                    line.append(bind.get(tmp, ""))
+                else:
+                    if x.get("type") == "literal":
+                        line.append('"' + x.get("value").replace('"', r"\"") + '"')
+                    else:
+                        line.append(f'<{x.get("value")}>')
+            buf.append(line)
+    return buf
