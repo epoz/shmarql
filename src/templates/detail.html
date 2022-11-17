@@ -62,11 +62,10 @@
             <h1>{{obj(TITLE_PREDICATE)}}</h1>
         {% endif %}
     {% endfor %}
-    
 
-    {% if obj.get("rdf:type") %}
-    <h3><em>rdf:type</em> {% for t in obj.get("rdf:type", []) %}    
-    <a href="?e={{e}}&o=%3C{{t['value']|urlencode}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
+    {% if obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") %}
+    <h3><em>Type</em> {% for t in obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", []) %}    
+    <a href="?e={{e}}&s={{s|urlencode}}&o=%3C{{t['value']|urlencode}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
     {% endfor %}</h3>
     {% endif %}
 
