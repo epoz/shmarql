@@ -174,7 +174,7 @@ async def sparql_get(
         )
     return Response(
         result.serialize(format="json"),
-        media_type="application/sparql-results+json",
+        media_type="application/json",
         headers={"Access-Control-Allow-Origin": "*"},
     )
 
