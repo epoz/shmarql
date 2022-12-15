@@ -21,7 +21,7 @@ DOMAIN = os.environ.get("DOMAIN", "127.0.0.1:8000")
 STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
-ENDPOINT = os.environ.get("ENDPOINT")
+ENDPOINT = os.environ.get("ENDPOINT", "/sparql")
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 
