@@ -5,6 +5,7 @@ from .main import app, templates
 from markdown_it import MarkdownIt
 from markupsafe import Markup
 import os
+from .lode import can_lode
 
 
 def find_md_file(pagename):
@@ -16,6 +17,10 @@ def find_md_file(pagename):
 
 @app.get("/{pagename:path}", response_class=HTMLResponse, include_in_schema=False)
 def schpiel(request: Request, background_tasks: BackgroundTasks, pagename: str):
+    lode_html = can_lode(request, pagename)
+    if lode_html:
+        return lode_html
+
     if SCHPIEL_PATH is None:
         return RedirectResponse("/shmarql")
 

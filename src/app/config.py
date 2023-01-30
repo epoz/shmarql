@@ -18,6 +18,7 @@ SITE_URI = os.environ.get("SITE_URI", "http://127.0.0.1:8000/")
 
 STORE = os.environ.get("STORE", "oxigraph")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1:8000")
+SCHEME = os.environ.get("SCHEME", "http://")
 STORE_PATH = os.environ.get("STORE_PATH")
 QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
@@ -51,7 +52,7 @@ DEFAULT_PREFIXES = {
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")
     if not ENDPOINT:
-        ENDPOINT = "http://localhost:8000/sparql"
+        ENDPOINT = f"{SCHEME}{DOMAIN}/sparql"
 else:
     DATA_LOAD_PATHS = []
 TBOX_PATH = os.environ.get("TBOX_PATH")
@@ -69,10 +70,10 @@ SERVICE_DESCRIPTION = f"""@prefix sd: <http://www.w3.org/ns/sparql-service-descr
         @prefix ent: <http://www.w3.org/ns/entailment/> .
         @prefix dc: <http://purl.org/dc/elements/1.1/> .
         @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-        <https://{DOMAIN}/sparql> a sd:Service ;
+        <{SCHEME}{DOMAIN}/sparql> a sd:Service ;
             rdfs:label "{SERVICE_DESCRIPTION_TITLE}" ;
             dc:description "{SERVICE_DESCRIPTION_LABEL}" ;
-            sd:endpoint <https://{DOMAIN}/sparql> ;
+            sd:endpoint <{SCHEME}{DOMAIN}/sparql> ;
             sd:supportedLanguage sd:SPARQL11Query ;
             sd:resultFormat <http://www.w3.org/ns/formats/SPARQL_Results_JSON>, <http://www.w3.org/ns/formats/SPARQL_Results_CSV> ;
             sd:feature sd:DereferencesURIs ;
