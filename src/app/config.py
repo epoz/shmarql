@@ -24,6 +24,7 @@ QUERY_DEFAULT_LIMIT = 999
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 ENDPOINT = os.environ.get("ENDPOINT")
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
+SCHPIEL_TOKEN = os.environ.get("SCHPIEL_TOKEN")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 
 # space-separated list of sqlite3 DB files containing sources, in the format:
