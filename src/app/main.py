@@ -287,15 +287,17 @@ async def schmarql(
             "o": o,
             "PREFIXES": PREFIXES,
             "IGNORE_FIELDS": [
-                "http://www.w3.org/2000/01/rdf-schema#label",
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-                "http://schema.org/name",
             ],
-            "TITLE_PREDICATES": ["rdfs:label", "schema:name", "skos:preflabel"],
+            "TITLE_PREDICATES": [
+                "http://www.w3.org/2000/01/rdf-schema#label",
+                "http://schema.org/name",
+                "http://www.w3.org/2004/02/skos/core#prefLabel",
+            ],
             "IMAGE_PREDICATES": [
                 "http://schema.org/thumbnail",
                 "http://schema.org/image",
-                "http://schema.org/contenturl",
+                "http://schema.org/contentUrl",
                 "http://xmlns.com/foaf/0.1/depiction",
                 "http://www.europeana.eu/schemas/edm/isShownBy",
             ],

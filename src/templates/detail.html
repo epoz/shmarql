@@ -46,28 +46,30 @@
     <div class="p-4">
 
     <div style="background-color: #eee; padding: 2vw">
-    <a href="/shmarql?e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
-    <a href="/shmarql?e={{e}}&o=<{{s.strip('<>')|urlencode}}>" class="selektor">O</a>
-    {{s.strip("<>")}}
+        <a href="/shmarql?e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
+        <a href="/shmarql?e={{e}}&o=<{{s.strip('<>')|urlencode}}>" class="selektor">O</a>
+        {{s.strip("<>")}}
 
-    <div>
-    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=ttl" class="btn btn-sm btn-secondary">TTL</a>
-    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=nt" class="btn btn-sm btn-secondary">NT</a>
-    </div>
+        {% for TITLE_PREDICATE in TITLE_PREDICATES %}
+            {% if obj(TITLE_PREDICATE) %}
+                <h1>{{obj(TITLE_PREDICATE)}}</h1>
+            {% endif %}
+        {% endfor %}
 
-    </div>
-
-    {% for TITLE_PREDICATE in TITLE_PREDICATES %}
-        {% if obj(TITLE_PREDICATE) %}
-            <h1>{{obj(TITLE_PREDICATE)}}</h1>
+        {% if obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") %}
+        <h3><em>a type of</em> {% for t in obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", []) %}    
+        <a href="?e={{e}}&s={{s|urlencode}}&o=%3C{{t['value']|urlencode}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
+        {% endfor %}</h3>
         {% endif %}
-    {% endfor %}
 
-    {% if obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") %}
-    <h3><em>Type</em> {% for t in obj.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", []) %}    
-    <a href="?e={{e}}&s={{s|urlencode}}&o=%3C{{t['value']|urlencode}}%3E">{{t['value']|prefixes}}</a> {% if not loop.last %}&middot;{% endif %}
-    {% endfor %}</h3>
-    {% endif %}
+        <div style="text-align: right">
+            <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=ttl" class="btn btn-sm btn-secondary">TTL</a>
+            <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=nt" class="btn btn-sm btn-secondary">NT</a>
+        </div>
+
+
+    </div>
+
 
  
     <table class="table">
