@@ -40,6 +40,9 @@ def update():
 
 
 def can_lode(request: Request, path: str):
+    if not TBOX:
+        return None
+
     accept_header = request.headers.get("accept", "")
 
     if path == "_LODE":
