@@ -11,13 +11,12 @@ except:
 
 
 def prefixes(value):
-    vv = value.lower()
     for uri, prefix in PREFIXES.items():
-        replaced = vv.replace(uri, prefix)
-        if replaced != vv:
+        replaced = value.replace(uri, prefix)
+        if replaced != value:
             return replaced
-        replaced = vv.replace(prefix, uri)
-        if replaced != vv:
+        replaced = value.replace(prefix, uri)
+        if replaced != value:
             return replaced
     return value
 
