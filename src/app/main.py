@@ -295,6 +295,7 @@ async def schmarql(
             "IMAGE_PREDICATES": [
                 "http://schema.org/thumbnail",
                 "http://schema.org/image",
+                "http://schema.org/contenturl",
                 "http://xmlns.com/foaf/0.1/depiction",
                 "http://www.europeana.eu/schemas/edm/isShownBy",
             ],
