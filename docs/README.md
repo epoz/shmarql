@@ -3,7 +3,6 @@
 ## Serving a LODE documentation page for your TBox
 
 If you have a TBox ontology available, you can use SHMARQL to server up some automatic LODE documentaiton for your ontology.
-The following settings need to be exported in your environment:
 
 For example, given the `foaf.ttl` file in this documentation directory, you could run a SHMARQL instance like this:
 
