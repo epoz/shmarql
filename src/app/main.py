@@ -1,12 +1,4 @@
-from fastapi import (
-    FastAPI,
-    Request,
-    Response,
-    Form,
-    HTTPException,
-    BackgroundTasks,
-    Query,
-)
+from fastapi import FastAPI, Request, Response, HTTPException, BackgroundTasks, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
@@ -29,7 +21,7 @@ from .config import (
 import httpx
 import logging, os, json
 from typing import Optional
-from urllib.parse import quote
+from urllib.parse import quote, parse_qs
 from rdflib import Graph, ConjunctiveGraph
 from rdflib.plugin import PluginException
 from .rdfer import prefixes, RDFer, results_to_triples
@@ -119,10 +111,21 @@ if FTS_FILEPATH:
 
 
 @app.post("/sparql")
-async def sparql_post(
-    request: Request, background_tasks: BackgroundTasks, query: str = Form(...)
+async def sparql_post_sparql_query(
+    request: Request,
+    background_tasks: BackgroundTasks,
 ):
-    return await sparql_get(request, background_tasks, query)
+    content_type = request.headers.get("content-type")
+    body = await request.body()
+    body = body.decode("utf8")
+
+    if content_type == "application/sparql-query":
+        return await sparql_get(request, background_tasks, body)
+    if content_type == "application/x-www-form-urlencoded":
+        params = parse_qs(body)
+        return await sparql_get(request, background_tasks, params["query"][0])
+
+    raise HTTPException(status_code=400, detail="This request is malformed")
 
 
 @app.get("/sparql")
@@ -132,10 +135,14 @@ async def sparql_get(
     query: Optional[str] = Query(None),
 ):
     background_tasks.add_task(rec_usage, request, "/sparql")
-    accept_header = request.headers.get("accept", "")
+    accept_header = request.headers.get("accept")
+    if accept_header:
+        accept_headers = [ah.strip() for ah in accept_header.split(",")]
+    else:
+        accept_headers = []
 
     if not query:
-        if accept_header == "text/turtle":
+        if "text/turtle" in accept_headers:
             result = Graph()
             result.parse(data=SERVICE_DESCRIPTION, format="ttl")
             return Response(result.serialize(format="ttl"), media_type="text/turtle")
@@ -145,28 +152,36 @@ async def sparql_get(
     else:
         result = GRAPH.query(query)
 
+    if "application/sparql-results+json" in accept_headers:
+        json_result = json.loads(
+            result.serialize(format="json")
+        )  # alas, an encode/decode double due to rdflib not returning json but bytes
+        # Fix for bug in oxigraph https://github.com/oxigraph/oxigraph/issues/429
+        new_result = {}
+        new_result["head"] = json_result["head"]
+        new_result["results"] = json_result["results"]
+        # json.dumps(json_result)
+        return Response(
+            json.dumps(new_result),
+            media_type="application/sparql-results+json",
+            headers={"Access-Control-Allow-Origin": "*"},
+        )
     if (
-        accept_header == "application/xml"
-        or accept_header == "application/sparql-results+xml"
+        "application/xml" in accept_headers
+        or "application/sparql-results+xml" in accept_headers
     ):
         return Response(
             result.serialize(format="xml"),
             media_type="application/xml",
             headers={"Access-Control-Allow-Origin": "*"},
         )
-    if accept_header == "application/ld+json":
+    if "application/ld+json" in accept_headers:
         return Response(
             result.serialize(format="json-ld"),
             media_type="application/ld+json",
             headers={"Access-Control-Allow-Origin": "*"},
         )
-    if accept_header == "application/sparql-results+json":
-        return Response(
-            result.serialize(format="json"),
-            media_type="application/sparql-results+json",
-            headers={"Access-Control-Allow-Origin": "*"},
-        )
-    if accept_header == "text/turtle":
+    if "text/turtle" in accept_headers:
         return Response(
             result.serialize(format="ttl"),
             media_type="text/turtle",
