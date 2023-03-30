@@ -119,9 +119,9 @@ async def sparql_post_sparql_query(
     body = await request.body()
     body = body.decode("utf8")
 
-    if content_type == "application/sparql-query":
+    if content_type.startswith("application/sparql-query"):
         return await sparql_get(request, background_tasks, body)
-    if content_type == "application/x-www-form-urlencoded":
+    if content_type.startswith("application/x-www-form-urlencoded"):
         params = parse_qs(body)
         return await sparql_get(request, background_tasks, params["query"][0])
 
