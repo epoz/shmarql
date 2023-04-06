@@ -15,7 +15,7 @@ Later: Add some options to do language-specific stemming.
 """
 
 DB_SCHEMA = """
-CREATE VIRTUAL TABLE IF NOT EXISTS literal_index USING fts5(uri UNINDEXED, txt);
+CREATE VIRTUAL TABLE IF NOT EXISTS literal_index USING fts5(subject UNINDEXED, predicate UNINDEXED, txt);
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_vocab USING fts5vocab('literal_index', 'row');
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_spellfix USING spellfix1;
 """
@@ -36,7 +36,7 @@ def search(q: Literal):
         db.load_extension("/usr/local/lib/fts5stemmer")
 
     cursor = db.execute(
-        "SELECT distinct uri FROM literal_index WHERE txt match (SELECT word FROM literal_index_spellfix WHERE word MATCH ? LIMIT 1)",
+        "SELECT distinct subject FROM literal_index WHERE txt match (SELECT word FROM literal_index_spellfix WHERE word MATCH ? LIMIT 1)",
         (str(q),),
     )
     return [row[0] for row in cursor.fetchall()]
@@ -76,7 +76,7 @@ CUSTOM_EVALS["fts_eval"] = fts_eval
 def check(buf, db, size_limit=0):
     if len(buf) > size_limit:
         logging.debug(f"Doing an insert into literal_index of {len(buf)} entries")
-        db.executemany(f"INSERT INTO literal_index VALUES (?, ?)", buf)
+        db.executemany(f"INSERT INTO literal_index VALUES (?, ?, ?)", buf)
         buf = []
     return buf
 
@@ -98,7 +98,7 @@ def init_fts(graph, fts_filepath):
         logging.debug("Nothing found in FTS, now indexing...")
         buf = []
         for s, p, o in graph.triples((None, None, None)):
-            uri_txt = (str(s), str(o))
+            uri_txt = (str(s), str(p), str(o))
             if isinstance(o, Literal):
                 buf.append(uri_txt)
             buf = check(buf, db, INDEX_BUF_SIZE)
@@ -141,8 +141,11 @@ class NTFileReader:
         with wrap_file(F, self.inputfilepath_size) as inputfile:
             line = inputfile.readline()
             while len(line) > 0:
-                self.parser.parse(rdflib.parser.StringInputSource(line), self)
-                yield self.current_triple
+                try:
+                    self.parser.parse(rdflib.parser.StringInputSource(line), self)
+                    yield self.current_triple
+                except rdflib.exceptions.ParserError:
+                    continue
                 line = inputfile.readline()
         F.close()
 
