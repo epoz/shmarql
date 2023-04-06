@@ -99,8 +99,7 @@ def init_fts(graph, fts_filepath):
         buf = []
         for s, p, o in graph.triples((None, None, None)):
             uri_txt = (str(s), str(p), str(o))
-            if isinstance(o, Literal):
-                buf.append(uri_txt)
+            buf.append(uri_txt)
             buf = check(buf, db, INDEX_BUF_SIZE)
         check(buf, db)
 
