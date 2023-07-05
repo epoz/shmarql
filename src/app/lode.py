@@ -1,7 +1,9 @@
 from fastapi import Request, Response
+from fastapi.responses import RedirectResponse
 from .config import TBOX_PATH, SCHEME, DOMAIN
-from .main import app
-from rdflib import Graph, RDF, OWL
+from .main import app, GRAPH
+from urllib.parse import quote
+from rdflib import Graph, RDF, OWL, URIRef
 from pylode import OntDoc
 import httpx
 import logging
@@ -40,10 +42,27 @@ def update():
 
 
 def can_lode(request: Request, path: str):
-    if not TBOX:
-        return None
+    logging.debug(f"LODE path requested:  {path}")
 
     accept_header = request.headers.get("accept", "")
+    if accept_header:
+        accept_headers = [ah.strip() for ah in accept_header.split(",")]
+    else:
+        accept_headers = []
+
+    # Check to see if this is a request for a subject which is in the store
+    full_subject = f"{SCHEME}{DOMAIN}/{path}"
+    if (URIRef(full_subject), None, None) in GRAPH:
+        if "text/turtle" in accept_headers:
+            tmp_graph = Graph()
+            for t in GRAPH.triples((URIRef(full_subject), None, None)):
+                tmp_graph.add(t)
+            # TODO Consider using the .main.PREFIXES to bind some user-defined prefixes to output
+            return Response(tmp_graph.serialize(format="ttl"), media_type="text/turtle")
+        return RedirectResponse("/shmarql?s=<" + quote(full_subject) + ">")
+
+    if not TBOX:
+        return None
 
     if path == "_LODE":
         return TBOX_HTML
@@ -52,17 +71,9 @@ def can_lode(request: Request, path: str):
         if ss.startswith(f"{SCHEME}{DOMAIN}"):
             ont_path = ss.replace(f"{SCHEME}{DOMAIN}/", "")
             if ont_path == path:
-                if accept_header == "text/turtle":
+                if "text/turtle" in accept_headers:
                     if o == OWL.Ontology:
                         return Response(
                             TBOX.serialize(format="ttl"), media_type="text/turtle"
-                        )
-                    else:
-                        # TODO Consider using the .main.PREFIXES to bind some user-defined prefixes to output
-                        tmp_graph = Graph()
-                        for t in TBOX.triples((s, None, None)):
-                            tmp_graph.add(t)
-                        return Response(
-                            tmp_graph.serialize(format="ttl"), media_type="text/turtle"
                         )
                 return TBOX_HTML
