@@ -16,7 +16,6 @@ IDP_ENTITY = os.environ.get("IDP_ENTITY")
 SP_ENTITY = os.environ.get("SP_ENTITY")
 SITE_URI = os.environ.get("SITE_URI", "http://127.0.0.1:8000/")
 
-STORE = os.environ.get("STORE", "oxigraph")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1:8000")
 SCHEME = os.environ.get("SCHEME", "http://")
 STORE_PATH = os.environ.get("STORE_PATH")

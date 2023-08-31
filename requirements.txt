@@ -1,7 +1,5 @@
 fastapi==0.65.2
-pyoxigraph==0.3.13
-oxrdflib==0.3.2
-rdflib==6.1.1
+pyoxigraph==0.3.19
 uvicorn>=0.11.3
 aiofiles==0.4.0
 httpx==0.21.1

@@ -7,7 +7,6 @@ from .config import (
     DEBUG,
     ORIGINS,
     DATA_LOAD_PATHS,
-    STORE,
     STORE_PATH,
     DOMAIN,
     SERVICE_DESCRIPTION,
@@ -22,11 +21,11 @@ import httpx
 import logging, os, json
 from typing import Optional
 from urllib.parse import quote, parse_qs
-from rdflib import Graph, ConjunctiveGraph
-from rdflib.plugin import PluginException
+import pyoxigraph as px
 from .rdfer import prefixes, RDFer, results_to_triples
 from rich.traceback import install
 from .fts import init_fts
+from .px_util import OxigraphSerialization
 
 install(show_locals=True)
 
@@ -49,59 +48,44 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
-if STORE == "oxigraph":
-    GRAPH = ConjunctiveGraph(store="Oxigraph")
+
+if STORE_PATH:
     logging.debug(f"Opening store from {STORE_PATH}")
-    GRAPH.open(STORE_PATH)
+    if DATA_LOAD_PATHS:
+        GRAPH = px.Store(STORE_PATH)
+    else:
+        GRAPH = px.Store.read_only(STORE_PATH)
 else:
-    GRAPH = ConjunctiveGraph()
-
-PREFIXES = DEFAULT_PREFIXES
-try:
-    if PREFIXES_FILEPATH:
-        PREFIXES = PREFIXES | json.load(open(PREFIXES_FILEPATH))
-        for uri, prefix in PREFIXES.items():
-            GRAPH.bind(prefix.strip(":"), uri)
-except:
-    logging.exception(f"Problem binding PREFIXES from {PREFIXES_FILEPATH}")
-
+    GRAPH = px.Store()
 
 if len(GRAPH) < 1 and DATA_LOAD_PATHS:
     for DATA_LOAD_PATH in DATA_LOAD_PATHS:
         if DATA_LOAD_PATH.startswith("http://") or DATA_LOAD_PATH.startswith(
             "https://"
         ):
-            logging.debug(f"Parsing {DATA_LOAD_PATH}")
-            try:
-                GRAPH.parse(DATA_LOAD_PATH)
-            except PluginException:
-                logging.debug(
-                    "Content-Type for plugin failed, downloading the file directly."
-                )
-                # Try downloading this file and parsing it as a string
-                r = httpx.get(DATA_LOAD_PATH, follow_redirects=True)
-                if r.status_code == 200:
-                    d = r.content
-                    # Try and guess content type from extention, default is turtle
-                    # if .rdf or .nt use on of those
-                    if DATA_LOAD_PATH.endswith(".rdf") or DATA_LOAD_PATH.endswith(
-                        ".xml"
-                    ):
-                        GRAPH.parse(data=r.content, format="xml")
-                    elif DATA_LOAD_PATH.endswith(".nt"):
-                        GRAPH.parse(data=r.content, format="nt")
-                    else:
-                        GRAPH.parse(
-                            data=r.content,
-                        )
+            logging.debug(f"Downloading {DATA_LOAD_PATH}")
+            # Try downloading this file and parsing it as a string
+            r = httpx.get(DATA_LOAD_PATH, follow_redirects=True)
+            if r.status_code == 200:
+                d = r.content
+                # Try and guess content type from extention, default is turtle
+                # if .rdf or .nt use on of those
+                if DATA_LOAD_PATH.endswith(".rdf") or DATA_LOAD_PATH.endswith(".xml"):
+                    GRAPH.bulk_load(r.content, "application/rdf+xml")
+                elif DATA_LOAD_PATH.endswith(".nt"):
+                    GRAPH.bulk_load(r.content, "application/n-triples")
+                else:
+                    GRAPH.bulk_load(r.content, "text/turtle")
         else:
             for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
                 for filename in filenames:
+                    filepath = os.path.join(dirpath, filename)
                     if filename.lower().endswith(".ttl"):
-                        filepath = os.path.join(dirpath, filename)
                         logging.debug(f"Parsing {filepath}")
-                        GRAPH.parse(filepath)
-
+                        GRAPH.bulk_load(filepath, "text/turtle")
+                    elif filename.lower().endswith(".nt"):
+                        logging.debug(f"Parsing {filepath}")
+                        GRAPH.bulk_load(filepath, "application/n-triples")
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
 
@@ -143,52 +127,46 @@ async def sparql_get(
 
     if not query:
         if "text/turtle" in accept_headers:
-            result = Graph()
-            result.parse(data=SERVICE_DESCRIPTION, format="ttl")
-            return Response(result.serialize(format="ttl"), media_type="text/turtle")
+            return Response(SERVICE_DESCRIPTION, media_type="text/turtle")
         return templates.TemplateResponse(
             "sparql.html", {"request": request, "ENDPOINT": ENDPOINT}
         )
     else:
         result = GRAPH.query(query)
 
+    new_result = OxigraphSerialization(result)
+
     if "application/sparql-results+json" in accept_headers:
-        json_result = json.loads(
-            result.serialize(format="json")
-        )  # alas, an encode/decode double due to rdflib not returning json but bytes
-        # Fix for bug in oxigraph https://github.com/oxigraph/oxigraph/issues/429
-        new_result = {}
-        new_result["head"] = json_result["head"]
-        new_result["results"] = json_result["results"]
-        # json.dumps(json_result)
         return Response(
-            json.dumps(new_result),
+            json.dumps(new_result.json()),
             media_type="application/sparql-results+json",
             headers={"Access-Control-Allow-Origin": "*"},
         )
-    if (
-        "application/xml" in accept_headers
-        or "application/sparql-results+xml" in accept_headers
-    ):
-        return Response(
-            result.serialize(format="xml"),
-            media_type="application/xml",
-            headers={"Access-Control-Allow-Origin": "*"},
-        )
-    if "application/ld+json" in accept_headers:
-        return Response(
-            result.serialize(format="json-ld"),
-            media_type="application/ld+json",
-            headers={"Access-Control-Allow-Origin": "*"},
-        )
+    # delay XML results until it is actually needed https://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321/
+    # if (
+    #     "application/xml" in accept_headers
+    #     or "application/sparql-results+xml" in accept_headers
+    # ):
+    #     return Response(
+    #         result.serialize(format="xml"),
+    #         media_type="application/xml",
+    #         headers={"Access-Control-Allow-Origin": "*"},
+    #     )
+    # delay JSON-LD until it is actually needed... ;-)
+    # if "application/ld+json" in accept_headers:
+    #     return Response(
+    #         result.serialize(format="json-ld"),
+    #         media_type="application/ld+json",
+    #         headers={"Access-Control-Allow-Origin": "*"},
+    #     )
     if "text/turtle" in accept_headers:
         return Response(
-            result.serialize(format="ttl"),
+            new_result.qt_turtle(),
             media_type="text/turtle",
             headers={"Access-Control-Allow-Origin": "*"},
         )
     return Response(
-        result.serialize(format="json"),
+        json.dumps(new_result.json()),
         media_type="application/json",
         headers={"Access-Control-Allow-Origin": "*"},
     )
@@ -214,7 +192,7 @@ async def external_sparql(endpoint: str, query: str):
 
 
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
-async def schmarql(
+async def shmarql(
     request: Request,
     background_tasks: BackgroundTasks,
     e: str = "",
