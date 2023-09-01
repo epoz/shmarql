@@ -51,8 +51,6 @@ DEFAULT_PREFIXES = {
 
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")
-    if not ENDPOINT:
-        ENDPOINT = f"{SCHEME}{DOMAIN}/sparql"
 else:
     DATA_LOAD_PATHS = []
 TBOX_PATH = os.environ.get("TBOX_PATH")
