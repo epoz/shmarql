@@ -3,12 +3,12 @@ from fastapi.responses import RedirectResponse
 from .config import TBOX_PATH, SCHEME, DOMAIN
 from .main import app, GRAPH
 from urllib.parse import quote
-from rdflib import Graph, RDF, OWL, URIRef
+import pyoxigraph as px
 from pylode import OntDoc
 import httpx
 import logging
 import tempfile
-
+import io
 
 TBOX, TBOX_HTML = None, None
 
@@ -19,13 +19,15 @@ def load_tbox():
     try:
         r = httpx.get(TBOX_PATH, follow_redirects=True)
         if r.status_code == 200:
-            TBOX = Graph()
-            TBOX.parse(data=r.content)
             # TODO There is a bug in pyLODE, when initializing OntDoc with a rdflib.Graph instance, things fail
             with tempfile.NamedTemporaryFile() as F:
                 F.write(r.content)
                 od = OntDoc(F.name)
                 globals()["TBOX_HTML"] = od.make_html()
+            TBOX = px.Store()
+            TBOX.load(
+                io.BytesIO(r.content), "application/n-triples"
+            )  # Only supporting n-triples, what to do when the TBox is turtle?
             globals()["TBOX"] = TBOX
     except:
         # Bit wide, swallowing all the errors, but we do not want a mis-configured TBOX stopping proceedings
@@ -52,13 +54,19 @@ def can_lode(request: Request, path: str):
 
     # Check to see if this is a request for a subject which is in the store
     full_subject = f"{SCHEME}{DOMAIN}/{path}"
-    if (URIRef(full_subject), None, None) in GRAPH:
+    find_full_subject = list(
+        GRAPH.quads_for_pattern(px.NamedNode(full_subject), None, None)
+    )
+
+    if len(find_full_subject) > 0:
         if "text/turtle" in accept_headers:
-            tmp_graph = Graph()
-            for t in GRAPH.triples((URIRef(full_subject), None, None)):
-                tmp_graph.add(t)
+            tmp_graph = px.Store()
+            tmp_graph.extend(find_full_subject)
             # TODO Consider using the .main.PREFIXES to bind some user-defined prefixes to output
-            return Response(tmp_graph.serialize(format="ttl"), media_type="text/turtle")
+            out = io.StringIO()
+            return Response(
+                tmp_graph.dump(out, "text/turtle"), media_type="text/turtle"
+            )
         return RedirectResponse("/shmarql?s=<" + quote(full_subject) + ">")
 
     if not TBOX:
@@ -66,14 +74,17 @@ def can_lode(request: Request, path: str):
 
     if path == "_LODE":
         return TBOX_HTML
-    for s, p, o in TBOX.triples((None, RDF.type, None)):
-        ss = str(s)
+    for s, p, o, _ in TBOX.quads_for_pattern(
+        None, px.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), None
+    ):
+        ss = s.value
         if ss.startswith(f"{SCHEME}{DOMAIN}"):
             ont_path = ss.replace(f"{SCHEME}{DOMAIN}/", "")
             if ont_path == path:
                 if "text/turtle" in accept_headers:
-                    if o == OWL.Ontology:
+                    if o.value == "http://www.w3.org/2002/07/owl#Ontology":
+                        out = io.StringIO()
                         return Response(
-                            TBOX.serialize(format="ttl"), media_type="text/turtle"
+                            TBOX.dump(out, "text/turtle"), media_type="text/turtle"
                         )
                 return TBOX_HTML
