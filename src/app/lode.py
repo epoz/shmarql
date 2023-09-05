@@ -54,11 +54,19 @@ def can_lode(request: Request, path: str):
 
     # Check to see if this is a request for a subject which is in the store
     full_subject = f"{SCHEME}{DOMAIN}/{path}"
+    logging.debug(f"Looking for {full_subject} in GRAPH")
     find_full_subject = list(
         GRAPH.quads_for_pattern(px.NamedNode(full_subject), None, None)
     )
 
     if len(find_full_subject) > 0:
+        # See if there is a schema:url in the store for this IRI. If so, re-direct
+        for s, p, o, _ in find_full_subject:
+            if p in (
+                px.NamedNode("http://schema.org/url"),
+                px.NamedNode("https://schema.org/url"),
+            ):  # alas, some people use the https: variant, let's not be strict
+                return RedirectResponse(o.value)
         if "text/turtle" in accept_headers:
             tmp_graph = px.Store()
             tmp_graph.extend(find_full_subject)

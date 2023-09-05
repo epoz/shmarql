@@ -18,14 +18,15 @@ from .config import (
     FTS_FILEPATH,
 )
 import httpx
-import logging, os, json
+import logging, os, json, io
 from typing import Optional
 from urllib.parse import quote, parse_qs
 import pyoxigraph as px
-from .rdfer import prefixes, RDFer, results_to_triples
+from .rdfer import prefixes, RDFer
 from rich.traceback import install
 from .fts import init_fts
-from .px_util import OxigraphSerialization
+from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
+import rdflib
 
 install(show_locals=True)
 
@@ -191,6 +192,27 @@ async def external_sparql(endpoint: str, query: str):
     return {"exception": r.status_code, "txt": r.text}
 
 
+def str_to_term(s: str):
+    if s[:2] == "_:":
+        return px.BlankNode(s[2:])
+    if s[0] == "?":
+        return None
+    if s is None or len(s) < 1:
+        return None
+    if s[0] == "<" and s[-1] == ">":
+        return px.NamedNode(s[1:-1])
+    if s[0] == '"':
+        if s[-1] == ">":
+            tmp = s[1:-1].split('"^^<')
+            if len(tmp) == 2:
+                value = tmp[0]
+                datatype = tmp[1]
+                return px.Literal(value, datatype=px.NamedNode(datatype))
+        if s[-3] == "@" and s[-1] != '"' and s[-4] == '"':
+            return px.Literal(s[1:-4], language=s[-2:])
+    return px.Literal(s)
+
+
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
 async def shmarql(
     request: Request,
@@ -206,43 +228,70 @@ async def shmarql(
 ):
     background_tasks.add_task(rec_usage, request, "/shmarql")
     if len(e) < 1:
-        if not ENDPOINT:
-            return templates.TemplateResponse(
-                "choose_endpoint.html", {"request": request}
-            )
-        else:
+        if ENDPOINT:
             e = ENDPOINT
-    if s or p or o:
-        q = (
-            "SELECT ?s ?p ?o WHERE { "
-            + s
-            + " "
-            + p
-            + " "
-            + o
-            + " }"
-            + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
-        )
-    elif len(q) < 1:
-        q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+        else:
+            e = "_local_"
+            if len(GRAPH) < 1:
+                return templates.TemplateResponse(
+                    "choose_endpoint.html", {"request": request}
+                )
 
-    results = await external_sparql(e, q)
+    if e == "_local_":
+        QUERY_DEFAULT_LIMIT
+        buf = []
+
+        if s == "?s" and p == "?p" and o == "?o":
+            r = GRAPH.query(
+                "SELECT ?p (COUNT(DISTINCT ?s) as ?o) WHERE { ?s ?p ?object . } GROUP BY ?p ORDER BY DESC(?o)"
+            )
+            results = OxigraphSerialization(r).json()
+        else:
+            triples = GRAPH.quads_for_pattern(
+                str_to_term(s), str_to_term(p), str_to_term(o)
+            )
+            while len(buf) < QUERY_DEFAULT_LIMIT:
+                try:
+                    ts, tp, to, _ = next(triples)
+                except StopIteration:
+                    break
+                buf.append((ts, tp, to))
+
+            results = OxigraphSerialization(SynthQuerySolutions(buf)).json()
+    else:
+        if s or p or o:
+            q = (
+                "SELECT ?s ?p ?o WHERE { "
+                + s
+                + " "
+                + p
+                + " "
+                + o
+                + " }"
+                + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+            )
+        elif len(q) < 1:
+            q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+
+        results = await external_sparql(e, q)
 
     if fmt == "json":
         return JSONResponse(results)
 
     if fmt in ("ttl", "nt"):
-        triplebuf = "\n".join(
-            [
-                f"{s_} {p_} {o_} ."
-                for s_, p_, o_ in results_to_triples(results, {"s": s, "p": p, "o": o})
-            ]
+        tmpstore = px.Store()
+        tmpstore.extend(
+            [px.Quad(ss, pp, oo) for ss, pp, oo in results_to_triples(results)]
         )
+        outbuf = io.BytesIO()
         if fmt == "ttl":
-            tmpgraph = rdflib.Graph()
-            tmpgraph.parse(format="nt", data=triplebuf)
-            triplebuf = tmpgraph.serialize()
-        return PlainTextResponse(triplebuf)
+            tmpstore.dump(outbuf, "text/turtle")
+            g = rdflib.Graph()
+            g.parse(data=outbuf.getvalue())
+            return PlainTextResponse(g.serialize())
+        else:
+            tmpstore.dump(outbuf, "application/n-triples")
+        return PlainTextResponse(outbuf.getvalue())
 
     if "exception" in results:
         return templates.TemplateResponse(
