@@ -1,5 +1,17 @@
 # SHMARQL Documentation
 
+## Using a full-text index
+
+There is support for creating full-text indexes for search over your knowledge graphs using the [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html).
+
+For example, given the `foaf.ttl` file in this documentation directory, you can index it by running:
+
+```
+docker run --rm -it -v $(pwd):/data/ ghcr.io/epoz/shmarql python -m app.fts /data/nfdico.nt /data/nfdico.sqlite
+```
+
+(make sure you are in the ./docs/ directory when you run the command)
+
 ## Serving a LODE documentation page for your TBox
 
 If you have a TBox ontology available, you can use SHMARQL to server up some automatic LODE documentaiton for your ontology.
