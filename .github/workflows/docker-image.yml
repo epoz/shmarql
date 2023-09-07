@@ -18,5 +18,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and Push
         run: |
-          docker build -t ghcr.io/shmarql:$(date +%s) .
-          docker push ghcr.io/shmarql --all-tags
+          docker build -t ghcr.io/epoz/shmarql:$(date +%s) .
+          docker push ghcr.io/epoz/shmarql --all-tags
