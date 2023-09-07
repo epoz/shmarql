@@ -6,24 +6,12 @@ from pygments.formatters import HtmlFormatter
 from pygments import highlight
 import pygments.lexers
 import os, sqlite3, gzip, rdflib
-from .config import SHOW_PATHS
+from .config import SHOW_PATHS, PREFIXES
 from xml.etree import ElementTree as ET
 
 
 turtle_lexer = pygments.lexers.get_lexer_by_name("turtle")
 xml_lexer = pygments.lexers.get_lexer_by_name("xml")
-PREFIXES = {
-    "dc": "http://purl.org/dc/elements/1.1/",
-    "dcterms": "http://purl.org/dc/terms/",
-    "ore": "http://www.openarchives.org/ore/terms/",
-    "edm": "http://www.europeana.eu/schemas/edm/",
-    "skos": "http://www.w3.org/2004/02/skos/core#",
-    "dcterms": "http://purl.org/dc/terms/",
-    "cidoc": "http://www.cidoc-crm.org/rdfs/cidoc_crm_v5.0.2_english_label.rdfs#",
-    "ddbedm": "http://www.deutsche-digitale-bibliothek.de/edm/",
-    "ddbitem": "http://www.deutsche-digitale-bibliothek.de/item/",
-    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-}
 
 
 def from_db(objid):

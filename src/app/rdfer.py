@@ -1,13 +1,5 @@
 import json, logging
-from .config import PREFIXES_FILEPATH, DEFAULT_PREFIXES
-
-try:
-    if PREFIXES_FILEPATH:
-        PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
-    else:
-        PREFIXES = DEFAULT_PREFIXES
-except:
-    logging.exception(f"Problem binding PREFIXES from {PREFIXES_FILEPATH}")
+from .config import PREFIXES
 
 
 def prefixes(value):

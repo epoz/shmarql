@@ -1,4 +1,4 @@
-import os
+import os, json, logging
 
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 ORIGINS = os.environ.get(
@@ -47,6 +47,14 @@ DEFAULT_PREFIXES = {
     "http://purl.org/dc/elements/1.1/": "dc:",
     "http://dbpedia.org/resource/": "dbr:",
 }
+
+try:
+    if PREFIXES_FILEPATH:
+        PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
+    else:
+        PREFIXES = DEFAULT_PREFIXES
+except:
+    logging.exception(f"Problem binding PREFIXES from {PREFIXES_FILEPATH}")
 
 
 if "DATA_LOAD_PATHS" in os.environ:
