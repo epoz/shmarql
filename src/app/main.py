@@ -90,6 +90,15 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS:
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
 
+    # Fetch the predicates
+    GRAPH_PREDICATES = set(
+        [
+            x[0].value
+            for x in GRAPH.query("SELECT DISTINCT ?p WHERE { ?s ?p ?object . }")
+        ]
+    )
+
+
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
     init_fts(GRAPH, FTS_FILEPATH)
@@ -130,7 +139,8 @@ async def sparql_get(
         if "text/turtle" in accept_headers:
             return Response(SERVICE_DESCRIPTION, media_type="text/turtle")
         return templates.TemplateResponse(
-            "sparql.html", {"request": request, "ENDPOINT": ENDPOINT}
+            "sparql.html",
+            {"request": request, "ENDPOINT": "http://localhost:8000/sparql"},
         )
     else:
         result = GRAPH.query(query)
@@ -165,10 +175,11 @@ async def sparql_get(
             new_result.qt_turtle(),
             media_type="text/turtle",
             headers={"Access-Control-Allow-Origin": "*"},
-        )
+        )  # add the RDFlib serialization here.
+
     return Response(
-        json.dumps(new_result.json()),
-        media_type="application/json",
+        new_result.qt_turtle(),
+        media_type="application/n-triples",
         headers={"Access-Control-Allow-Origin": "*"},
     )
 
@@ -193,8 +204,8 @@ async def external_sparql(endpoint: str, query: str):
 
 
 def str_to_term(s: str):
-    if s[:2] == "_:":
-        return px.BlankNode(s[2:])
+    if s[:3] == "<_:":
+        return px.BlankNode(s[3:-1])
     if s[0] == "?":
         return None
     if s is None or len(s) < 1:
@@ -210,7 +221,7 @@ def str_to_term(s: str):
                 return px.Literal(value, datatype=px.NamedNode(datatype))
         if s[-3] == "@" and s[-1] != '"' and s[-4] == '"':
             return px.Literal(s[1:-4], language=s[-2:])
-    return px.Literal(s)
+    return px.Literal(s.strip('"'))
 
 
 @app.get("/shmarql", response_class=HTMLResponse, include_in_schema=False)
@@ -247,9 +258,8 @@ async def shmarql(
             )
             results = OxigraphSerialization(r).json()
         else:
-            triples = GRAPH.quads_for_pattern(
-                str_to_term(s), str_to_term(p), str_to_term(o)
-            )
+            sss, ppp, ooo = str_to_term(s), str_to_term(p), str_to_term(o)
+            triples = GRAPH.quads_for_pattern(sss, ppp, ooo)
             while len(buf) < QUERY_DEFAULT_LIMIT:
                 try:
                     ts, tp, to, _ = next(triples)
@@ -299,14 +309,6 @@ async def shmarql(
         )
 
     if "results" in results and "bindings" in results["results"]:
-        for row in results["results"]["bindings"]:
-            if s != "?s":
-                row["s"] = {"type": "uri", "value": s.strip("<>")}
-            if p != "?p":
-                row["p"] = {"type": "uri", "value": p.strip("<>")}
-            if o != "?o":
-                row["o"] = {"type": "uri", "value": o.strip("<>")}
-
         obj = RDFer(results["results"]["bindings"])
     else:
         obj = {}
@@ -331,6 +333,7 @@ async def shmarql(
             "IGNORE_FIELDS": [
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
             ],
+            "GRAPH_PREDICATES": GRAPH_PREDICATES,
             "TITLE_PREDICATES": [
                 "http://www.w3.org/2000/01/rdf-schema#label",
                 "http://schema.org/name",

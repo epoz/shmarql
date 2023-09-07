@@ -2,6 +2,7 @@ from pyoxigraph import (
     NamedNode,
     Literal,
     BlankNode,
+    Quad,
     QuerySolutions,
     QueryTriples,
     Store,
@@ -47,18 +48,17 @@ class OxigraphSerialization:
 
     def to_store(self) -> Store:
         tmp_store = Store()
-        for quad in self.result:
-            tmp_store.add(quad)
+        tmp_store.extend([Quad(s, p, o) for s, p, o in self.result])
         return tmp_store
 
     def qt_json(self):
-        return [map(termJSON, a) for a in self.result]
+        return [list(map(termJSON, a)) for a in self.result]
 
     def qt_turtle(self):
         tmp_store = self.to_store()
         buf = BytesIO()
         tmp_store.dump(buf, "text/turtle")
-        return buf.getvalue().encode("utf8")
+        return buf.getvalue().decode("utf8")
 
     def qr_json(self):
         result = {"head": {"vars": [x.value for x in self.result.variables]}}
