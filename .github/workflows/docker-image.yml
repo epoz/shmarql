@@ -2,15 +2,17 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "sans_rdflib" ]
+    branches: ["sans_rdflib"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build -t ghcr.io/shmarql:$(date +%s) .
+      - uses: actions/checkout@v3
+      - name: Build and Push
+        env:
+          REGISTRY: ghcr.io
+        run: |
+          docker build -t $REGISTRY/shmarql:$(date +%s) .        
+          docker push $REGISTRY/shmarql --all-tags
