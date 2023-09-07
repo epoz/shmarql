@@ -11,8 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build and Push
-        env:
-          REGISTRY: ghcr.io
         run: |
-          docker build -t $REGISTRY/shmarql:$(date +%s) .        
-          docker push $REGISTRY/shmarql --all-tags
+          docker build -t ghcr.io/shmarql:$(date +%s) .
+          docker push ghcr.io/shmarql:$(date +%s)
