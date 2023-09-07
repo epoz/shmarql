@@ -13,4 +13,4 @@ jobs:
       - name: Build and Push
         run: |
           docker build -t ghcr.io/shmarql:$(date +%s) .
-          docker push ghcr.io/shmarql:$(date +%s)
+          docker push ghcr.io/shmarql --all-tags
