@@ -29,7 +29,7 @@ def termJSON(term):
             r["xml:lang"] = term.language
         return r
     elif isinstance(term, BlankNode):
-        return {"type": "bnode", "value": str(term)}
+        return {"type": "bnode", "value": term.value}
     elif term is None:
         return None
     else:

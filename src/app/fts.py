@@ -1,13 +1,8 @@
 import os, sqlite3, sys, argparse, gzip
-from rdflib import Literal, URIRef, Namespace
-import rdflib.plugins.parsers.ntriples as NT
-from rdflib.plugins.sparql.evaluate import evalBGP
-from rdflib.plugins.sparql import CUSTOM_EVALS
-from rdflib.term import Variable
-import rdflib.parser
 import logging
 from rich.progress import wrap_file
 from .config import FTS_FILEPATH
+import pyoxigraph as px
 
 """Allows Fulltext searches over all the literals in the triplestore
 
@@ -20,12 +15,10 @@ CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_vocab USING fts5vocab('literal_
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_spellfix USING spellfix1;
 """
 
-INDEX_BUF_SIZE = 999
-
-SHMARQL_NS = Namespace("https://epoz.org/shmarql/")
+INDEX_BUF_SIZE = 9999
 
 
-def search(q: Literal):
+def search(q: str):
     db = sqlite3.connect(FTS_FILEPATH)
     db.enable_load_extension(True)
     if sys.platform == "darwin":
@@ -35,42 +28,14 @@ def search(q: Literal):
         db.load_extension("/usr/local/lib/spellfix")
         db.load_extension("/usr/local/lib/fts5stemmer")
 
-    cursor = db.execute(
-        "SELECT distinct subject FROM literal_index WHERE txt match (SELECT word FROM literal_index_spellfix WHERE word MATCH ? LIMIT 1)",
-        (str(q),),
-    )
+    try:
+        cursor = db.execute(
+            "SELECT distinct subject FROM literal_index WHERE txt match ?",
+            (q,),
+        )
+    except sqlite3.OperationalError:
+        return []
     return [row[0] for row in cursor.fetchall()]
-
-
-def get_q(ctx, s, uris):
-    for uri in uris:
-        if isinstance(s, URIRef):
-            if str(s) != uri:
-                continue
-        c = ctx.push()
-        c[s] = URIRef(uri)
-        yield c.solution()
-
-
-def fts_eval(ctx, part):
-    if part.name != "BGP":
-        raise NotImplementedError()
-    rest = []
-
-    for s, p, o in part.triples:
-        if p == SHMARQL_NS.fts_match:
-            if isinstance(o, Literal):
-                return get_q(
-                    ctx, s, search(o)
-                )  # but this will only do the first query found... need to support > 1
-        else:
-            rest.append((s, p, o))
-
-    if rest:
-        return evalBGP(ctx, rest)
-
-
-CUSTOM_EVALS["fts_eval"] = fts_eval
 
 
 def check(buf, db, size_limit=0):
@@ -81,7 +46,8 @@ def check(buf, db, size_limit=0):
     return buf
 
 
-def init_fts(graph, fts_filepath):
+def init_fts(triple_func, fts_filepath):
+    logging.debug(f"Init FTS {fts_filepath}")
     db = sqlite3.connect(fts_filepath)
     db.enable_load_extension(True)
     if sys.platform == "darwin":
@@ -97,8 +63,8 @@ def init_fts(graph, fts_filepath):
         # There are no literals in the DB yet, let's index
         logging.debug("Nothing found in FTS, now indexing...")
         buf = []
-        for s, p, o in graph.triples((None, None, None)):
-            uri_txt = (str(s), str(p), str(o))
+        for s, p, o, _ in triple_func(None, None, None):
+            uri_txt = (str(s).strip("<>"), str(p).strip("<>"), str(o))
             buf.append(uri_txt)
             buf = check(buf, db, INDEX_BUF_SIZE)
         check(buf, db)
@@ -123,16 +89,12 @@ class NTFileReader:
     """
 
     def __init__(self, inputfilepath, count=None):
-        self.parser = NT.NTParser()
         self.inputfilepath = inputfilepath
         statinfo = os.stat(inputfilepath)
         self.inputfilepath_size = statinfo.st_size
         self.current_triple = (None, None, None)
 
-    def add(self, triple):
-        self.current_triple = triple
-
-    def triples(self, triple):
+    def triples(self, s, p, o):
         if self.inputfilepath.lower().endswith(".gz"):
             F = gzip.open(self.inputfilepath)
         else:
@@ -140,11 +102,15 @@ class NTFileReader:
         with wrap_file(F, self.inputfilepath_size) as inputfile:
             line = inputfile.readline()
             while len(line) > 0:
-                try:
-                    self.parser.parse(rdflib.parser.StringInputSource(line), self)
-                    yield self.current_triple
-                except rdflib.exceptions.ParserError:
-                    continue
+                line = line.strip()
+                if line.endswith(" ."):
+                    line = line[:-2]
+                    parts = line.split(" ")
+                    if len(parts) > 2:
+                        s = parts[0]
+                        p = parts[1]
+                        o = " ".join(parts[2:])
+                        yield s, p, o, None
                 line = inputfile.readline()
         F.close()
 
@@ -162,4 +128,4 @@ if __name__ == "__main__":
     )
     args = argparser.parse_args()
     nfr = NTFileReader(args.inputfile)
-    init_fts(nfr, args.fts_sqlite_file)
+    init_fts(nfr.triples, args.fts_sqlite_file)
