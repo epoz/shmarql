@@ -9,6 +9,7 @@ from .config import (
     DATA_LOAD_PATHS,
     STORE_PATH,
     DOMAIN,
+    SCHEME,
     SERVICE_DESCRIPTION,
     SERVICE_DESCRIPTION_TITLE,
     QUERY_DEFAULT_LIMIT,
@@ -102,7 +103,7 @@ if len(GRAPH) > 0:
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
     init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
-    SPARQL = Language("/usr/local/lib/sparql.so", "sparql")
+    SPARQL = Language("/Users/etienne/Documents/foo.dylib", "sparql")
     PARSER = Parser()
     PARSER.set_language(SPARQL)
 
@@ -143,7 +144,7 @@ async def sparql_get(
             return Response(SERVICE_DESCRIPTION, media_type="text/turtle")
         return templates.TemplateResponse(
             "sparql.html",
-            {"request": request, "ENDPOINT": "http://localhost:8000/sparql"},
+            {"request": request, "ENDPOINT": f"{SCHEME}{DOMAIN}/sparql"},
         )
 
     if FTS_FILEPATH:
