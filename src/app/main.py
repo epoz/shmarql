@@ -103,7 +103,7 @@ if len(GRAPH) > 0:
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
     init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
-    SPARQL = Language("/Users/etienne/Documents/foo.dylib", "sparql")
+    SPARQL = Language("/usr/local/lib/sparql.so", "sparql")
     PARSER = Parser()
     PARSER.set_language(SPARQL)
 
