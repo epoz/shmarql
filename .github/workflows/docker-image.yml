@@ -2,7 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches: ["sans_rdflib"]
+    tags:
+      - v*
 
 jobs:
   build:
