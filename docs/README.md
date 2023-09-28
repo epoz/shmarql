@@ -38,3 +38,9 @@ docker run --rm -it -p 8000:8000 -e SCHEME=https -e DOMAIN=xmlns.com -e TBOX_PAT
 ```
 
 Note: this will only work if your shmarql instance is actually behind some form of https proxy.
+
+## Related Tools
+
+https://github.com/zazuko/SPEX SPEX - SPARQL Endpoint Explorer
+
+https://github.com/zazuko/graph-explorer Graph Explorer can be used to explore RDF graphs in SPARQL endpoints or on the web.

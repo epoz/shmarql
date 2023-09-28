@@ -1,7 +1,12 @@
 from fastapi import FastAPI, Request, Response, HTTPException, BackgroundTasks, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import (
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+    RedirectResponse,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from .config import (
     DEBUG,
@@ -303,8 +308,8 @@ async def shmarql(
         else:
             e = "_local_"
             if len(GRAPH) < 1:
-                return templates.TemplateResponse(
-                    "choose_endpoint.html", {"request": request}
+                return RedirectResponse(
+                    "https://docs.google.com/spreadsheets/d/1HVxe9DoKtJTfJHl0l_NQKH-3CVxv-LTHa6xMHoYBcFk/edit?usp=sharing"
                 )
 
     if e == "_local_":
