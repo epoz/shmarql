@@ -85,14 +85,14 @@
             </thead>
             <tbody>
             {% for row in results["results"]['bindings'] %}<tr>
-            {% if "s" in row %}<td>
-                {{snippet("s", row["s"])}}
-            </td>{% endif %}
             <td>
-                {{snippet("p", row["p"])}}
+                {% if "s" in row %}{{snippet("s", row["s"])}}{% endif %}
             </td>
             <td>
-                {{snippet("o", row["o"])}}
+                {% if "p" in row %}{{snippet("p", row["p"])}}{% else %}&middot;{% endif %}                
+            </td>
+            <td>
+                {% if "o" in row %}{{snippet("o", row["o"])}}{% else %}&middot;{% endif %}                
             </td>
             </tr>{% endfor %}
             </tbody>
