@@ -6,7 +6,13 @@
 {% if param == "s" and elem["value"] == s.replace("<", "").replace(">", "") %}
     <a href="/shmarql?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>    
 {% else %}
-    <a href="/shmarql?e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+
+    {% if elem["type"] == "uri" %}
+        <a href="/shmarql?e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+    {% elif elem["type"] == "bnode" %}
+        <a href="/shmarql?e={{e}}&s=&lt;_:{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+    {% endif %}
+
 {% endif %}
 
 {% if param == "p" and elem["value"] == p.replace("<", "").replace(">", "") %}
@@ -18,26 +24,26 @@
 {% if param == "o" and elem["value"] == o.replace("<", "").replace(">", "") %}
     <a href="/shmarql?e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>
 {% else %}
-    {% if elem["type"] in ["uri", "bnode"] %}
-        <a href="/shmarql?e={{e}}&o=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
-    {% else %}
+
+    {% if elem["type"] == "uri" %}
+        <a href="/shmarql?e={{e}}&o=&lt;{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+    {% elif elem["type"] == "bnode" %}
+        <a href="/shmarql?e={{e}}&o=&lt;_:{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+    {% else %}        
         <a href="/shmarql?e={{e}}&o=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
     {% endif %}
+        
+
 {% endif %}
 
 
-
-
-
-
-{% if elem["type"] in ["uri", "bnode"] %}
+{% if elem["type"]  == "uri" %}
     <a href="/shmarql?e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
+{% elif elem["type"] == "bnode" %}
+    <a href="/shmarql?e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
 {% else %}
     <a href="/shmarql?e={{e}}&{{param}}=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}">{{elem["value"]}}</a>   
 {% endif %}
-
-
-
 
 
 <a href="{{elem['value']}}" target="_new">
@@ -61,7 +67,10 @@
     <div class="p-4">
 
     <div style="background-color: #eee; padding: 2vw">
-        <a href="/shmarql?e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
+        {% if not s.startswith("<_:") %}
+            <a href="/shmarql?e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
+        {% endif %}
+        
         <a href="/shmarql?e={{e}}&o=<{{s.strip('<>')|urlencode}}>" class="selektor">O</a>
         {{s.strip("<>")}}
 
