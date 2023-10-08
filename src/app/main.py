@@ -27,7 +27,7 @@ import logging, os, json, io
 from typing import Optional
 from urllib.parse import quote, parse_qs
 import pyoxigraph as px
-from .rdfer import prefixes, RDFer
+from .rdfer import prefixes, RDFer, Nice
 from rich.traceback import install
 from .fts import init_fts, search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
@@ -312,8 +312,9 @@ async def shmarql(
                     "https://docs.google.com/spreadsheets/d/1HVxe9DoKtJTfJHl0l_NQKH-3CVxv-LTHa6xMHoYBcFk/edit?usp=sharing"
                 )
 
+    uniq_uris = set()
+    nicer = Nice(None, [])
     if e == "_local_":
-        QUERY_DEFAULT_LIMIT
         buf = []
 
         if s == "?s" and p == "?p" and o == "?o":
@@ -327,11 +328,13 @@ async def shmarql(
             while len(buf) < QUERY_DEFAULT_LIMIT:
                 try:
                     ts, tp, to, _ = next(triples)
+                    uniq_uris.update([ts, tp, to])
                 except StopIteration:
                     break
                 buf.append((ts, tp, to))
 
             results = OxigraphSerialization(SynthQuerySolutions(buf)).json()
+            nicer = Nice(GRAPH, uniq_uris)
     else:
         if s or p or o:
             q = (
@@ -413,6 +416,7 @@ async def shmarql(
                 "http://www.europeana.eu/schemas/edm/isShownBy",
             ],
             "obj": obj,
+            "nicer": nicer,
         },
     )
 

@@ -1,5 +1,6 @@
 import json, logging
 from .config import PREFIXES
+import pyoxigraph as px
 
 
 def prefixes(value):
@@ -11,6 +12,31 @@ def prefixes(value):
         if replaced != value:
             return replaced
     return value
+
+
+class Nice:
+    def __init__(self, graph: px.Store, uris: iter):
+        data = {}
+        if graph is None:
+            return
+        for uri in uris:
+            if not type(uri) == px.NamedNode:
+                continue
+            for s, p, o, _ in graph.quads_for_pattern(uri, None, None):
+                data.setdefault(s.value, {}).setdefault(p.value, []).append(o.value)
+        self.data = data
+
+    def s(self, uri):
+        D = self.data.get(uri, {})
+        for d in [
+            "http://www.w3.org/2000/01/rdf-schema#label",
+            "http://schema.org/name",
+            "http://www.w3.org/2004/02/skos/core#prefLabel",
+        ]:
+            dd = D.get(d)
+            if dd:
+                return dd[0]
+        return prefixes(uri)
 
 
 class RDFer:

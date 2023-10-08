@@ -38,7 +38,7 @@
 
 
 {% if elem["type"]  == "uri" %}
-    <a href="/shmarql?e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
+    <a href="/shmarql?e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
 {% elif elem["type"] == "bnode" %}
     <a href="/shmarql?e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
 {% else %}
