@@ -16,15 +16,16 @@ def prefixes(value):
 
 class Nice:
     def __init__(self, graph: px.Store, uris: iter):
-        data = {}
+        self.data = {}
         if graph is None:
             return
         for uri in uris:
             if not type(uri) == px.NamedNode:
                 continue
             for s, p, o, _ in graph.quads_for_pattern(uri, None, None):
-                data.setdefault(s.value, {}).setdefault(p.value, []).append(o.value)
-        self.data = data
+                self.data.setdefault(s.value, {}).setdefault(p.value, []).append(
+                    o.value
+                )
 
     def s(self, uri):
         D = self.data.get(uri, {})
