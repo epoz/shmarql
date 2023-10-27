@@ -23,7 +23,7 @@ from .config import (
     FTS_FILEPATH,
 )
 import httpx
-import logging, os, json, io
+import logging, os, json, io, time, random
 from typing import Optional
 from urllib.parse import quote, parse_qs
 import pyoxigraph as px
@@ -55,17 +55,27 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
-
+STORE_PRIMARY = True
 if STORE_PATH:
     logging.debug(f"Opening store from {STORE_PATH}")
     if DATA_LOAD_PATHS:
-        GRAPH = px.Store(STORE_PATH)
+        # If there are multiple workers trying to load at the same time,
+        # contention for the lock will happen.
+        # Do a short wait to stagger start times and let one win, the rest will lock and open read_only
+        time.sleep(random.random() / 2)
+        try:
+            GRAPH = px.Store(STORE_PATH)
+            logging.debug("This process won the loading contention")
+        except OSError:
+            logging.debug("Secondary, opening store read-only")
+            GRAPH = px.Store.secondary(STORE_PATH)
+            STORE_PRIMARY = False
     else:
         GRAPH = px.Store.read_only(STORE_PATH)
 else:
     GRAPH = px.Store()
 
-if len(GRAPH) < 1 and DATA_LOAD_PATHS:
+if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
     for DATA_LOAD_PATH in DATA_LOAD_PATHS:
         if DATA_LOAD_PATH.startswith("http://") or DATA_LOAD_PATH.startswith(
             "https://"
