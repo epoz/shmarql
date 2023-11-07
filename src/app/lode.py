@@ -71,10 +71,9 @@ def can_lode(request: Request, path: str):
             tmp_graph = px.Store()
             tmp_graph.extend(find_full_subject)
             # TODO Consider using the .main.PREFIXES to bind some user-defined prefixes to output
-            out = io.StringIO()
-            return Response(
-                tmp_graph.dump(out, "text/turtle"), media_type="text/turtle"
-            )
+            out = io.BytesIO()
+            tmp_graph.dump(out, "text/turtle")
+            return Response(out.getvalue(), media_type="text/turtle")
         return RedirectResponse("/shmarql?s=<" + quote(full_subject) + ">")
 
     if not TBOX:
