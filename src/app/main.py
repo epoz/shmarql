@@ -113,12 +113,15 @@ if len(GRAPH) > 0:
             for x in GRAPH.query("SELECT DISTINCT ?p WHERE { ?s ?p ?object . }")
         ]
     )
-
+GRAPH_PREDICATES = []
 
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
     init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
-    SPARQL = Language("/usr/local/lib/sparql.so", "sparql")
+    if sys.platform == "darwin":
+        SPARQL = Language("/usr/local/lib/sparql.dylib", "sparql")
+    else:
+        SPARQL = Language("/usr/local/lib/sparql.so", "sparql")
     PARSER = Parser()
     PARSER.set_language(SPARQL)
 
