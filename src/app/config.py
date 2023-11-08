@@ -46,6 +46,7 @@ DEFAULT_PREFIXES = {
     "http://purl.org/dc/terms/": "dct:",
     "http://purl.org/dc/elements/1.1/": "dc:",
     "http://dbpedia.org/resource/": "dbr:",
+    "https://www.ica.org/standards/RiC/ontology#": "rico:",
 }
 
 try:
