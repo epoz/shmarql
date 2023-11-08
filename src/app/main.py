@@ -103,6 +103,9 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
                     elif filename.lower().endswith(".nt"):
                         logging.debug(f"Parsing {filepath}")
                         GRAPH.bulk_load(filepath, "application/n-triples")
+
+ENDPOINT_PREDICATE_CACHE = {}
+GRAPH_PREDICATES = set()
 if len(GRAPH) > 0:
     logging.debug(f"Store size: {len(GRAPH)}")
 
@@ -113,7 +116,8 @@ if len(GRAPH) > 0:
             for x in GRAPH.query("SELECT DISTINCT ?p WHERE { ?s ?p ?object . }")
         ]
     )
-GRAPH_PREDICATES = []
+    ENDPOINT_PREDICATE_CACHE["_local_"] = GRAPH_PREDICATES
+
 
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
@@ -364,6 +368,13 @@ async def shmarql(
             q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
 
         results = await external_sparql(e, q)
+        if e not in ENDPOINT_PREDICATE_CACHE:
+            preds_q = await external_sparql(
+                e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . }"
+            )
+            ENDPOINT_PREDICATE_CACHE[e] = set(
+                [x["p"]["value"] for x in preds_q["results"]["bindings"]]
+            )
 
     if fmt == "json":
         return JSONResponse(results)
@@ -415,7 +426,7 @@ async def shmarql(
             "IGNORE_FIELDS": [
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
             ],
-            "GRAPH_PREDICATES": GRAPH_PREDICATES,
+            "GRAPH_PREDICATES": ENDPOINT_PREDICATE_CACHE[e],
             "TITLE_PREDICATES": [
                 "http://www.w3.org/2000/01/rdf-schema#label",
                 "http://schema.org/name",
