@@ -362,7 +362,7 @@ async def shmarql(
                 + " "
                 + o
                 + " }"
-                + f" ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
+                + f" LIMIT {QUERY_DEFAULT_LIMIT}"
             )
         elif len(q) < 1:
             q = f"SELECT ?s ?p ?o WHERE {{?s ?p ?o}} ORDER BY ?s LIMIT {QUERY_DEFAULT_LIMIT}"
