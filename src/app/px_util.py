@@ -9,6 +9,7 @@ from pyoxigraph import (
     Variable,
 )
 from io import BytesIO
+import logging
 
 
 class SerializationException(Exception):
@@ -98,7 +99,7 @@ class SynthQuerySolutions:
         return current_variable
 
 
-def results_to_triples(results: dict):
+def results_to_triples(results: dict, vars: dict):
     buf = []
     if "results" in results and "bindings" in results["results"]:
         for row in results["results"]["bindings"]:
@@ -107,6 +108,18 @@ def results_to_triples(results: dict):
                 x = row.get(tmp)
                 if not x is None:
                     if x.get("type") == "literal":
+                        if tmp == "p":
+                            logging.debug(f"Bogus literal as predicate: {x}")
+                            line.append(
+                                NamedNode(
+                                    "http://bogus_literal_as_predicate_from_endpoint/"
+                                )
+                            )
+                            continue
+                        # It does not make sense for a literal to be a predicate
+                        # But some endpoints have mistakes in them, eg:
+                        # ?e=https://eu.api.kleksi.com/apps/jmb1mb/datasets/default/sparql&s=<https%3A//klek.si/jmb1mb/6z97aq>
+
                         datatype = x.get("datatype")
                         if datatype:
                             line.append(
@@ -124,5 +137,13 @@ def results_to_triples(results: dict):
                         line.append(NamedNode(x.get("value")))
                     elif x.get("type") == "bnode":
                         line.append(BlankNode(x.get("value")))
+                if vars.get(tmp) != "?" + tmp:
+                    varvalue = vars.get(tmp)
+                    if varvalue.startswith("<"):
+                        line.append(NamedNode(varvalue.strip("<>")))
+                    elif varvalue.startswith("_"):
+                        line.append(BlankNode(varvalue[1:]))
+                    else:
+                        line.append(Literal(varvalue))
             buf.append(line)
     return buf
