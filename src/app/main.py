@@ -266,12 +266,12 @@ async def sparql_get(
 
 
 async def external_sparql(endpoint: str, query: str):
-    async with httpx.AsyncClient(timeout=45) as client:
+    async with httpx.AsyncClient(timeout=120) as client:
         headers = {
             "Accept": "application/sparql-results+json",
             "User-Agent": "SCHMARQL/2022 (https://epoz.org/schmarql/ ep@epoz.org)",
         }
-        data = {"query": query}
+        data = {"query": query, "format": "json"}
         logging.debug("SPARQL query on \n%s query=%s", endpoint, quote(query))
         logging.debug(data)
         r = await client.post(
@@ -370,7 +370,7 @@ async def shmarql(
         results = await external_sparql(e, q)
         if e not in ENDPOINT_PREDICATE_CACHE:
             preds_q = await external_sparql(
-                e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . }"
+                e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . } LIMIT 200"
             )
             ENDPOINT_PREDICATE_CACHE[e] = set(
                 [x["p"]["value"] for x in preds_q["results"]["bindings"]]
@@ -382,7 +382,10 @@ async def shmarql(
     if fmt in ("ttl", "nt"):
         tmpstore = px.Store()
         tmpstore.extend(
-            [px.Quad(ss, pp, oo) for ss, pp, oo in results_to_triples(results)]
+            [
+                px.Quad(ss, pp, oo)
+                for ss, pp, oo in results_to_triples(results, {"s": s, "p": p, "o": o})
+            ]
         )
         outbuf = io.BytesIO()
         if fmt == "ttl":
@@ -416,6 +419,7 @@ async def shmarql(
             "request": request,
             "results": results,
             "SERVICE_DESCRIPTION_TITLE": SERVICE_DESCRIPTION_TITLE,
+            "SERVICE_URI": f"{SCHEME}{DOMAIN}/shmarql",
             "e": e,
             "q": q,
             "showq": showq,
@@ -436,6 +440,7 @@ async def shmarql(
                 "http://schema.org/thumbnail",
                 "http://schema.org/image",
                 "http://schema.org/contentUrl",
+                "https://schema.org/thumbnailUrl",
                 "http://xmlns.com/foaf/0.1/depiction",
                 "http://www.europeana.eu/schemas/edm/isShownBy",
             ],
