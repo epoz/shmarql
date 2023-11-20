@@ -107,7 +107,7 @@ def results_to_triples(results: dict, vars: dict):
             for tmp in ("s", "p", "o"):
                 x = row.get(tmp)
                 if not x is None:
-                    if x.get("type") == "literal":
+                    if x.get("type") in ("literal", "typed-literal"):
                         if tmp == "p":
                             logging.debug(f"Bogus literal as predicate: {x}")
                             line.append(
