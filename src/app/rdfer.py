@@ -20,7 +20,7 @@ class Nice:
         if graph is None:
             return
         for uri in uris:
-            if not type(uri) == px.NamedNode:
+            if type(uri) not in (px.NamedNode, px.BlankNode):
                 continue
             for s, p, o, _ in graph.quads_for_pattern(uri, None, None):
                 self.data.setdefault(s.value, {}).setdefault(p.value, []).append(
@@ -39,6 +39,9 @@ class Nice:
                 return dd[0]
         return prefixes(uri)
 
+    def iiif(self, uri):
+        D = self.data.get(uri, {})
+
 
 class RDFer:
     def __init__(self, results):
@@ -50,9 +53,12 @@ class RDFer:
             self._length += 1
             field = row.get("p")
             value = row.get("o")
-            self._fields.add(field["value"])
-            self._data.setdefault(field["value"], []).append(value)
-            self._data_prefixed.setdefault(prefixes(field["value"]), []).append(value)
+            if field:
+                self._fields.add(field["value"])
+                self._data.setdefault(field["value"], []).append(value)
+                self._data_prefixed.setdefault(prefixes(field["value"]), []).append(
+                    value
+                )
 
     def get(self, key, default=None):
         tmp = self.__getitem__(key)
