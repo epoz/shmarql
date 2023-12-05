@@ -317,7 +317,7 @@ async def shmarql(
     order: str = "?s",
     fmt: str = "",
     showq: bool = False,
-    g: str = None,
+    g: str = "",
 ):
     background_tasks.add_task(rec_usage, request, "/shmarql")
     if len(e) < 1:
@@ -375,9 +375,15 @@ async def shmarql(
 
         results = await external_sparql(e, q)
         if e not in ENDPOINT_PREDICATE_CACHE:
-            preds_q = await external_sparql(
-                e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . } LIMIT 200"
-            )
+            if g:
+                preds_q = await external_sparql(
+                    e,
+                    f"SELECT DISTINCT ?p FROM {g} WHERE {{ ?s ?p ?object . }} LIMIT 200",
+                )
+            else:
+                preds_q = await external_sparql(
+                    e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . } LIMIT 200"
+                )
             ENDPOINT_PREDICATE_CACHE[e] = set(
                 [x["p"]["value"] for x in preds_q["results"]["bindings"]]
             )
@@ -432,6 +438,7 @@ async def shmarql(
             "s": s,
             "p": p,
             "o": o,
+            "g": g,
             "PREFIXES": PREFIXES,
             "IGNORE_FIELDS": [
                 "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",

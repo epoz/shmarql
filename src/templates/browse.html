@@ -10,48 +10,48 @@
 <div class="snippet">    
 
 {% if param == "s" and elem["value"] == s.replace("<", "").replace(">", "") %}
-    <a href="{{SERVICE_URI}}?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>    
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>    
 {% else %}
 
     {% if elem["type"] == "uri" %}
-        <a href="{{SERVICE_URI}}?e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
     {% elif elem["type"] == "bnode" %}
-        <a href="{{SERVICE_URI}}?e={{e}}&s=&lt;_:{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s=&lt;_:{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
     {% endif %}        
     
 {% endif %}
 
 {% if param == "p" and elem["value"] == p.replace("<", "").replace(">", "") %}
-    <a href="{{SERVICE_URI}}?e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>
 {% else %}
     {% if elem["value"] in GRAPH_PREDICATES %}
-        <a href="{{SERVICE_URI}}?e={{e}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>
     {% else %}
         <span>&middot;</span>
     {% endif %}    
 {% endif %}
 
 {% if param == "o" and elem["value"] == o.replace("<", "").replace(">", "") %}
-    <a href="{{SERVICE_URI}}?e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>
 {% else %}
 
 {% if elem["type"] == "uri" %}
-    <a href="{{SERVICE_URI}}?e={{e}}&o=&lt;{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=&lt;{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
 {% elif elem["type"] == "bnode" %}
-    <a href="{{SERVICE_URI}}?e={{e}}&o=&lt;_:{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=&lt;_:{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
 {% else %}
-    <a href="{{SERVICE_URI}}?e={{e}}&o=%22{{elem['value']|urlencode}}%22&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=%22{{elem['value']|urlencode}}%22&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
 {% endif %}
 
     
 {% endif %}
 
 {% if elem["type"]  == "uri" %}
-    <a href="{{SERVICE_URI}}?e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
 {% elif elem["type"] == "bnode" %}
-    <a href="{{SERVICE_URI}}?e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
 {% else %}
-    <a href="{{SERVICE_URI}}?e={{e}}&{{param}}=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}">{{elem["value"]}}</a>   
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}">{{elem["value"]}}</a>   
 {% endif %}
 
 {% if elem["type"] in ["uri", "bnode"] %}
@@ -88,9 +88,9 @@
             <table class="table table-striped">
             <thead>
                 <tr>
-                    {% if "s" in results["head"]["vars"] %}<th><a href="{{SERVICE_URI}}?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>{% endif %}
-                    <th><a href="{{SERVICE_URI}}?e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
-                    <th><a href="{{SERVICE_URI}}?e={{e}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
+                    {% if "s" in results["head"]["vars"] %}<th><a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}">{{s}}</a></th>{% endif %}
+                    <th><a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}">{{p}}</a></th>
+                    <th><a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p={{p|urlencode}}&s={{s|urlencode}}">{{o}}</a></th>
                 </tr>
             </thead>
             <tbody>

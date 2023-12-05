@@ -4,33 +4,33 @@
 <div class="snippet">    
 
 {% if param == "s" and elem["value"] == s.replace("<", "").replace(">", "") %}
-    <a href="/shmarql?e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>    
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>    
 {% else %}
 
     {% if elem["type"] == "uri" %}
-        <a href="/shmarql?e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s=&lt;{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
     {% elif elem["type"] == "bnode" %}
-        <a href="/shmarql?e={{e}}&s=&lt;_:{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s=&lt;_:{{elem['value']|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
     {% endif %}
 
 {% endif %}
 
 {% if param == "p" and elem["value"] == p.replace("<", "").replace(">", "") %}
-    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">&middot;</a>
 {% else %}
-    <a href="/shmarql?e={{e}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p=<{{elem['value']|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>
 {% endif %}
 
 {% if param == "o" and elem["value"] == o.replace("<", "").replace(">", "") %}
-    <a href="/shmarql?e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">&middot;</a>
 {% else %}
 
     {% if elem["type"] == "uri" %}
-        <a href="/shmarql?e={{e}}&o=&lt;{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=&lt;{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
     {% elif elem["type"] == "bnode" %}
-        <a href="/shmarql?e={{e}}&o=&lt;_:{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=&lt;_:{{elem['value']|urlencode}}&gt;&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
     {% else %}        
-        <a href="/shmarql?e={{e}}&o=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
     {% endif %}
         
 
@@ -38,11 +38,11 @@
 
 
 {% if elem["type"]  == "uri" %}
-    <a href="/shmarql?e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
 {% elif elem["type"] == "bnode" %}
-    <a href="/shmarql?e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
 {% else %}
-    <a href="/shmarql?e={{e}}&{{param}}=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}">{{elem["value"]}}</a>   
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=%22{{elem['value']|urlencode}}%22{% if elem['xml:lang'] %}@{{elem['xml:lang']}}{% endif %}">{{elem["value"]}}</a>   
 {% endif %}
 
 
@@ -68,10 +68,10 @@
 
     <div style="background-color: #eee; padding: 2vw">
         {% if not s.startswith("<_:") %}
-            <a href="/shmarql?e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
+            <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p=<{{s.strip('<>')|urlencode}}>" class="selektor">P</a>
         {% endif %}
         
-        <a href="/shmarql?e={{e}}&o=<{{s.strip('<>')|urlencode}}>" class="selektor">O</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=<{{s.strip('<>')|urlencode}}>" class="selektor">O</a>
         {{s.strip("<>")}}
 
         {% for TITLE_PREDICATE in TITLE_PREDICATES %}
@@ -87,8 +87,8 @@
         {% endif %}
 
         <div style="text-align: right">
-            <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=ttl" class="btn btn-sm btn-secondary">TTL</a>
-            <a href="/shmarql?e={{e}}&s={{s|urlencode}}&fmt=nt" class="btn btn-sm btn-secondary">NT</a>
+            <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&fmt=ttl" class="btn btn-sm btn-secondary">TTL</a>
+            <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s={{s|urlencode}}&fmt=nt" class="btn btn-sm btn-secondary">NT</a>
         </div>
 
 
@@ -102,12 +102,12 @@
     {% if field not in IGNORE_FIELDS %}
     <tr>
     <td>
-        <a href="/shmarql?e={{e}}&s=&lt;{{field|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&s=&lt;{{field|urlencode}}&gt;&p={{p|urlencode}}&o={{o|urlencode}}" class="selektor">S</a>
         {% if field in GRAPH_PREDICATES %}
-            <a href="/shmarql?e={{e}}&p=<{{field|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>    
+            <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p=<{{field|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}" class="selektor">P</a>    
         {% endif %}
-        <a href="/shmarql?e={{e}}&o=<{{field|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
-        <a href="/shmarql?e={{e}}&p=<{{field|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}">{{field|prefixes}}</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&o=<{{field|urlencode}}>&s={{s|urlencode}}&p={{p|urlencode}}" class="selektor">O</a>
+        <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&p=<{{field|urlencode}}>&s={{s|urlencode}}&o={{o|urlencode}}">{{field|prefixes}}</a>
         
     </td>
     <td>
