@@ -317,6 +317,7 @@ async def shmarql(
     order: str = "?s",
     fmt: str = "",
     showq: bool = False,
+    g: str = None,
 ):
     background_tasks.add_task(rec_usage, request, "/shmarql")
     if len(e) < 1:
@@ -354,8 +355,13 @@ async def shmarql(
             nicer = Nice(GRAPH, uniq_uris)
     else:
         if s or p or o:
+            if g:
+                sparql_start = f"SELECT ?s ?p ?o FROM {g} WHERE {{ "
+            else:
+                sparql_start = "SELECT ?s ?p ?o WHERE { "
+
             q = (
-                "SELECT ?s ?p ?o WHERE { "
+                sparql_start
                 + s
                 + " "
                 + p
