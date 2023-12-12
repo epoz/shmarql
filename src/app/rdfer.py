@@ -1,6 +1,7 @@
 import json, logging
 from .config import PREFIXES
 import pyoxigraph as px
+from markupsafe import Markup
 
 
 def prefixes(value):
@@ -19,9 +20,17 @@ class Nice:
         self.data = {}
         if graph is None:
             return
+        gathered_o_uris = set()
         for uri in uris:
             if type(uri) not in (px.NamedNode, px.BlankNode):
                 continue
+            for s, p, o, _ in graph.quads_for_pattern(uri, None, None):
+                self.data.setdefault(s.value, {}).setdefault(p.value, []).append(
+                    o.value
+                )
+                if type(o) in (px.NamedNode, px.BlankNode):
+                    gathered_o_uris.add(o)
+        for uri in gathered_o_uris:
             for s, p, o, _ in graph.quads_for_pattern(uri, None, None):
                 self.data.setdefault(s.value, {}).setdefault(p.value, []).append(
                     o.value
@@ -41,6 +50,14 @@ class Nice:
 
     def iiif(self, uri):
         D = self.data.get(uri, {})
+        for s in D.get("http://rdfs.org/sioc/services#has_service", []):
+            DD = self.data.get(s, {})
+            if "http://iiif.io/api/image/3#ImageService" in DD.get(
+                "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", []
+            ):
+                iuri = s + "/full/,200/0/default.jpg"
+                return Markup(f"<img src='{iuri}'/>")
+        return ""
 
 
 class RDFer:

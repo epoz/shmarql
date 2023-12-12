@@ -47,7 +47,7 @@
 {% endif %}
 
 {% if elem["type"]  == "uri" %}
-    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>
+    <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;{{elem['value']|urlencode}}&gt;" title="{{elem["value"]|prefixes}}">{{nicer.s(elem["value"])}}</a>    
 {% elif elem["type"] == "bnode" %}
     <a href="{{SERVICE_URI}}?g={{g}}&e={{e}}&{{param}}=&lt;_:{{elem['value']|urlencode}}&gt;">{{elem["value"]|prefixes}}</a>
 {% else %}
@@ -96,7 +96,10 @@
             <tbody>
             {% for row in results["results"]['bindings'] %}<tr>
             <td>
-                {% if "s" in row %}{{snippet("s", row["s"])}}{% endif %}
+                {% if "s" in row %}
+                {{nicer.iiif(row["s"]["value"])}}
+                {{snippet("s", row["s"])}}{% endif %}
+
             </td>
             <td>
                 {% if "p" in row %}{{snippet("p", row["p"])}}{% else %}&middot;{% endif %}                
