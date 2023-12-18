@@ -14,7 +14,7 @@
     </div>
     <div>
         {% if history.messages|length > 1 %}
-            <a href="/chat/{{history.id}}.json">{{history.messages[1]['content']}}</a>
+            <a href="/chat/{{history.id}}">{{history.messages[1]['content']}}</a>
         {% else %}
             Empty conversation
         {% endif %}
@@ -36,7 +36,7 @@
                 <div>{{msg.content_html}}</div>
             {% endif %}
             {% if msg.role == 'user' and msg.content %}
-                <div style="font-size: 120%">{{msg.content}}</div>
+                <h4>{{msg.content}}</h4>
             {% endif %}
             {% if msg.role == 'function' and msg.content_json %}
             {% for obj in msg.content_json %}
