@@ -9,16 +9,14 @@
     <div class="left-column" style="flex: 1; background-color: #e0e0e0; padding: 20px;">
     <h4>Conversations</h4>
     <div style="max-height: 90vh; overflow-y: scroll">{% for history in histories  %}
+    {% if history.messages|length > 1 %}
     <div style="margin-top: 0.75vh; font-size: 75%">
         <a href="/chat/{{history.id}}">{{history.date_created}}</a>
     </div>
     <div>
-        {% if history.messages|length > 1 %}
-            <a href="/chat/{{history.id}}">{{history.messages[1]['content']}}</a>
-        {% else %}
-            Empty conversation
-        {% endif %}
+        <a href="/chat/{{history.id}}">{{history.messages[1]['content']}}</a>                
     </div>
+    {% endif %}
 {% endfor %}</div>
         </div>
 
@@ -33,7 +31,7 @@
         <div style="max-height: 85vh; overflow-y: scroll" id="messages">
             {% for msg in history.messages %}
             {% if msg.role == 'assistant' and msg.content %}
-                <div>{{msg.content_html}}</div>
+                <div style="margin-bottom: 1vh">{{msg.content_html}}</div>
             {% endif %}
             {% if msg.role == 'user' and msg.content %}
                 <h4>{{msg.content}}</h4>
