@@ -493,4 +493,5 @@ def rec_usage(request: Request, path: str):
 from .am import *
 from .show import *
 from .lode import update
+from .chat import *
 from .schpiel import *

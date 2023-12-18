@@ -92,3 +92,5 @@ SERVICE_DESCRIPTION = f"""@prefix sd: <http://www.w3.org/ns/sparql-service-descr
                     a sd:Graph ;
                 ] 
             ] ."""
+
+CHATDB_FILEPATH = os.environ.get("CHATDB_FILEPATH")
