@@ -14,7 +14,8 @@ if DEBUG:
 else:
     logging.basicConfig()
 
-CHATDB = sqlite3.connect(CHATDB_FILEPATH)
+if CHATDB_FILEPATH:
+    CHATDB = sqlite3.connect(CHATDB_FILEPATH)
 
 
 def format_history(history: dict):
