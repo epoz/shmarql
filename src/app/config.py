@@ -70,7 +70,7 @@ SERVICE_DESCRIPTION_TITLE = os.environ.get(
     "SERVICE_DESCRIPTION_TITLE", "SPARQL SHMARQL"
 )
 SERVICE_DESCRIPTION_LABEL = os.environ.get(
-    "SERVICE_DESCRIPTION_LABEL", "SPARQL SCHMARQL"
+    "SERVICE_DESCRIPTION_LABEL", "SPARQL SHMARQL"
 )
 
 # See: https://www.w3.org/TR/sparql11-service-description/ and https://www.w3.org/TR/sparql11-entailment/
