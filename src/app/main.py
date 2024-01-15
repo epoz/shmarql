@@ -38,6 +38,7 @@ install(show_locals=True)
 
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
+    logging.debug("Debug logging requested from config env DEBUG")
 else:
     logging.basicConfig()
 
