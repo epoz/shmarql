@@ -37,7 +37,7 @@ def pygments_highlighter(md):
         if lang == "sparql":
             formatter = CustomHtmlFormatter(url=url, noclasses=True)
         else:
-            formatter = HtmlFormatter()
+            formatter = HtmlFormatter(noclasses=True)
         return highlight(code, lexer, formatter)
 
     md.add_render_rule("fence", _highlight)
