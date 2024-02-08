@@ -15,7 +15,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_vocab USING fts5vocab('literal_
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_spellfix USING spellfix1;
 """
 
-INDEX_BUF_SIZE = 9999
+INDEX_BUF_SIZE = 999999
 
 
 def search(q: str):

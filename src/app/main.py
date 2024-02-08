@@ -23,7 +23,7 @@ from .config import (
     FTS_FILEPATH,
 )
 import httpx
-import logging, os, json, io, time, random
+import logging, os, json, io, time, random, sys
 from typing import Optional
 from urllib.parse import quote, parse_qs
 import pyoxigraph as px
