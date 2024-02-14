@@ -282,7 +282,7 @@ async def external_sparql(endpoint: str, query: str):
         )
     if r.status_code == 200:
         return r.json()
-    return {"exception": r.status_code, "txt": r.text}
+    return {"exception": r.status_code, "txt": r.text, "results": {"bindings": []}}
 
 
 def str_to_term(s: str):
@@ -376,15 +376,20 @@ async def shmarql(
 
         results = await external_sparql(e, q)
         if e not in ENDPOINT_PREDICATE_CACHE:
-            if g:
-                preds_q = await external_sparql(
-                    e,
-                    f"SELECT DISTINCT ?p FROM {g} WHERE {{ ?s ?p ?object . }} LIMIT 200",
-                )
-            else:
-                preds_q = await external_sparql(
-                    e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . } LIMIT 200"
-                )
+            try:
+                if g:
+                    preds_q = await external_sparql(
+                        e,
+                        f"SELECT DISTINCT ?p FROM {g} WHERE {{ ?s ?p ?object . }} LIMIT 200",
+                    )
+                else:
+                    preds_q = await external_sparql(
+                        e, "SELECT DISTINCT ?p WHERE { ?s ?p ?object . } LIMIT 200"
+                    )
+            except Exception as e:
+                logging.debug(f"Failed to get predicates from {e}")
+                preds_q = {"results": {"bindings": []}}
+
             ENDPOINT_PREDICATE_CACHE[e] = set(
                 [x["p"]["value"] for x in preds_q["results"]["bindings"]]
             )
