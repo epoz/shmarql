@@ -24,10 +24,14 @@ def load_tbox():
                 F.write(r.content)
                 od = OntDoc(F.name)
                 globals()["TBOX_HTML"] = od.make_html()
+
+            if TBOX_PATH.endswith(".ttl"):
+                media_type = "text/turtle"
+            else:
+                media_type = "application/n-triples"
+
             TBOX = px.Store()
-            TBOX.load(
-                io.BytesIO(r.content), "application/n-triples"
-            )  # Only supporting n-triples, what to do when the TBox is turtle?
+            TBOX.load(io.BytesIO(r.content), media_type)
             globals()["TBOX"] = TBOX
     except:
         # Bit wide, swallowing all the errors, but we do not want a mis-configured TBOX stopping proceedings
