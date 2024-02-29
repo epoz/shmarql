@@ -32,7 +32,7 @@ from rich.traceback import install
 from .fts import init_fts, search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
 import rdflib
-from tree_sitter import Language, Parser
+import fizzysearch
 
 install(show_locals=True)
 
@@ -123,12 +123,7 @@ if len(GRAPH) > 0:
 if FTS_FILEPATH:
     logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
     init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
-    if sys.platform == "darwin":
-        SPARQL = Language("/usr/local/lib/sparql.dylib", "sparql")
-    else:
-        SPARQL = Language("/usr/local/lib/sparql.so", "sparql")
-    PARSER = Parser()
-    PARSER.set_language(SPARQL)
+    fizzysearch.register(["<http://shmarql.com/fts>"], search)
 
 
 @app.post("/sparql")
@@ -171,59 +166,7 @@ async def sparql_get(
         )
 
     if FTS_FILEPATH:
-        tree = PARSER.parse(query.encode("utf8"))
-        q = SPARQL.query(
-            """((triples_same_subject (var) @var (property_list (property (path_element (iri_reference) @predicate) (object_list (rdf_literal) @q_object)))) @tss (".")* @tss_dot )"""
-        )
-        found_vars = []
-        found = False
-        start_byte = end_byte = 0
-        var_name = q_object = None
-        for n, name in q.captures(tree.root_node):
-            if name == "tss":
-                if start_byte > 0 and end_byte > start_byte:
-                    if var_name is not None and q_object is not None and found:
-                        found_vars.append((start_byte, end_byte, var_name, q_object))
-                start_byte = n.start_byte
-                end_byte = n.end_byte
-                var_name = q_object = None
-                found = False
-            if name == "q_object":
-                q_object = n.text.decode("utf8")
-            if name == "predicate" and n.text == b"<http://shmarql.com/fts>":
-                found = True
-            if name == "var":
-                var_name = n.text.decode("utf8")
-            if name == "tss_dot":
-                end_byte = n.end_byte
-
-        # If there is only one,
-        if start_byte > 0 and end_byte > start_byte:
-            if var_name is not None and q_object is not None and found:
-                found_vars.append((start_byte, end_byte, var_name, q_object))
-
-        if len(found_vars) > 0:
-            newq = []
-            for i, c in enumerate(query.encode("utf8")):
-                in_found = False
-                for start_byte, end_byte, var_name, q_object in found_vars:
-                    if i >= start_byte and i <= end_byte:
-                        if not in_found:
-                            fts_results = search(q_object.strip('"'))
-                            fts_results = " ".join(
-                                [
-                                    f"<{fts_result}>"
-                                    for fts_result in fts_results
-                                    if not fts_result.startswith("_:")
-                                ]
-                            )
-                            if fts_results:
-                                newq.append(f"VALUES {var_name} {{{fts_results}}}")
-                        in_found = True
-                if not in_found:
-                    newq.append(chr(c))
-            newq = "".join(newq)
-            query = newq
+        query = fizzysearch.rewrite(query)
 
     result = GRAPH.query(query)
 
@@ -470,28 +413,7 @@ async def shmarql(
 
 
 def rec_usage(request: Request, path: str):
-    if DOMAIN == "localhost":
-        return
-    xff = request.headers.get("x-forwarded-for")
-    headers = {
-        "Content-Type": "application/json",
-        "User-Agent": request.headers.get("user-agent", "unknown"),
-        "X-Forwarded-For": "127.0.0.1",
-    }
-    if xff:
-        logging.debug(f"Query from {xff}")
-        headers["X-Forwarded-For"] = xff
-    r = httpx.post(
-        "https://plausible.io/api/event",
-        headers=headers,
-        data=json.dumps(
-            {
-                "name": "pageview",
-                "url": f"https://{DOMAIN}/{path}",
-                "domain": DOMAIN,
-            }
-        ),
-    )
+    pass  # Better monitoring to be done separately
 
 
 # Import this at the end, so other more specific path definitions get priority
