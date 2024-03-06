@@ -10,10 +10,12 @@ from pyoxigraph import (
 )
 from io import BytesIO
 import logging
+from rdflib.plugins.sparql.results.xmlresults import SPARQLXMLWriter
+from xml.sax.xmlreader import AttributesNSImpl
+from xml.dom import XML_NAMESPACE
 
 
-class SerializationException(Exception):
-    ...
+class SerializationException(Exception): ...
 
 
 def termJSON(term):
@@ -72,6 +74,78 @@ class OxigraphSerialization:
             rows.append(row)
         result["results"] = {"bindings": rows}
         return result
+
+    def xml(self):
+        SPARQL_XML_NAMESPACE = "http://www.w3.org/2005/sparql-results#"
+        if type(self.result) in (QuerySolutions, SynthQuerySolutions):
+            stream = BytesIO()
+            sxw = SPARQLXMLWriter(stream, encoding="utf-8")
+            vars = [v.value for v in self.result.variables]
+            sxw.write_header(vars)
+            sxw.write_results_header()
+            for qs in self.result:
+                sxw.write_start_result()
+                for name in vars:
+                    if qs[name] is not None:
+                        attr_vals = {
+                            (None, "name"): str(name),
+                        }
+                        attr_qnames = {
+                            (None, "name"): "name",
+                        }
+                        sxw.writer.startElementNS(
+                            (SPARQL_XML_NAMESPACE, "binding"),
+                            "binding",
+                            AttributesNSImpl(attr_vals, attr_qnames),
+                        )
+                        val = qs[name]
+                        if type(val) == NamedNode:
+                            sxw.writer.startElementNS(
+                                (SPARQL_XML_NAMESPACE, "uri"),
+                                "uri",
+                                AttributesNSImpl({}, {}),
+                            )
+                            sxw.writer.characters(val.value)
+                            sxw.writer.endElementNS(
+                                (SPARQL_XML_NAMESPACE, "uri"), "uri"
+                            )
+                        elif type(val) == BlankNode:
+                            sxw.writer.startElementNS(
+                                (SPARQL_XML_NAMESPACE, "bnode"),
+                                "bnode",
+                                AttributesNSImpl({}, {}),
+                            )
+                            sxw.writer.characters(val.value)
+                            sxw.writer.endElementNS(
+                                (SPARQL_XML_NAMESPACE, "bnode"), "bnode"
+                            )
+                        elif type(val) == Literal:
+                            attr_vals = {}
+                            attr_qnames = {}
+                            if val.language:
+                                attr_vals[(XML_NAMESPACE, "lang")] = val.language
+                                attr_qnames[(XML_NAMESPACE, "lang")] = "xml:lang"
+                            elif val.datatype:
+                                attr_vals[(None, "datatype")] = val.datatype
+                                attr_qnames[(None, "datatype")] = "datatype"
+
+                            sxw.writer.startElementNS(
+                                (SPARQL_XML_NAMESPACE, "literal"),
+                                "literal",
+                                AttributesNSImpl(attr_vals, attr_qnames),
+                            )
+                            sxw.writer.characters(val.value)
+                            sxw.writer.endElementNS(
+                                (SPARQL_XML_NAMESPACE, "literal"), "literal"
+                            )
+
+                        sxw.writer.endElementNS(
+                            (SPARQL_XML_NAMESPACE, "binding"), "binding"
+                        )
+
+                sxw.write_end_result()
+            sxw.close()
+            return stream.getvalue().decode("utf8")
 
 
 class SynthQuerySolutions:

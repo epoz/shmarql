@@ -178,16 +178,16 @@ async def sparql_get(
             media_type="application/sparql-results+json",
             headers={"Access-Control-Allow-Origin": "*"},
         )
-    # delay XML results until it is actually needed https://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321/
-    # if (
-    #     "application/xml" in accept_headers
-    #     or "application/sparql-results+xml" in accept_headers
-    # ):
-    #     return Response(
-    #         result.serialize(format="xml"),
-    #         media_type="application/xml",
-    #         headers={"Access-Control-Allow-Origin": "*"},
-    #     )
+
+    if (
+        "application/xml" in accept_headers
+        or "application/sparql-results+xml" in accept_headers
+    ):
+        return Response(
+            new_result.xml(),
+            media_type="application/xml",
+            headers={"Access-Control-Allow-Origin": "*"},
+        )
     # delay JSON-LD until it is actually needed... ;-)
     # if "application/ld+json" in accept_headers:
     #     return Response(
