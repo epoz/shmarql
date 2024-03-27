@@ -172,7 +172,7 @@ async def sparql_get(
             {"request": request, "ENDPOINT": f"{SCHEME}{DOMAIN}/sparql"},
         )
 
-    if FTS_FILEPATH:
+    if FTS_FILEPATH or RDF2VEC_FILEPATH:
         query = fizzysearch.rewrite(query)
 
     result = GRAPH.query(query)

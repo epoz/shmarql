@@ -30,6 +30,7 @@ def rdf2vec_search(node_uri: str):
         )
         if uri.startswith("<")
     ]
+    logging.debug(f"RDF2Vec search for {node_uri} found {len(results)}")
     return results
 
 
