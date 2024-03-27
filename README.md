@@ -35,7 +35,13 @@ This will load all .ttl files found in the specified directory, and make it avai
 docker run --rm -it -p 8000:8000 -it -e DEBUG=1 -e FTS_FILEPATH=/fts -e DATA_LOAD_PATHS=https://yogaontology.org/ontology.ttl ghcr.io/epoz/shmarql:latest
 ```
 
-...add a link here to a a sparql query using the magic predicate on localhost:8000
+[Try this query](http://localhost:8000/sparql#query=SELECT%20*%20WHERE%20%7B%0A%20%20%3Fsub%20%3Chttp%3A%2F%2Fshmarql.com%2Ffts%3E%20%22Sa*%22%20.%0A%7D&endpoint=http%3A%2F%2Flocalhost%3A8000%2Fsparql&requestMethod=POST&tabTitle=Query&headers=%7B%7D&contentTypeConstruct=application%2Fn-triples%2C*%2F*%3Bq%3D0.9&contentTypeSelect=application%2Fsparql-results%2Bjson%2C*%2F*%3Bq%3D0.9&outputFormat=table)
+
+```sparql
+SELECT * WHERE {
+  ?sub <http://shmarql.com/fts> "Sa*" .
+}
+```
 
 ## RDF2vec
 
@@ -45,7 +51,7 @@ Under development is RDF2vec support. This can be enabled by adding the path to 
 docker run --rm -it -p 8000:8000 -it -e DEBUG=1 -e RDF2VEC_FILEPATH=/vec -e DATA_LOAD_PATHS=https://yogaontology.org/ontology.ttl ghcr.io/epoz/shmarql:latest
 ```
 
-Then you can query the triples for similar entities by using the magic predicate: `<http://shmarql.com/vec>`
+Then you can query the triples for similar entities by using the magic predicate: `<http://shmarql.com/vec>` similar to the fulltext query above.
 
 ☣️ This is a new experimental feature, and needs more extenstive testing.
 
