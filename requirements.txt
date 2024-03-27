@@ -15,4 +15,8 @@ python3-saml==1.14.0
 python-jose==3.3.0
 rdflib==6.1.1
 tree-sitter==0.20.1
-fizzysearch==0.1
+fizzysearch==0.2
+igraph==0.10.4
+numpy==1.22.4
+voyager==2.0.6
+gensim==4.3.2

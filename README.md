@@ -29,6 +29,26 @@ docker run --rm -p 8000:8000 -it -v $(pwd)/databases:/data -e DATA_LOAD_PATHS=/d
 
 This will load all .ttl files found in the specified directory, and make it available under a /sparql endpoint, eg. http://localhost:8000/sparql
 
+## Using full-text searches in queries
+
+```shell
+docker run --rm -it -p 8000:8000 -it -e DEBUG=1 -e FTS_FILEPATH=/fts -e DATA_LOAD_PATHS=https://yogaontology.org/ontology.ttl ghcr.io/epoz/shmarql:latest
+```
+
+...add a link here to a a sparql query using the magic predicate on localhost:8000
+
+## RDF2vec
+
+Under development is RDF2vec support. This can be enabled by adding the path to store the embeddings like so:
+
+```shell
+docker run --rm -it -p 8000:8000 -it -e DEBUG=1 -e RDF2VEC_FILEPATH=/vec -e DATA_LOAD_PATHS=https://yogaontology.org/ontology.ttl ghcr.io/epoz/shmarql:latest
+```
+
+Then you can query the triples for similar entities by using the magic predicate: `<http://shmarql.com/vec>`
+
+☣️ This is a new experimental feature, and needs more extenstive testing.
+
 ## Development instructions
 
 If you would like to run and modify the code in this repo, there is a [Dockerfile](Dockerfile) which includes the necessary versions of the required libraries.

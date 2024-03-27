@@ -25,6 +25,7 @@ ENDPOINT = os.environ.get("ENDPOINT")
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 SCHPIEL_TOKEN = os.environ.get("SCHPIEL_TOKEN")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
+RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
 
 # space-separated list of sqlite3 DB files containing sources, in the format:
 # CREATE TABLE source (id PRIMARY KEY, last_download, xml) as per the DDB
@@ -52,7 +53,25 @@ DEFAULT_PREFIXES = {
 
 try:
     if PREFIXES_FILEPATH:
-        PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
+        # also support reading the prefixed from a .ttl file for convenience
+        if PREFIXES_FILEPATH.endswith(".ttl"):
+            PREFIXES = DEFAULT_PREFIXES
+            for line in open(PREFIXES_FILEPATH).readlines():
+                if not line.lower().startswith("@prefix "):
+                    continue
+                if not line.lower().endswith(" .\n"):
+                    continue
+                line = line.strip("\n .")
+                parts = line.split(":")
+                if len(parts) < 2:
+                    continue
+                prefix = parts[0][8:] + ":"
+                prefix_uri = "".join(parts[1:]).strip("<> ")
+                if prefix == ":":
+                    prefix = " "
+                PREFIXES[prefix] = prefix_uri
+        else:
+            PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
     else:
         PREFIXES = DEFAULT_PREFIXES
 except:
