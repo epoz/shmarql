@@ -126,7 +126,7 @@ class OxigraphSerialization:
                                 attr_vals[(XML_NAMESPACE, "lang")] = val.language
                                 attr_qnames[(XML_NAMESPACE, "lang")] = "xml:lang"
                             elif val.datatype:
-                                attr_vals[(None, "datatype")] = val.datatype
+                                attr_vals[(None, "datatype")] = val.datatype.value
                                 attr_qnames[(None, "datatype")] = "datatype"
 
                             sxw.writer.startElementNS(
