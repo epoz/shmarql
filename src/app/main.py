@@ -22,9 +22,10 @@ from .config import (
     ENDPOINT,
     FTS_FILEPATH,
     RDF2VEC_FILEPATH,
+    SBERT_FILEPATH,
 )
 import httpx
-import logging, os, json, io, time, random, sys
+import logging, os, json, io, time, random, sys, gzip
 from typing import Optional
 from urllib.parse import quote, parse_qs
 import pyoxigraph as px
@@ -32,6 +33,7 @@ from .rdfer import prefixes, RDFer, Nice
 from rich.traceback import install
 from .fts import init_fts, search
 from .rdf2vec import init_rdf2vec, rdf2vec_search
+from .emb import init_sbert, sbert_search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
 import rdflib
 import fizzysearch
@@ -39,10 +41,16 @@ import fizzysearch
 install(show_locals=True)
 
 if DEBUG:
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
     logging.debug("Debug logging requested from config env DEBUG")
 else:
-    logging.basicConfig()
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
 
 app = FastAPI(openapi_url="/openapi")
 app.add_middleware(
@@ -74,6 +82,7 @@ if STORE_PATH:
             GRAPH = px.Store.secondary(STORE_PATH)
             STORE_PRIMARY = False
     else:
+        logging.debug("Opening store read-only")
         GRAPH = px.Store.read_only(STORE_PATH)
 else:
     GRAPH = px.Store()
@@ -100,6 +109,9 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
             for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
                 for filename in filenames:
                     filepath = os.path.join(dirpath, filename)
+                    if filename.endswith(".gz"):
+                        filepath = gzip.open(filepath)
+                        filename = filename[:-3]
                     if filename.lower().endswith(".ttl"):
                         logging.debug(f"Parsing {filepath}")
                         GRAPH.bulk_load(filepath, "text/turtle")
@@ -131,6 +143,11 @@ if RDF2VEC_FILEPATH:
     logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
     init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
     fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
+
+if SBERT_FILEPATH:
+    logging.debug(f"SBERT filepath has been specified: {SBERT_FILEPATH}")
+    init_sbert(GRAPH.quads_for_pattern, SBERT_FILEPATH)
+    fizzysearch.register(["<http://shmarql.com/sbert>"], sbert_search)
 
 
 @app.post("/sparql")
