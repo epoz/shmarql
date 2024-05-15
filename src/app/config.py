@@ -26,6 +26,7 @@ SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 SCHPIEL_TOKEN = os.environ.get("SCHPIEL_TOKEN")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
+SBERT_FILEPATH = os.environ.get("SBERT_FILEPATH")
 
 # space-separated list of sqlite3 DB files containing sources, in the format:
 # CREATE TABLE source (id PRIMARY KEY, last_download, xml) as per the DDB
