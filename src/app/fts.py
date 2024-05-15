@@ -13,6 +13,7 @@ DB_SCHEMA = """
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index USING fts5(subject UNINDEXED, predicate UNINDEXED, txt);
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_vocab USING fts5vocab('literal_index', 'row');
 CREATE VIRTUAL TABLE IF NOT EXISTS literal_index_spellfix USING spellfix1;
+CREATE TABLE IF NOT EXISTS lock(nonce PRIMARY KEY);
 """
 
 INDEX_BUF_SIZE = 999999
@@ -58,12 +59,23 @@ def init_fts(triple_func, fts_filepath):
         db.load_extension("/usr/local/lib/fts5stemmer")
     db.executescript(DB_SCHEMA)
 
+    try:
+        db.execute("INSERT INTO lock VALUES (42)")
+        db.commit()
+    except sqlite3.IntegrityError:
+        logging.debug("Lock not acquired, skipping indexing")
+        return
+
+    logging.debug("Lock acquired, checking index count...")
     count = db.execute("SELECT count(*) FROM literal_index").fetchone()[0]
     if count < 1:
         # There are no literals in the DB yet, let's index
         logging.debug("Nothing found in FTS, now indexing...")
+
         buf = []
         for s, p, o, _ in triple_func(None, None, None):
+            if type(o) != px.Literal:
+                continue
             uri_txt = (str(s).strip("<>"), str(p).strip("<>"), str(o))
             buf.append(uri_txt)
             buf = check(buf, db, INDEX_BUF_SIZE)
@@ -73,7 +85,8 @@ def init_fts(triple_func, fts_filepath):
             "INSERT INTO literal_index_spellfix(word) select term from literal_index_vocab"
         )
 
-        db.commit()
+    db.execute("DELETE FROM lock")
+    db.commit()
 
 
 class NTFileReader:
