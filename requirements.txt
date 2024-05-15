@@ -20,3 +20,4 @@ igraph==0.10.4
 numpy==1.22.4
 voyager==2.0.6
 gensim==4.3.2
+scipy==1.10.1
