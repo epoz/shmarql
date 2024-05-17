@@ -74,8 +74,6 @@ def init_fts(triple_func, fts_filepath):
 
         buf = []
         for s, p, o, _ in triple_func(None, None, None):
-            if type(o) != px.Literal:
-                continue
             uri_txt = (str(s).strip("<>"), str(p).strip("<>"), str(o))
             buf.append(uri_txt)
             buf = check(buf, db, INDEX_BUF_SIZE)
