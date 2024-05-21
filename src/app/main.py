@@ -23,6 +23,7 @@ from .config import (
     FTS_FILEPATH,
     RDF2VEC_FILEPATH,
     SBERT_FILEPATH,
+    VIRTGRAPH_PATH,
 )
 import httpx
 import logging, os, json, io, time, random, sys, gzip
@@ -33,10 +34,10 @@ from .rdfer import prefixes, RDFer, Nice
 from rich.traceback import install
 from .fts import init_fts, search
 from .rdf2vec import init_rdf2vec, rdf2vec_search
-from .emb import init_sbert, sbert_search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
 import rdflib
 import fizzysearch
+from .virtual import VirtualGraph
 
 install(show_locals=True)
 
@@ -84,6 +85,8 @@ if STORE_PATH:
     else:
         logging.debug("Opening store read-only")
         GRAPH = px.Store.read_only(STORE_PATH)
+elif VIRTGRAPH_PATH:
+    GRAPH = VirtualGraph(VIRTGRAPH_PATH)
 else:
     GRAPH = px.Store()
 
@@ -143,11 +146,6 @@ if RDF2VEC_FILEPATH:
     logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
     init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
     fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
-
-if SBERT_FILEPATH:
-    logging.debug(f"SBERT filepath has been specified: {SBERT_FILEPATH}")
-    init_sbert(GRAPH.quads_for_pattern, SBERT_FILEPATH)
-    fizzysearch.register(["<http://shmarql.com/sbert>"], sbert_search)
 
 
 @app.post("/sparql")
@@ -442,7 +440,7 @@ def rec_usage(request: Request, path: str):
 
 # Import this at the end, so other more specific path definitions get priority
 # TODO: confirm that this matters?
-from .am import *
+# from .am import *
 from .show import *
 from .lode import update
 from .chat import *
