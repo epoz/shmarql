@@ -111,29 +111,34 @@ if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
         else:
             for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
                 for filename in filenames:
-                    filepath = os.path.join(dirpath, filename)
-                    if filename.endswith(".gz"):
-                        filepath = gzip.open(filepath)
-                        filename = filename[:-3]
-                    if filename.lower().endswith(".ttl"):
-                        logging.debug(f"Parsing {filepath}")
-                        GRAPH.bulk_load(filepath, "text/turtle")
-                    elif filename.lower().endswith(".nt"):
-                        logging.debug(f"Parsing {filepath}")
-                        GRAPH.bulk_load(filepath, "application/n-triples")
+                    try:
+                        filepath = os.path.join(dirpath, filename)
+                        if filename.endswith(".gz"):
+                            filepath = gzip.open(filepath)
+                            filename = filename[:-3]
+                        if filename.lower().endswith(".ttl"):
+                            logging.debug(f"Parsing {filepath}")
+                            GRAPH.bulk_load(filepath, "text/turtle")
+                        elif filename.lower().endswith(".nt"):
+                            logging.debug(f"Parsing {filepath}")
+                            GRAPH.bulk_load(filepath, "application/n-triples")
+                    except SyntaxError:
+                        logging.error(f"Failed to parse {filepath}")
 
 ENDPOINT_PREDICATE_CACHE = {}
 GRAPH_PREDICATES = set()
 if len(GRAPH) > 0:
-    logging.debug(f"Store size: {len(GRAPH)}")
+    logging.debug(f"Store size: {len(GRAPH)}, now priming predicate cache...")
 
     # Fetch the predicates
-    GRAPH_PREDICATES = set(
-        [
-            x[0].value
-            for x in GRAPH.query("SELECT DISTINCT ?p WHERE { ?s ?p ?object . }")
-        ]
-    )
+    # For very big triplestores, this query can take too long, so let's cap the runtime and do a sample via an iterator
+    start_time_predicate_cache = time.time()
+    for s, p, o, _ in GRAPH.quads_for_pattern(None, None, None):
+        GRAPH_PREDICATES.add(p.value)
+        if time.time() - start_time_predicate_cache > 5:
+            logging.debug(f"Predicate cache priming took too long, breaking")
+            break
+
     ENDPOINT_PREDICATE_CACHE["_local_"] = GRAPH_PREDICATES
 
 
