@@ -207,17 +207,23 @@ def results_to_triples(results: dict, vars: dict):
                             line.append(
                                 Literal(x.get("value"), language=x.get("xml:lang"))
                             )
+                            continue
                     elif x.get("type") == "uri":
                         line.append(NamedNode(x.get("value")))
+                        continue
                     elif x.get("type") == "bnode":
                         line.append(BlankNode(x.get("value")))
+                        continue
                 if vars.get(tmp) != "?" + tmp:
                     varvalue = vars.get(tmp)
                     if varvalue.startswith("<"):
                         line.append(NamedNode(varvalue.strip("<>")))
+                        continue
                     elif varvalue.startswith("_"):
                         line.append(BlankNode(varvalue[1:]))
+                        continue
                     else:
                         line.append(Literal(varvalue))
+                        continue
             buf.append(line)
     return buf
