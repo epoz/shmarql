@@ -34,7 +34,7 @@ from .rdfer import prefixes, RDFer, Nice
 from rich.traceback import install
 from .fts import init_fts, search
 
-# from .rdf2vec import init_rdf2vec, rdf2vec_search
+from .rdf2vec import init_rdf2vec, rdf2vec_search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
 import rdflib
 import fizzysearch
@@ -150,10 +150,10 @@ if FTS_FILEPATH:
     init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
     fizzysearch.register(["<http://shmarql.com/fts>"], search)
 
-# if RDF2VEC_FILEPATH:
-#     logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
-#     init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
-#     fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
+if RDF2VEC_FILEPATH:
+    logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
+    init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
+    fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
 
 
 @app.post("/sparql")
