@@ -36,4 +36,5 @@ RUN pip install -r requirements.txt
 
 COPY src .
 
-CMD ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "app:app", "--log-level", "debug" ]
+ENV WORKERS 4
+CMD ["sh", "-c", "uvicorn --workers $WORKERS --host 0.0.0.0 --port 8000 --log-level debug app:app"]
