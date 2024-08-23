@@ -1,22 +1,25 @@
 version: '3.8'
 
 services:
-  shmarql:
-    image: ghcr.io/epoz/shmarql:latest
-    container_name: shmarql
+  shmarql_dev:
+    # image: ghcr.io/epoz/shmarql:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shmarql_dev
     ports:
       - "8000:8000"
     volumes:
       - ${PWD_VOLUME}:/data
     environment:
       - DEBUG=${DEBUG}
-      - FTS_FILEPATH=${FTS_FILEPATH}
-      - RDF2VEC_FILEPATH=${RDF2VEC_FILEPATH}
+      # - FTS_FILEPATH=${FTS_FILEPATH}
+      # - RDF2VEC_FILEPATH=${RDF2VEC_FILEPATH}
       - DATA_LOAD_PATHS=${DATA_LOAD_PATHS}
-      - SCHEME=${SCHEME}
-      - DOMAIN=${DOMAIN}
+      # - SCHEME=${SCHEME}
+      # - DOMAIN=${DOMAIN}
       - TBOX_PATH=${TBOX_PATH}
-      - STORE_PATH=${STORE_PATH}
+      # - STORE_PATH=${STORE_PATH}
       # - PREFIXES_FILEPATH=${PREFIXES_FILEPATH}
       # - ENDPOINT=${ENDPOINT}
       # - SCHPIEL_PATH=${SCHPIEL_PATH}
