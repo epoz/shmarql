@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request, Response, HTTPException, BackgroundTasks, Query
+from fastapi import FastAPI, Request, Response, HTTPException, BackgroundTasks, Query, APIRouter, Depends, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import (
@@ -24,6 +25,8 @@ from .config import (
     RDF2VEC_FILEPATH,
     SBERT_FILEPATH,
     VIRTGRAPH_PATH,
+    ADMIN,
+    PASSWORD
 )
 import httpx
 import logging, os, json, io, time, random, sys, gzip
@@ -53,6 +56,8 @@ else:
         format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
 
+security = HTTPBasic()
+init_router = APIRouter()
 app = FastAPI(openapi_url="/openapi")
 app.add_middleware(
     CORSMiddleware,
@@ -67,91 +72,155 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
-STORE_PRIMARY = True
-if STORE_PATH:
-    logging.debug(f"Opening store from {STORE_PATH}")
-    if DATA_LOAD_PATHS:
-        # If there are multiple workers trying to load at the same time,
-        # contention for the lock will happen.
-        # Do a short wait to stagger start times and let one win, the rest will lock and open read_only
-        time.sleep(random.random() / 2)
-        try:
-            GRAPH = px.Store(STORE_PATH)
-            logging.debug("This process won the loading contention")
-        except OSError:
-            logging.debug("Secondary, opening store read-only")
-            GRAPH = px.Store.secondary(STORE_PATH)
-            STORE_PRIMARY = False
+def sesame_open(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = ADMIN
+    correct_password = PASSWORD
+    if credentials.username == correct_username and credentials.password == correct_password:
+        return credentials.username
     else:
-        logging.debug("Opening store read-only")
-        GRAPH = px.Store.read_only(STORE_PATH)
-elif VIRTGRAPH_PATH:
-    GRAPH = VirtualGraph(VIRTGRAPH_PATH)
-else:
-    GRAPH = px.Store()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    
+def initialize_graph(STORE_PATH=STORE_PATH,DATA_LOAD_PATHS=DATA_LOAD_PATHS):
 
-if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
-    for DATA_LOAD_PATH in DATA_LOAD_PATHS:
-        if DATA_LOAD_PATH.startswith("http://") or DATA_LOAD_PATH.startswith(
-            "https://"
-        ):
-            logging.debug(f"Downloading {DATA_LOAD_PATH}")
-            # Try downloading this file and parsing it as a string
-            r = httpx.get(DATA_LOAD_PATH, follow_redirects=True)
-            if r.status_code == 200:
-                d = r.content
-                # Try and guess content type from extention, default is turtle
-                # if .rdf or .nt use on of those
-                if DATA_LOAD_PATH.endswith(".rdf") or DATA_LOAD_PATH.endswith(".xml"):
-                    GRAPH.bulk_load(r.content, "application/rdf+xml")
-                elif DATA_LOAD_PATH.endswith(".nt"):
-                    GRAPH.bulk_load(r.content, "application/n-triples")
-                else:
-                    GRAPH.bulk_load(r.content, "text/turtle")
+    STORE_PRIMARY = True
+    if STORE_PATH:
+        logging.debug(f"Opening store from {STORE_PATH}")
+        if DATA_LOAD_PATHS:
+            # If there are multiple workers trying to load at the same time,
+            # contention for the lock will happen.
+            # Do a short wait to stagger start times and let one win, the rest will lock and open read_only
+            time.sleep(random.random() / 2)
+            try:
+                GRAPH = px.Store(STORE_PATH)
+                logging.debug("This process won the loading contention")
+            except OSError:
+                logging.debug("Secondary, opening store read-only")
+                GRAPH = px.Store.secondary(STORE_PATH)
+                STORE_PRIMARY = False
         else:
-            for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
-                for filename in filenames:
-                    try:
-                        filepath = os.path.join(dirpath, filename)
-                        if filename.endswith(".gz"):
-                            filepath = gzip.open(filepath)
-                            filename = filename[:-3]
-                        if filename.lower().endswith(".ttl"):
-                            logging.debug(f"Parsing {filepath}")
-                            GRAPH.bulk_load(filepath, "text/turtle")
-                        elif filename.lower().endswith(".nt"):
-                            logging.debug(f"Parsing {filepath}")
-                            GRAPH.bulk_load(filepath, "application/n-triples")
-                    except SyntaxError:
-                        logging.error(f"Failed to parse {filepath}")
+            logging.debug("Opening store read-only")
+            GRAPH = px.Store.read_only(STORE_PATH)
+    elif VIRTGRAPH_PATH:
+        GRAPH = VirtualGraph(VIRTGRAPH_PATH)
+    else:
+        GRAPH = px.Store()
 
+    if len(GRAPH) < 1 and DATA_LOAD_PATHS and STORE_PRIMARY:
+        for DATA_LOAD_PATH in DATA_LOAD_PATHS:
+            if DATA_LOAD_PATH.startswith("http://") or DATA_LOAD_PATH.startswith(
+                "https://"
+            ):
+                logging.debug(f"Downloading {DATA_LOAD_PATH}")
+                # Try downloading this file and parsing it as a string
+                r = httpx.get(DATA_LOAD_PATH, follow_redirects=True)
+                if r.status_code == 200:
+                    d = r.content
+                    # Try and guess content type from extention, default is turtle
+                    # if .rdf or .nt use on of those
+                    if DATA_LOAD_PATH.endswith(".rdf") or DATA_LOAD_PATH.endswith(".xml"):
+                        GRAPH.bulk_load(r.content, "application/rdf+xml")
+                    elif DATA_LOAD_PATH.endswith(".nt"):
+                        GRAPH.bulk_load(r.content, "application/n-triples")
+                    else:
+                        GRAPH.bulk_load(r.content, "text/turtle")
+            else:
+                for dirpath, dirnames, filenames in os.walk(DATA_LOAD_PATH):
+                    for filename in filenames:
+                        try:
+                            filepath = os.path.join(dirpath, filename)
+                            if filename.endswith(".gz"):
+                                filepath = gzip.open(filepath)
+                                filename = filename[:-3]
+                            if filename.lower().endswith(".ttl"):
+                                logging.debug(f"Parsing {filepath}")
+                                GRAPH.bulk_load(filepath, "text/turtle")
+                            elif filename.lower().endswith(".nt"):
+                                logging.debug(f"Parsing {filepath}")
+                                GRAPH.bulk_load(filepath, "application/n-triples")
+                        except SyntaxError:
+                            logging.error(f"Failed to parse {filepath}")
+    return GRAPH
+
+def initialize_cache(GRAPH):
+    
+    GRAPH_PREDICATES = set()
+    if len(GRAPH) > 0:
+        logging.debug(f"Store size: {len(GRAPH)}, now priming predicate cache...")
+
+        # Fetch the predicates
+        # For very big triplestores, this query can take too long, so let's cap the runtime and do a sample via an iterator
+        start_time_predicate_cache = time.time()
+        for s, p, o, _ in GRAPH.quads_for_pattern(None, None, None):
+            GRAPH_PREDICATES.add(p.value)
+            if time.time() - start_time_predicate_cache > 5:
+                logging.debug(f"Predicate cache priming took too long, breaking")
+                break
+
+        return GRAPH_PREDICATES
+
+def initialize_fts(GRAPH, FTS_FILEPATH=FTS_FILEPATH, CLEAR=False):
+    if FTS_FILEPATH:
+        logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
+        if CLEAR and os.path.exists(FTS_FILEPATH):
+            try:
+                os.remove(FTS_FILEPATH)
+                logging.debug(f"Deleted FTS file at {FTS_FILEPATH}")
+            except Exception as e:
+                logging.error(f"Failed to delete FTS file: {str(e)}")
+        else:
+            logging.debug(f"No FTS  file found to delete at {FTS_FILEPATH}")
+        init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
+        fizzysearch.register(["<http://shmarql.com/fts>"], search)
+    return FTS_FILEPATH
+
+def initialize_rdf2vec(GRAPH, RDF2VEC_FILEPATH=RDF2VEC_FILEPATH, CLEAR=False):
+    if RDF2VEC_FILEPATH:
+        logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
+        if CLEAR and os.path.exists(RDF2VEC_FILEPATH):
+            try:
+                os.remove(RDF2VEC_FILEPATH)
+                logging.debug(f"Deleted RDF2Vec file at {RDF2VEC_FILEPATH}")
+            except Exception as e:
+                logging.error(f"Failed to delete RDF2Vec file: {str(e)}")
+        else:
+            logging.debug(f"No RDF2Vec file found to delete at {RDF2VEC_FILEPATH}")
+        init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
+        fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
+    return RDF2VEC_FILEPATH
+
+GRAPH=initialize_graph()    
 ENDPOINT_PREDICATE_CACHE = {}
-GRAPH_PREDICATES = set()
-if len(GRAPH) > 0:
-    logging.debug(f"Store size: {len(GRAPH)}, now priming predicate cache...")
+ENDPOINT_PREDICATE_CACHE["_local_"] = initialize_cache(GRAPH)
+FTS_FILEPATH=initialize_fts(GRAPH)
+RDF2VEC_FILEPATH=initialize_rdf2vec(GRAPH)
 
-    # Fetch the predicates
-    # For very big triplestores, this query can take too long, so let's cap the runtime and do a sample via an iterator
-    start_time_predicate_cache = time.time()
-    for s, p, o, _ in GRAPH.quads_for_pattern(None, None, None):
-        GRAPH_PREDICATES.add(p.value)
-        if time.time() - start_time_predicate_cache > 5:
-            logging.debug(f"Predicate cache priming took too long, breaking")
-            break
+@init_router.post("/graph")
+async def init_graph(request: Request):
+    body = await request.json()
+    # a better way would be Dependency Injection in FastAPI with Depends for following endpoints
+    global GRAPH
+    GRAPH=initialize_graph(**body)
+    return {"message": "Graph initialized"}
 
-    ENDPOINT_PREDICATE_CACHE["_local_"] = GRAPH_PREDICATES
+@init_router.post("/fts")
+async def init_fts(request: Request):
+    body = await request.json()
+    global FTS_FILEPATH
+    FTS_FILEPATH=initialize_fts(GRAPH,**body)
+    return {"message": "FTS Index initialized"}
 
+@init_router.post("/rdf2vec")
+async def init_rdf2vec(request: Request):
+    body = await request.json()
+    global RDF2VEC_FILEPATH
+    RDF2VEC_FILEPATH=initialize_rdf2vec(GRAPH,**body)
+    return {"message": "RDF2Vec initialized"}
 
-if FTS_FILEPATH:
-    logging.debug(f"Fulltextsearch filepath has been specified: {FTS_FILEPATH}")
-    init_fts(GRAPH.quads_for_pattern, FTS_FILEPATH)
-    fizzysearch.register(["<http://shmarql.com/fts>"], search)
-
-if RDF2VEC_FILEPATH:
-    logging.debug(f"RDF2Vec filepath has been specified: {RDF2VEC_FILEPATH}")
-    init_rdf2vec(GRAPH.quads_for_pattern, RDF2VEC_FILEPATH)
-    fizzysearch.register(["<http://shmarql.com/vec>"], rdf2vec_search)
-
+app.include_router(init_router,prefix="/init", tags=["initialization"], dependencies=[Depends(sesame_open)])
 
 @app.post("/sparql")
 async def sparql_post_sparql_query(
@@ -447,6 +516,6 @@ def rec_usage(request: Request, path: str):
 # TODO: confirm that this matters?
 # from .am import *
 from .show import *
-from .lode import update
+from .lode import update # sure this is correct?
 from .chat import *
 from .schpiel import *
