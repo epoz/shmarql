@@ -72,6 +72,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
+QUERY_PARAMS={'use_default_graph_as_union':True,'base_iri':None,'default_graph':None,'named_graphs':None} # since a refined setup would require px classes, better define this here instead of in config.py? Or parse string values to something like (list(NamedNode or BlankNode), see https://pyoxigraph.readthedocs.io/en/stable/store.html#pyoxigraph.Store.query
+
 def sesame_open(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = ADMIN
     correct_password = PASSWORD
@@ -200,7 +202,10 @@ RDF2VEC_FILEPATH=initialize_rdf2vec(GRAPH)
 
 @init_router.post("/graph")
 async def init_graph(request: Request):
-    body = await request.json()
+    try:
+        body = await request.json()
+    except json.JSONDecodeError:
+        body = {}
     # a better way would be Dependency Injection in FastAPI with Depends for following endpoints
     global GRAPH
     GRAPH=initialize_graph(**body)
@@ -208,14 +213,20 @@ async def init_graph(request: Request):
 
 @init_router.post("/fts")
 async def init_fts(request: Request):
-    body = await request.json()
+    try:
+        body = await request.json()
+    except json.JSONDecodeError:
+        body = {}
     global FTS_FILEPATH
     FTS_FILEPATH=initialize_fts(GRAPH,**body)
     return {"message": "FTS Index initialized"}
 
 @init_router.post("/rdf2vec")
 async def init_rdf2vec(request: Request):
-    body = await request.json()
+    try:
+        body = await request.json()
+    except json.JSONDecodeError:
+        body = {}
     global RDF2VEC_FILEPATH
     RDF2VEC_FILEPATH=initialize_rdf2vec(GRAPH,**body)
     return {"message": "RDF2Vec initialized"}
@@ -264,7 +275,7 @@ async def sparql_get(
     if FTS_FILEPATH or RDF2VEC_FILEPATH:
         query = fizzysearch.rewrite(query)
 
-    result = GRAPH.query(query) # add default union here ?
+    result = GRAPH.query(query=query,**QUERY_PARAMS)
 
     new_result = OxigraphSerialization(result)
 
@@ -377,8 +388,8 @@ async def shmarql(
 
         if s == "?s" and p == "?p" and o == "?o":
             r = GRAPH.query(
-                "SELECT ?p (COUNT(DISTINCT ?s) as ?o) WHERE { ?s ?p ?object . } GROUP BY ?p ORDER BY DESC(?o)"
-            )  # add default union here ?
+                query="SELECT ?p (COUNT(DISTINCT ?s) as ?o) WHERE { ?s ?p ?object . } GROUP BY ?p ORDER BY DESC(?o)",**QUERY_PARAMS
+            )
             results = OxigraphSerialization(r).json()
         else:
             sss, ppp, ooo = str_to_term(s), str_to_term(p), str_to_term(o)
