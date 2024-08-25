@@ -1,6 +1,6 @@
 fastapi==0.65.2
 pyoxigraph==0.3.19
-uvicorn>=0.11.3
+uvicorn==0.29.0
 aiofiles==0.4.0
 httpx==0.21.1
 starlette==0.14.2
