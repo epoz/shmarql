@@ -264,7 +264,7 @@ async def sparql_get(
     if FTS_FILEPATH or RDF2VEC_FILEPATH:
         query = fizzysearch.rewrite(query)
 
-    result = GRAPH.query(query)
+    result = GRAPH.query(query) # add default union here ?
 
     new_result = OxigraphSerialization(result)
 
@@ -378,7 +378,7 @@ async def shmarql(
         if s == "?s" and p == "?p" and o == "?o":
             r = GRAPH.query(
                 "SELECT ?p (COUNT(DISTINCT ?s) as ?o) WHERE { ?s ?p ?object . } GROUP BY ?p ORDER BY DESC(?o)"
-            )
+            )  # add default union here ?
             results = OxigraphSerialization(r).json()
         else:
             sss, ppp, ooo = str_to_term(s), str_to_term(p), str_to_term(o)
