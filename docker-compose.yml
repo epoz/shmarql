@@ -11,18 +11,13 @@ services:
       - "8000:8000"
     volumes:
       - ${PWD_VOLUME}:/data
-    environment:
-      - DEBUG=${DEBUG}
-      - FTS_FILEPATH=${FTS_FILEPATH}
-      - RDF2VEC_FILEPATH=${RDF2VEC_FILEPATH}
-      - DATA_LOAD_PATHS=${DATA_LOAD_PATHS}
-      - SCHEME=${SCHEME}
-      - DOMAIN=${DOMAIN}
-      # - TBOX_PATH=${TBOX_PATH}
-      # - STORE_PATH=${STORE_PATH}
-      # - PREFIXES_FILEPATH=${PREFIXES_FILEPATH}
-      # - ENDPOINT=${ENDPOINT}
-      # - SCHPIEL_PATH=${SCHPIEL_PATH}
-      # - SCHPIEL_TOKEN=${SCHPIEL_TOKEN}
-      # - SBERT_FILEPATH=${SBERT_FILEPATH}
-      # - VIRTGRAPH_PATH=${VIRTGRAPH_PATH}
+      - ../dataria/app/data_oxigraph:/store
+    # environment:
+    #   - DEBUG=${DEBUG}
+    #   - FTS_FILEPATH=${FTS_FILEPATH}
+    #   - RDF2VEC_FILEPATH=${RDF2VEC_FILEPATH}
+    #   - DATA_LOAD_PATHS=${DATA_LOAD_PATHS}
+    #   - SCHEME=${SCHEME}
+    #   - DOMAIN=${DOMAIN}
+    env_file:
+      - ./.env
