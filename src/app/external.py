@@ -1,19 +1,20 @@
-import httpx, logging
+import httpx, logging, random
 import fizzysearch
 from .config import ENDPOINT, ENDPOINTS
 
 
 def do_query(query: str):
-    to_use = None
+    to_use = ENDPOINT
     rewritten = fizzysearch.rewrite_extended(query)
     for comment in rewritten["comments"]:
         if comment.find("shmarql-engine:") > -1:
             to_use = ENDPOINTS.get(comment.split(" ")[-1])
-    if not to_use:
-        to_use = ENDPOINT
 
     if not to_use:
-        return {"error": "No endpoint found"}
+        if len(ENDPOINTS) > 0:
+            to_use = random.choice(list(ENDPOINTS.values()))
+        else:
+            return {"error": "No endpoint found"}
 
     headers = {
         "Accept": "application/sparql-results+json",
