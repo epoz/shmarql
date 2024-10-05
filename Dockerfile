@@ -22,4 +22,4 @@ RUN pip install -r requirements.txt
 COPY src .
 
 ENV WORKERS=4
-CMD ["sh", "-c", "uvicorn --workers $WORKERS --host 0.0.0.0 --port 8000 --log-level debug app:app"]
+CMD ["sh", "-c", "uvicorn --workers $WORKERS --host 0.0.0.0 --port 8000 --log-level debug shmarql:app"]
