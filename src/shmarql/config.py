@@ -1,4 +1,4 @@
-import os
+import os, sqlite3
 
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 ENDPOINT = os.environ.get("ENDPOINT")
@@ -12,3 +12,8 @@ ENDPOINTS = dict(zip(ens_names, ens))
 SCHEME = os.environ.get("SCHEME", "http://")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1")
 PORT = os.environ.get("PORT", "5001")
+
+QUERIES_DB = sqlite3.connect(os.environ.get("QUERIES_DB", "queries.db"))
+QUERIES_DB.executescript(
+    """CREATE TABLE IF NOT EXISTS queries (queryhash TEXT, query TEXT, timestamp TEXT, endpoint TEXT, result TEXT, duration FLOAT);"""
+)
