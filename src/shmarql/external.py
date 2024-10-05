@@ -1,4 +1,4 @@
-import httpx, logging, random, hashlib, json, time
+import httpx, logging, random, hashlib, json, time, sqlite3
 import fizzysearch
 from .config import ENDPOINT, ENDPOINTS, QUERIES_DB
 
@@ -8,7 +8,7 @@ def hash_query(query: str) -> str:
 
 
 def cached_query(endpoint: str, query: str):
-    for timestamp, result, duration in QUERIES_DB.execute(
+    for timestamp, result, duration in sqlite3.connect(QUERIES_DB).execute(
         "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? ORDER BY timestamp DESC LIMIT 1",
         (hash_query(query), endpoint),
     ):
@@ -50,12 +50,13 @@ def do_query(query: str) -> dict:
     time_end = time.time()
     duration = time_end - time_start
     if r.status_code == 200:
-        QUERIES_DB.execute(
+        thequerydb = sqlite3.connect(QUERIES_DB)
+        thequerydb.execute(
             "INSERT INTO queries (queryhash, query, timestamp, endpoint, result, duration) VALUES (?, ?, datetime(), ?, ?, ?)",
             (hash_query(query), query, to_use, r.text, duration),
         )
 
-        QUERIES_DB.commit()
+        thequerydb.commit()
         result = r.json()
         result["duration"] = duration
         return result

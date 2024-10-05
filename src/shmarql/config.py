@@ -13,7 +13,9 @@ SCHEME = os.environ.get("SCHEME", "http://")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1")
 PORT = os.environ.get("PORT", "5001")
 
-QUERIES_DB = sqlite3.connect(os.environ.get("QUERIES_DB", "queries.db"))
-QUERIES_DB.executescript(
-    """CREATE TABLE IF NOT EXISTS queries (queryhash TEXT, query TEXT, timestamp TEXT, endpoint TEXT, result TEXT, duration FLOAT);"""
+QUERIES_DB = os.environ.get("QUERIES_DB", "queries.db")
+thequerydb = sqlite3.connect(QUERIES_DB)
+thequerydb.executescript(
+    """CREATE TABLE IF NOT EXISTS queries (queryhash TEXT, query TEXT, timestamp TEXT, endpoint TEXT, result TEXT, duration FLOAT);
+pragma journal_mode=WAL;"""
 )
