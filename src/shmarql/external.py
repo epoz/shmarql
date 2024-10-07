@@ -33,10 +33,12 @@ def do_query(query: str) -> dict:
     else:
         rewritten = fizzysearch.rewrite(query)
     for comment in rewritten["comments"]:
+        logging.debug(f"fizzysearch SPARQL Comment: {comment}")
         if comment.find("shmarql-engine:") > -1:
             to_use = ENDPOINTS.get(comment.split(" ")[-1])
 
     query = rewritten.get("rewritten", query)
+    logging.debug(f"fizzysearch rewritten query: {query[:1000]}...{query[-1000:]}")
 
     if not to_use:
         if len(ENDPOINTS) > 0:

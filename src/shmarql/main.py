@@ -1,8 +1,22 @@
-import sqlite3
+import sqlite3, logging
 from urllib.parse import quote
 from fasthtml.common import *
-from .config import SCHEME, DOMAIN, PORT
+from .config import SCHEME, DOMAIN, PORT, DEBUG
 from .external import do_query, hash_query
+
+if DEBUG:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+    logging.debug("Debug logging requested from config env DEBUG")
+else:
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
 
 app, rt = fast_app()
 
