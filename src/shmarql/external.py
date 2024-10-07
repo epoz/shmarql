@@ -1,6 +1,6 @@
 import httpx, logging, random, hashlib, json, time, sqlite3
 import fizzysearch
-from .config import ENDPOINT, ENDPOINTS, QUERIES_DB
+from .config import ENDPOINT, ENDPOINTS, QUERIES_DB, FTS_FILEPATH
 
 
 def hash_query(query: str) -> str:
@@ -21,10 +21,22 @@ def cached_query(endpoint: str, query: str):
 
 def do_query(query: str) -> dict:
     to_use = ENDPOINT
-    rewritten = fizzysearch.rewrite_extended(query)
+    if FTS_FILEPATH:
+        rewritten = fizzysearch.rewrite(
+            query,
+            {
+                "https://fizzysearch.ise.fiz-karlsruhe.de/fts/": fizzysearch.use_fts(
+                    FTS_FILEPATH
+                )
+            },
+        )
+    else:
+        rewritten = fizzysearch.rewrite(query)
     for comment in rewritten["comments"]:
         if comment.find("shmarql-engine:") > -1:
             to_use = ENDPOINTS.get(comment.split(" ")[-1])
+
+    query = rewritten.get("rewritten", query)
 
     if not to_use:
         if len(ENDPOINTS) > 0:

@@ -19,3 +19,5 @@ thequerydb.executescript(
     """CREATE TABLE IF NOT EXISTS queries (queryhash TEXT, query TEXT, timestamp TEXT, endpoint TEXT, result TEXT, duration FLOAT);
 pragma journal_mode=WAL;"""
 )
+
+FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
