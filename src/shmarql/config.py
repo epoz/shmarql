@@ -23,7 +23,10 @@ pragma journal_mode=WAL;"""
 
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 
-CONFIG_STORE = px.Store(os.environ.get("CONFIG_STORE", "config.oxi"))
+try:
+    CONFIG_STORE = px.Store(os.environ.get("CONFIG_STORE", "config.oxi"))
+except:
+    CONFIG_STORE = px.Store()
 
 SITE_ID = os.environ.get(
     "SITE_ID", "".join([random.choice("abcdef0123456789") for _ in range(10)])
