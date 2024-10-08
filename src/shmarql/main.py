@@ -141,6 +141,7 @@ def fragments_sparql(query: str):
                 row_columns.append(Td(value["value"]))
         table_rows.append(Tr(*row_columns))
     cached = " (from cache) " if results.get("cached") else ""
+
     duration_display = (
         f"{int(results.get('duration', 0) * 1000)}ms"
         if results.get("duration", 0) < 1
@@ -149,7 +150,10 @@ def fragments_sparql(query: str):
 
     return (
         Div(
-            f"{len(results['results']['bindings'])} results in {duration_display}{cached}",
+            Span(
+                f"{len(results['results']['bindings'])} results in {duration_display}{cached}",
+                title="used: " + results.get("endpoint_name", ""),
+            ),
             A(
                 "CSV",
                 title="Download as CSV",

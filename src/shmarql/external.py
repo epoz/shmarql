@@ -64,16 +64,26 @@ def do_query(query: str) -> dict:
         return {"error": "Could not connect to endpoint"}
     time_end = time.time()
     duration = time_end - time_start
+
+    # get the endpoint name from the to_use URL
+    endpoint_name = "default"
+    for k, v in ENDPOINTS.items():
+        if v == to_use:
+            endpoint_name = k
+
     if r.status_code == 200:
+        result = r.json()
+        result["duration"] = duration
+        result["endpoint_name"] = endpoint_name
+        result["endpoint"] = to_use
+
         thequerydb = sqlite3.connect(QUERIES_DB)
         thequerydb.execute(
             "INSERT INTO queries (queryhash, query, timestamp, endpoint, result, duration) VALUES (?, ?, datetime(), ?, ?, ?)",
-            (hash_query(query), query, to_use, r.text, duration),
+            (hash_query(query), query, to_use, json.dumps(result), duration),
         )
-
         thequerydb.commit()
-        result = r.json()
-        result["duration"] = duration
+
         return result
     else:
         return {"error": r.text, "status": r.status_code}
