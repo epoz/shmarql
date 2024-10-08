@@ -25,7 +25,7 @@ def do_query(query: str) -> dict:
         rewritten = fizzysearch.rewrite(
             query,
             {
-                "https://fizzysearch.ise.fiz-karlsruhe.de/fts/": fizzysearch.use_fts(
+                "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
                     FTS_FILEPATH
                 )
             },
