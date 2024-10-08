@@ -134,7 +134,11 @@ def fragments_sparql(query: str):
                             href=f"/sparql?query={O_query}",
                             style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
                         ),
-                        A(value["value"], href=value["value"]),
+                        A(
+                            value["value"],
+                            href=value["value"],
+                            style="margin-left: 1ch",
+                        ),
                     )
                 )
             else:
