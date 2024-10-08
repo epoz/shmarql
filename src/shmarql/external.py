@@ -27,7 +27,8 @@ def do_query(query: str) -> dict:
             {
                 "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
                     FTS_FILEPATH
-                )
+                ),
+                "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
             },
         )
     else:
