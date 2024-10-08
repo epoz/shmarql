@@ -1,6 +1,13 @@
 import httpx, logging, random, hashlib, json, time, sqlite3
 import fizzysearch
-from .config import ENDPOINT, ENDPOINTS, QUERIES_DB, FTS_FILEPATH
+from .config import (
+    ENDPOINT,
+    ENDPOINTS,
+    QUERIES_DB,
+    FTS_FILEPATH,
+    CONFIG_STORE,
+    get_setting,
+)
 
 
 def hash_query(query: str) -> str:
@@ -56,7 +63,7 @@ def do_query(query: str) -> dict:
         "Accept": "application/sparql-results+json",
         "User-Agent": "SCHMARQL/2024 (https://shmarql.com/ ep@epoz.org)",
     }
-    data = {"query": query, "format": "json"}
+    data = {"query": get_setting("prefixes") + "\n" + query, "format": "json"}
     try:
         r = httpx.post(to_use, data=data, headers=headers, timeout=180)
     except:

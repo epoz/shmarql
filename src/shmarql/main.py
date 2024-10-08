@@ -56,11 +56,19 @@ def get():
 def get(s: str): ...
 
 
-def make_sparql(uri: str, spo: str, encode=True, limit=999):
+def make_literal_query(some_literal: dict, encode=True, limit=999):
+    Q = f"""select ?s ?p where {{ ?s fizzy:fts "{some_literal['value']}" }} limit {limit}"""
+    if encode:
+        return quote(Q)
+    else:
+        return Q
+
+
+def make_spo(uri: str, spo: str, encode=True, limit=999):
     uri = f"<{uri}>"
     tp = dict([(c, f"?{c}") for c in "spo"])
     if spo not in ("s", "p", "o"):
-        return f"select ?s ?p ?o where {{ ?s ?p ?o }} LIMIT {limit}"
+        return f"select ?s ?p ?o where {{ ?s ?p ?o }} limit {limit}"
     vars = tp.copy()
     vars[spo] = ""
     tp[spo] = uri
@@ -114,9 +122,9 @@ def fragments_sparql(query: str):
         for var in results.get("head", {}).get("vars", []):
             value = row.get(var, {"value": ""})
             if value.get("type") == "uri":
-                S_query = make_sparql(value["value"], "s")
-                P_query = make_sparql(value["value"], "p")
-                O_query = make_sparql(value["value"], "o")
+                S_query = make_spo(value["value"], "s")
+                P_query = make_spo(value["value"], "p")
+                O_query = make_spo(value["value"], "o")
                 row_columns.append(
                     Td(
                         A(
@@ -142,7 +150,12 @@ def fragments_sparql(query: str):
                     )
                 )
             else:
-                row_columns.append(Td(value["value"]))
+                o_link = A(
+                    "O",
+                    href=f"/sparql?query={make_literal_query(value)}",
+                    style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
+                )
+                row_columns.append(Td(o_link, value["value"]))
         table_rows.append(Tr(*row_columns))
     cached = " (from cache) " if results.get("cached") else ""
 
