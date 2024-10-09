@@ -1,4 +1,5 @@
-import sqlite3, logging
+import sqlite3, logging, csv, io, string, json
+
 from urllib.parse import quote
 from fasthtml.common import *
 from .config import SCHEME, DOMAIN, PORT, DEBUG
@@ -57,7 +58,12 @@ def get(s: str): ...
 
 
 def make_literal_query(some_literal: dict, encode=True, limit=999):
-    Q = f"""select ?s ?p where {{ ?s fizzy:fts "{some_literal['value']}" }} limit {limit}"""
+    txt = some_literal["value"]
+    txt = txt.translate(str.maketrans("", "", string.punctuation))
+    txt = txt.split(" ")[:5]
+    txt = " ".join(txt)
+
+    Q = f"""select ?s ?p where {{ ?s fizzy:fts "{txt}" }} limit {limit}"""
     if encode:
         return quote(Q)
     else:
@@ -155,7 +161,9 @@ def fragments_sparql(query: str):
                     href=f"/sparql?query={make_literal_query(value)}",
                     style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
                 )
-                row_columns.append(Td(o_link, value["value"]))
+                row_columns.append(
+                    Td(o_link, Span(value["value"], style="margin-left: 1ch"))
+                )
         table_rows.append(Tr(*row_columns))
     cached = " (from cache) " if results.get("cached") else ""
 
@@ -177,13 +185,15 @@ def fragments_sparql(query: str):
                 href=f"/sparql?query={quote(query)}&format=csv",
                 style="margin-left: 2ch",
             ),
+            A(
+                "JSON",
+                title="Download as JSON",
+                href=f"/sparql?query={quote(query)}&format=json",
+                style="margin-left: 2ch",
+            ),
         ),
         Table(*table_rows),
     )
-
-
-import csv
-import io
 
 
 def json_results_to_csv(results: dict):
@@ -204,17 +214,28 @@ def json_results_to_csv(results: dict):
 
 @rt("/sparql")
 def get(query: str = "select * where {?s ?p ?o} limit 10", format: str = "html"):
-    if format == "csv":
+    if format in ("csv", "json"):
         results = do_query(query)
-        csv_data = json_results_to_csv(results)
 
-        return Response(
-            csv_data,
-            headers={
-                "Content-Type": "text/csv",
-                "Content-Disposition": f"attachment; filename={hash_query(query)}.csv",
-            },
-        )
+        if format == "csv":
+            csv_data = json_results_to_csv(results)
+
+            return Response(
+                csv_data,
+                headers={
+                    "Content-Type": "text/csv",
+                    "Content-Disposition": f"attachment; filename={hash_query(query)}.csv",
+                },
+            )
+        if format == "json":
+            if "endpoint" in results:
+                del results["endpoint"]
+            return Response(
+                json.dumps(results, indent=2),
+                headers={
+                    "Content-Type": "application/json",
+                },
+            )
 
     results = fragments_sparql(query)
 
