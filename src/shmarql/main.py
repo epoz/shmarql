@@ -2,7 +2,7 @@ import sqlite3, logging, csv, io, string, json
 
 from urllib.parse import quote
 from fasthtml.common import *
-from .config import SCHEME, DOMAIN, PORT, DEBUG
+from .config import DEBUG, get_setting
 from .external import do_query, hash_query
 
 if DEBUG:
@@ -18,25 +18,20 @@ else:
         format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-
-app, rt = fast_app()
-
-
-def page(*content, extra_style=[], extra_head=[], title="SHMARQL"):
-    page = Html(
-        Head(
-            Title(title),
-            picolink,
-            *extra_head,
-            *extra_style,
-        ),
-        Body(
-            Main(
-                content,
+app, rt = fast_app(
+    pico=False,
+    hdrs=(
+        (
+            Link(
+                rel="stylesheet",
+                type="text/css",
+                href="/static/shmarql.css",
             )
         ),
-    )
-    return page
+    ),
+)
+
+BTN_STYLE = "bg-slate-300 hover:bg-slate-400 text-black px-2 rounded-lg shadow-xl transition duration-300 font-bold"
 
 
 @rt("/static/{fname:path}")
@@ -48,8 +43,11 @@ def get(fname: str):
 def get():
     return (
         Title("Welcome to SHMARQL"),
-        H1("Welcome to SHMARQL", style="margin-top: 5rem; text-align: center;"),
-        A("Query", href="/sparql"),
+        Div(
+            H1("Welcome to SHMARQL", style="margin-top: 5rem; text-align: center;"),
+            A("Query", href="/sparql"),
+            cls="prose",
+        ),
     )
 
 
@@ -58,10 +56,10 @@ def get(s: str): ...
 
 
 def make_literal_query(some_literal: dict, encode=True, limit=999):
-    txt = some_literal["value"]
+    txt = some_literal["value"].replace("\n", " ")
     txt = txt.translate(str.maketrans("", "", string.punctuation))
-    txt = txt.split(" ")[:5]
-    txt = " ".join(txt)
+    txt = [x for x in txt.split(" ") if len(x) > 1][:10]
+    txt = " ".join(txt).strip(" ")
 
     Q = f"""select ?s ?p where {{ ?s fizzy:fts "{txt}" }} limit {limit}"""
     if encode:
@@ -136,35 +134,40 @@ def fragments_sparql(query: str):
                         A(
                             "S",
                             href=f"/sparql?query={S_query}",
-                            style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
+                            style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "P",
                             href=f"/sparql?query={P_query}",
-                            style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
+                            style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "O",
                             href=f"/sparql?query={O_query}",
-                            style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
+                            style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             value["value"],
                             href=value["value"],
                             style="margin-left: 1ch",
                         ),
+                        cls="border border-gray-300 px-4 py-2 text-sm",
                     )
                 )
             else:
                 o_link = A(
                     "O",
                     href=f"/sparql?query={make_literal_query(value)}",
-                    style="font-size: 80%; background-color: #999; color: #000; padding: 2px; margin: 0",
+                    style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                 )
                 row_columns.append(
-                    Td(o_link, Span(value["value"], style="margin-left: 1ch"))
+                    Td(
+                        o_link,
+                        Span(value["value"], style="margin-left: 1ch"),
+                        cls="border border-gray-300 px-4 py-2 text-sm",
+                    )
                 )
-        table_rows.append(Tr(*row_columns))
+        table_rows.append(Tr(*row_columns, cls="hover:bg-gray-50"))
     cached = " (from cache) " if results.get("cached") else ""
 
     duration_display = (
@@ -173,7 +176,7 @@ def fragments_sparql(query: str):
         else f"{results.get('duration', 0):.3f}s"
     )
 
-    return (
+    return Div(
         Div(
             Span(
                 f"{len(results['results']['bindings'])} results in {duration_display}{cached}",
@@ -183,16 +186,20 @@ def fragments_sparql(query: str):
                 "CSV",
                 title="Download as CSV",
                 href=f"/sparql?query={quote(query)}&format=csv",
-                style="margin-left: 2ch",
+                cls=BTN_STYLE,
             ),
             A(
                 "JSON",
                 title="Download as JSON",
                 href=f"/sparql?query={quote(query)}&format=json",
-                style="margin-left: 2ch",
+                cls=BTN_STYLE,
             ),
+            cls="bg-slate-200 text-black p-2 flex flex-row gap-1 text-xs",
         ),
-        Table(*table_rows),
+        Table(
+            *table_rows,
+            cls="min-w-full table-auto border-collapse border border-gray-300",
+        ),
     )
 
 
@@ -245,12 +252,11 @@ def get(query: str = "select * where {?s ?p ?o} limit 10", format: str = "html")
                 </svg>"""
 
     return (
-        Head(
-            Script(src="/static/editor.js"),
-            Script(src="/static/matchbrackets.js"),
-            Script(src="/static/sparql.js"),
-            Script(
-                """document.addEventListener("DOMContentLoaded", function () {
+        Script(src="/static/editor.js"),
+        Script(src="/static/matchbrackets.js"),
+        Script(src="/static/sparql.js"),
+        Script(
+            """document.addEventListener("DOMContentLoaded", function () {
   sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: "application/sparql-query",
     matchBrackets: true,
@@ -281,30 +287,65 @@ document.body.addEventListener("htmx:configRequest", function (evt) {
     progress_counter = setTimeout(updateProgress, 1000);    
   }
 });
+
+document.body.addEventListener("keypress", function (evt) {
+    if (evt.ctrlKey && evt.key === "Enter") {
+        evt.preventDefault();
+        htmx.trigger(document.getElementById("execute_sparql"), "click");
+    }
+});
+
+
 """
-            ),
-            Link(
-                rel="stylesheet",
-                type="text/css",
-                href="/static/codemirror.css",
-            ),
+        ),
+        Link(
+            rel="stylesheet",
+            type="text/css",
+            href="/static/codemirror.css",
         ),
         Title("SHMARQL - SPARQL"),
         Div(
+            Header(
+                Img(
+                    src="/static/n4c-logo-black.svg",
+                    cls="h-20 border-t-2 border-t-black",
+                ),
+                cls="mt-5",
+            ),
             Div(
-                Textarea(query, id="code", name="code"),
-                A(
+                Button(
                     NotStr(svg_play_btn),
-                    href="#",
                     id="execute_sparql",
-                    title="Execute this query",
+                    title="Execute this query, (also use Ctrl+Enter)",
                     hx_post="/fragments/sparql",
                     hx_target="#results",
                     hx_swap="innerHTML",
+                    cls=f"{BTN_STYLE} items-center",
                 ),
-                style=" margin: 0 auto; width: 90vw;",
+                Button(
+                    "Prefixes",
+                    Script(
+                        f"""
+me().on("click", async ev => {{
+
+    let editorContent = sparqleditor.doc.getValue();
+    let prefixContent = `{get_setting("prefixes")}
+`;
+    sparqleditor.doc.setValue(prefixContent + editorContent);
+
+}})
+"""
+                    ),
+                    id="prefixes",
+                    cls=BTN_STYLE,
+                ),
+                id="editor_toolbar",
+                cls="flex flex-row px-4 py-2 gap-1 text-xs mb-3 mt-3",
             ),
-            style="display: flex; justify-content: center; align-items: center; margin-top: 3rem",
+            Div(
+                Textarea(query, id="code", name="code"),
+            ),
+            cls="px-2",
         ),
         Div(results, id="results", style="margin: 2vh 2vw 0 2vw"),
     )

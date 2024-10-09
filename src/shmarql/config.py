@@ -39,8 +39,11 @@ PREFIX schema: <http://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX virtrdfdata: <http://www.openlinksw.com/virtrdf-data-formats#>
+PREFIX virtrdf: <http://www.openlinksw.com/schemas/virtrdf#>
 PREFIX shmarql: <https://shmarql.com/>
 PREFIX cto: <https://nfdi4culture.de/ontology#>
+PREFIX nfdi4culture: <https://nfdi4culture.de/id/>
 PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>
 PREFIX factgrid: <https://database.factgrid.de/entity/>
 """
