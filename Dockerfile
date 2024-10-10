@@ -17,16 +17,12 @@ RUN git clone https://github.com/epoz/tree-sitter-sparql
 RUN pip install tree-sitter==0.20.1
 RUN python -c "from tree_sitter import Language; Language.build_library('b/sparql.so', ['tree-sitter-sparql'])"
 
-WORKDIR /fizzysearch
-RUN git clone https://github.com/ISE-FIZKarlsruhe/fizzysearch
-
 
 FROM python:3.10.15
 
 COPY --from=builder /fts5-snowball/fts5stemmer.so /usr/local/lib/
 COPY --from=builder /spellfix/spellfix.so /usr/local/lib/
 COPY --from=builder /tree_sitter_sparql/b/sparql.so /usr/local/lib
-COPY --from=builder /fizzysearch/fizzysearch/fizzysearch.py /usr/local/lib/python3.10/site-packages/fizzysearch.py
 
 RUN mkdir -p /src
 WORKDIR /src

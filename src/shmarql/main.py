@@ -1,5 +1,5 @@
 import sqlite3, logging, csv, io, string, json
-
+from fizzysearch import literal_to_parts
 from urllib.parse import quote
 from fasthtml.common import *
 from .config import DEBUG, get_setting
@@ -61,7 +61,9 @@ def make_literal_query(some_literal: dict, encode=True, limit=999):
     txt = [x for x in txt.split(" ") if len(x) > 1][:10]
     txt = " ".join(txt).strip(" ")
 
-    Q = f"""select ?s ?p where {{ ?s fizzy:fts "{txt}" }} limit {limit}"""
+    Q = f"""select ?s ?p ?o where {{ 
+        ?s ?p ?o .
+        ?s fizzy:fts "{txt}" . }} limit {limit}"""
     if encode:
         return quote(Q)
     else:
@@ -160,10 +162,20 @@ def fragments_sparql(query: str):
                     href=f"/sparql?query={make_literal_query(value)}",
                     style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                 )
+                # literal_value, language, datatype = literal_to_parts
+                lang = (
+                    Span(
+                        value.get("xml:lang"), cls="text-xs bg-gray-200 text-black px-2"
+                    )
+                    if "xml:lang" in value
+                    else None
+                )
+
                 row_columns.append(
                     Td(
                         o_link,
                         Span(value["value"], style="margin-left: 1ch"),
+                        lang,
                         cls="border border-gray-300 px-4 py-2 text-sm",
                     )
                 )

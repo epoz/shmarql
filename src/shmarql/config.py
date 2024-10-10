@@ -22,6 +22,7 @@ pragma journal_mode=WAL;"""
 )
 
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
+RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
 
 try:
     CONFIG_STORE = px.Store(os.environ.get("CONFIG_STORE", "config.oxi"))

@@ -5,6 +5,7 @@ from .config import (
     ENDPOINTS,
     QUERIES_DB,
     FTS_FILEPATH,
+    RDF2VEC_FILEPATH,
     CONFIG_STORE,
     get_setting,
 )
@@ -14,11 +15,20 @@ def hash_query(query: str) -> str:
     return hashlib.md5(query.encode("utf8")).hexdigest()
 
 
-def cached_query(endpoint: str, query: str):
-    for timestamp, result, duration in sqlite3.connect(QUERIES_DB).execute(
-        "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? ORDER BY timestamp DESC LIMIT 1",
-        (hash_query(query), endpoint),
-    ):
+def cached_query(query: str, endpoint: str = None):
+    # Only use the endpoint if specified
+    if endpoint:
+        theq = sqlite3.connect(QUERIES_DB).execute(
+            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? ORDER BY timestamp DESC LIMIT 1",
+            (hash_query(query), endpoint),
+        )
+    else:
+        theq = sqlite3.connect(QUERIES_DB).execute(
+            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? ORDER BY timestamp DESC LIMIT 1",
+            (hash_query(query),),
+        )
+
+    for timestamp, result, duration in theq:
         result = json.loads(result)
         result["timestamp"] = timestamp
         result["duration"] = duration
@@ -28,18 +38,18 @@ def cached_query(endpoint: str, query: str):
 
 def do_query(query: str) -> dict:
     to_use = ENDPOINT
-    if FTS_FILEPATH:
-        rewritten = fizzysearch.rewrite(
-            query,
-            {
-                "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
-                    FTS_FILEPATH
-                ),
-                "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
-            },
-        )
-    else:
-        rewritten = fizzysearch.rewrite(query)
+
+    rewritten = fizzysearch.rewrite(
+        query,
+        {
+            "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
+                FTS_FILEPATH
+            ),
+            "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
+            "fizzy:rdf2vec": fizzysearch.use_rdf2vec(RDF2VEC_FILEPATH),
+        },
+    )
+
     for comment in rewritten["comments"]:
         logging.debug(f"fizzysearch SPARQL Comment: {comment}")
         if comment.find("shmarql-engine:") > -1:
@@ -54,7 +64,7 @@ def do_query(query: str) -> dict:
         else:
             return {"error": "No endpoint found"}
 
-    cached_query_result = cached_query(to_use, query)
+    cached_query_result = cached_query(query)
     if cached_query_result:
         return cached_query_result
 
