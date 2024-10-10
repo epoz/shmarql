@@ -8,3 +8,7 @@
         height: calc(100vh - 64px);
     }
 }
+
+body {
+    padding-left: 2vw;
+}

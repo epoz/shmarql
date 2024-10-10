@@ -120,7 +120,7 @@ def fragments_sparql(query: str):
         row_columns.append(
             Td(
                 rownum,
-                style="margin: 0; padding: 0; font-size: 75%; color: #aaa;",
+                style="padding-right: 0.75ch; font-size: 75%; color: #aaa; text-align: right;",
             )
         )
         for var in results.get("head", {}).get("vars", []):
@@ -347,7 +347,7 @@ me().on("click", async ev => {{
             ),
             cls="px-2",
         ),
-        Div(results, id="results", style="margin: 2vh 2vw 0 2vw"),
+        Div(results, id="results", cls="m-2"),
     )
 
 
