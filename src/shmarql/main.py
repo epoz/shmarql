@@ -131,6 +131,24 @@ def fragments_sparql(query: str):
                 S_query = make_spo(value["value"], "s")
                 P_query = make_spo(value["value"], "p")
                 O_query = make_spo(value["value"], "o")
+
+                # do some fizzy for factgrid
+                if value["value"].find("database.factgrid.de") > -1:
+                    fizzy_query = quote(
+                        f"""select distinct ?s (STR(?o) AS ?oLabel) where {{
+  ?s fizzy:rdf2vec <{value['value']}> . 
+  ?s rdfs:label ?o .
+}}
+    """
+                    )
+                    fizzyquery = A(
+                        "✨",
+                        href="/sparql?query=" + fizzy_query,
+                        title="Show items similar to this entity using fizzysearch",
+                    )
+                else:
+                    fizzyquery = None
+
                 row_columns.append(
                     Td(
                         A(
@@ -153,6 +171,7 @@ def fragments_sparql(query: str):
                             href=value["value"],
                             style="margin-left: 1ch",
                         ),
+                        fizzyquery,
                         cls="border border-gray-300 px-4 py-2 text-sm",
                     )
                 )
