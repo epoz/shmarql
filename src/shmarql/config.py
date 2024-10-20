@@ -4,11 +4,14 @@ import pyoxigraph as px
 DEBUG = os.environ.get("DEBUG", "0") == "1"
 ENDPOINT = os.environ.get("ENDPOINT")
 
-ens_names = [x for x in os.environ.get("ENDPOINTS_NAMES", "").split(" ")]
-ens = [x for x in os.environ.get("ENDPOINTS", "").split(" ")]
-if len(ens) != len(ens_names):
-    raise ValueError("ENDPOINTS and ENDPOINTS_NAMES must have the same length")
-ENDPOINTS = dict(zip(ens_names, ens))
+# SHMARQL_ENDPOINTS variable with name|url pairs
+ens = os.environ.get("ENDPOINTS", "")
+
+# Split the string into name|url pairs and then further split each pair
+ens_pairs = [pair.split("|") for pair in ens.split(" ") if "|" in pair]
+
+# Convert into a dictionary
+ENDPOINTS = {name: url for name, url in ens_pairs}
 
 SCHEME = os.environ.get("SCHEME", "http://")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1")
