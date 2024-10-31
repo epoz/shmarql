@@ -200,20 +200,23 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
 
 def load_file_to_graph(graph: px.Store, filepath: str) -> bool:
     was_file = False
-    filename = os.path.basename(filepath)
-    if filename.endswith(".gz"):
-        filepath = gzip.open(filepath)
-        filename = filename[:-3]
-    else:
-        filepath = open(filepath, "rb")
-    if filename.lower().endswith(".ttl"):
-        log.debug(f"Parsing {filepath}")
-        graph.bulk_load(filepath, "text/turtle")
-        was_file = True
-    elif filename.lower().endswith(".nt"):
-        log.debug(f"Parsing {filepath}")
-        graph.bulk_load(filepath, "application/n-triples")
-        was_file = True
+    try:
+        filename = os.path.basename(filepath)
+        if filename.endswith(".gz"):
+            filepath = gzip.open(filepath)
+            filename = filename[:-3]
+        else:
+            filepath = open(filepath, "rb")
+        if filename.lower().endswith(".ttl"):
+            log.debug(f"Parsing {filepath}")
+            graph.bulk_load(filepath, "text/turtle")
+            was_file = True
+        elif filename.lower().endswith(".nt"):
+            log.debug(f"Parsing {filepath}")
+            graph.bulk_load(filepath, "application/n-triples")
+            was_file = True
+    except Exception as e:
+        log.debug(f"{filepath} exception {e}")
     return was_file
 
 
