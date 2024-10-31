@@ -55,7 +55,7 @@ def extract_coordinates(geom):
     else:
         return None
 
-# /calc
+# /math
 
 def px_log(t1):
     try:
@@ -82,3 +82,13 @@ def px_fuzzy_ratio(t1, t2):
         return Literal(str(ratio), datatype=NamedNode('http://www.w3.org/2001/XMLSchema#integer'))    
     except Exception as e:        
         return Literal("-1", datatype=NamedNode('http://www.w3.org/2001/XMLSchema#integer'))
+
+# /rdf
+
+def px_uuid(t1):
+    if not t1.value:
+        return Literal(str(uuid.uuid4()), datatype=NamedNode('http://www.w3.org/2001/XMLSchema#string'))
+
+    hashed_string = hashlib.sha256(t1.value.encode()).hexdigest()
+    hashed_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, hashed_string)
+    return Literal(str(hashed_uuid), datatype=NamedNode('http://www.w3.org/2001/XMLSchema#string'))

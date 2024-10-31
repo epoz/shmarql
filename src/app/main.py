@@ -74,7 +74,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates.env.filters["prefixes"] = prefixes
 
 QUERY_PARAMS={'use_default_graph_as_union':True,'custom_functions':{
-        px.NamedNode("http://shmarql.com/geo/distance"): px_distance, px.NamedNode("http://shmarql.com/geo/area"): px_area, px.NamedNode("http://shmarql.com/math/log"): px_log, px.NamedNode("http://shmarql.com/nlp/fuzzy_ratio"): px_fuzzy_ratio
+        px.NamedNode("http://shmarql.com/geo/distance"): px_distance, px.NamedNode("http://shmarql.com/geo/area"): px_area, px.NamedNode("http://shmarql.com/math/log"): px_log, px.NamedNode("http://shmarql.com/nlp/fuzzy_ratio"): px_fuzzy_ratio, px.NamedNode("http://shmarql.com/rdf/uuid"): px_uuid
     }} # since a refined setup would require px classes, better define this here instead of in config.py? Or parse string values to something like (list(NamedNode or BlankNode), see https://pyoxigraph.readthedocs.io/en/stable/store.html#pyoxigraph.Store.query
 
 def sesame_open(credentials: HTTPBasicCredentials = Depends(security)):
