@@ -45,13 +45,13 @@ jobs:
         run: python3 -m pip install mkdocs-material
 
       - name: MKDocs
-        run: mkdocs build
+        run: cd src && mkdocs build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: "./site"
+          path: "/home/runner/work/shmarql/shmarql/src/site"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
