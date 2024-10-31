@@ -26,7 +26,7 @@ This also means that the path in which the data is stored is is "visible" to the
 Here is an example, where you have some .ttl files stored in a directory named `./databases`
 
 ```shell
-docker run --rm -p 8000:8000 -it -v $(pwd)/databases:/data -e DATA_LOAD_PATHS=/data  ghcr.io/epoz/shmarql:v0.39
+docker run --rm -p 8000:8000 -it -v $(pwd):/data -e DATA_LOAD_PATHS=/data  ghcr.io/epoz/shmarql:v0.39
 ```
 
 This will load all .ttl files found in the specified directory, and make it available under a /sparql endpoint, eg. http://localhost:8000/sparql
