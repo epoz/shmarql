@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: ".src/site"
+          path: "/home/runner/work/shmarql/shmarql/src/site"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
