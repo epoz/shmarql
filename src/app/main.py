@@ -36,6 +36,7 @@ import pyoxigraph as px
 from .rdfer import prefixes, RDFer, Nice
 from rich.traceback import install
 from .fts import init_fts, search
+from .px_custom import *
 from .rdf2vec import init_rdf2vec, rdf2vec_search
 from .px_util import OxigraphSerialization, SynthQuerySolutions, results_to_triples
 import rdflib
@@ -72,7 +73,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Only init templates here so we can config and use prefixes method
 templates.env.filters["prefixes"] = prefixes
 
-QUERY_PARAMS={'use_default_graph_as_union':True,'base_iri':None,'default_graph':None,'named_graphs':None} # since a refined setup would require px classes, better define this here instead of in config.py? Or parse string values to something like (list(NamedNode or BlankNode), see https://pyoxigraph.readthedocs.io/en/stable/store.html#pyoxigraph.Store.query
+QUERY_PARAMS={'use_default_graph_as_union':True,'custom_functions':{
+        px.NamedNode("http://shmarql.com/geo/distance"): px_distance, px.NamedNode("http://shmarql.com/geo/area"): px_area, px.NamedNode("http://shmarql.com/math/log"): px_log, px.NamedNode("http://shmarql.com/nlp/fuzzy_ratio"): px_fuzzy_ratio
+    }} # since a refined setup would require px classes, better define this here instead of in config.py? Or parse string values to something like (list(NamedNode or BlankNode), see https://pyoxigraph.readthedocs.io/en/stable/store.html#pyoxigraph.Store.query
 
 def sesame_open(credentials: HTTPBasicCredentials = Depends(security)):
     correct_username = HTTP_USER
