@@ -1,6 +1,0 @@
-localhost:80 {
-  header Access-Control-Allow-Origin "*"  
-  reverse_proxy /sparql* http://virtuoso:8890
-  file_server
-  root * /data/
-}
