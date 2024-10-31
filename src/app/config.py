@@ -28,6 +28,8 @@ FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
 SBERT_FILEPATH = os.environ.get("SBERT_FILEPATH")
 VIRTGRAPH_PATH = os.environ.get("VIRTGRAPH_PATH")
+HTTP_USER = os.environ.get("HTTP_USER", "admin")
+HTTP_PASSWORD = os.environ.get("HTTP_PASSWORD", "admin")
 
 # space-separated list of sqlite3 DB files containing sources, in the format:
 # CREATE TABLE source (id PRIMARY KEY, last_download, xml) as per the DDB
