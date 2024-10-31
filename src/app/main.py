@@ -25,8 +25,8 @@ from .config import (
     RDF2VEC_FILEPATH,
     SBERT_FILEPATH,
     VIRTGRAPH_PATH,
-    ADMIN,
-    PASSWORD
+    HTTP_USER,
+    HTTP_PASSWORD
 )
 import httpx
 import logging, os, json, io, time, random, sys, gzip
@@ -75,8 +75,8 @@ templates.env.filters["prefixes"] = prefixes
 QUERY_PARAMS={'use_default_graph_as_union':True,'base_iri':None,'default_graph':None,'named_graphs':None} # since a refined setup would require px classes, better define this here instead of in config.py? Or parse string values to something like (list(NamedNode or BlankNode), see https://pyoxigraph.readthedocs.io/en/stable/store.html#pyoxigraph.Store.query
 
 def sesame_open(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = ADMIN
-    correct_password = PASSWORD
+    correct_username = HTTP_USER
+    correct_password = HTTP_PASSWORD
     if credentials.username == correct_username and credentials.password == correct_password:
         return credentials.username
     else:
