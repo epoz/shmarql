@@ -6,6 +6,8 @@ from pyproj import Geod
 import json
 import math
 from fuzzywuzzy import fuzz
+import uuid
+import hashlib
 
 # /geo
 
