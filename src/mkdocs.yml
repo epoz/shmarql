@@ -1,0 +1,42 @@
+site_name: Shmarql
+site_url: https://shmarql.com/
+repo_url: https://github.com/epoz/shmarql
+theme:
+  name: material
+  custom_dir: docs/overrides
+  palette:
+    primary: teal
+    accent: pink
+  features:
+    - content.code.copy
+    - navigation.instant
+    - navigation.instant.progress
+    - toc.follow
+    - navigation.top
+    - header.autohide
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      linenums: true
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+
+nav:
+  - Introduction: index.md
+  - Advanced Searching: fizzysearch.md
+  - Configuration:
+    - With existing websites: proxy.md
+    - Using other triplestores: endpoints.md

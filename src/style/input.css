@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .section-min-height {
+        min-height: calc(100vh - 64px);
+        height: calc(100vh - 64px);
+    }
+}
+
+body {
+    padding-left: 2vw;
+}
