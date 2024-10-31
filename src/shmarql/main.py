@@ -1,58 +1,34 @@
-import sqlite3, logging, csv, io, string, json
-from fizzysearch import literal_to_parts
+import logging, csv, io, string, json
 from urllib.parse import quote
 from fasthtml.common import *
-from .config import DEBUG, get_setting
-from .external import do_query, hash_query
+from .config import PREFIXES_SNIPPET, MOUNT
+from .qry import do_query, hash_query
 
-if DEBUG:
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s %(levelname)-8s %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-
-    logging.debug("Debug logging requested from config env DEBUG")
-else:
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-    )
-
-app, rt = fast_app(
+app = FastHTML(
     pico=False,
     hdrs=(
         (
             Link(
                 rel="stylesheet",
                 type="text/css",
-                href="/static/shmarql.css",
+                href=f"{MOUNT}shmarql/static/shmarql.css",
             )
         ),
     ),
 )
 
+
 BTN_STYLE = "bg-slate-300 hover:bg-slate-400 text-black px-2 rounded-lg shadow-xl transition duration-300 font-bold"
 
 
-@rt("/static/{fname:path}")
-def get(fname: str):
+@app.get("/favicon.ico")
+def favicon():
+    return FileResponse(f"static/favicon.ico")
+
+
+@app.get(MOUNT + "shmarql/static/{fname:path}")
+def shmarql_get_static(fname: str):
     return FileResponse(f"static/{fname}")
-
-
-@rt("/")
-def get():
-    return (
-        Title("Welcome to SHMARQL"),
-        Div(
-            H1("Welcome to SHMARQL", style="margin-top: 5rem; text-align: center;"),
-            A("Query", href="/sparql"),
-            cls="prose",
-        ),
-    )
-
-
-@rt("/shmarql")
-def get(s: str): ...
 
 
 def make_literal_query(some_literal: dict, encode=True, limit=999):
@@ -87,7 +63,17 @@ def make_spo(uri: str, spo: str, encode=True, limit=999):
         return Q
 
 
-@app.post("/fragments/sparql")
+@app.post("/_/oOo")
+def oinga():
+    from mkdocs.__main__ import cli
+
+    try:
+        cli(["build", "--site-dir", "site"], standalone_mode=False)
+    except Exception as e:
+        return Div(str(e))
+
+
+@app.post(f"{MOUNT}shmarql/fragments/sparql")
 def fragments_sparql(query: str):
     if query == "":
         query = "select * where {?s ?p ?o} limit 10"
@@ -153,17 +139,17 @@ def fragments_sparql(query: str):
                     Td(
                         A(
                             "S",
-                            href=f"/sparql?query={S_query}",
+                            href=f"{MOUNT}shmarql?query={S_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "P",
-                            href=f"/sparql?query={P_query}",
+                            href=f"{MOUNT}shmarql?query={P_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "O",
-                            href=f"/sparql?query={O_query}",
+                            href=f"{MOUNT}shmarql?query={O_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
@@ -178,10 +164,9 @@ def fragments_sparql(query: str):
             else:
                 o_link = A(
                     "O",
-                    href=f"/sparql?query={make_literal_query(value)}",
+                    href=f"{MOUNT}shmarql?query={make_literal_query(value)}",
                     style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                 )
-                # literal_value, language, datatype = literal_to_parts
                 lang = (
                     Span(
                         value.get("xml:lang"), cls="text-xs bg-gray-200 text-black px-2"
@@ -216,13 +201,13 @@ def fragments_sparql(query: str):
             A(
                 "CSV",
                 title="Download as CSV",
-                href=f"/sparql?query={quote(query)}&format=csv",
+                href=f"{MOUNT}shmarql?query={quote(query)}&format=csv",
                 cls=BTN_STYLE,
             ),
             A(
                 "JSON",
                 title="Download as JSON",
-                href=f"/sparql?query={quote(query)}&format=json",
+                href=f"{MOUNT}shmarql?query={quote(query)}&format=json",
                 cls=BTN_STYLE,
             ),
             cls="bg-slate-200 text-black p-2 flex flex-row gap-1 text-xs",
@@ -250,8 +235,10 @@ def json_results_to_csv(results: dict):
     return output.getvalue()
 
 
-@rt("/sparql")
-def get(query: str = "select * where {?s ?p ?o} limit 10", format: str = "html"):
+@app.get(f"{MOUNT}shmarql")
+def shmarql_get(
+    query: str = "select * where {?s ?p ?o} limit 10", format: str = "html"
+):
     if format in ("csv", "json"):
         results = do_query(query)
 
@@ -283,9 +270,9 @@ def get(query: str = "select * where {?s ?p ?o} limit 10", format: str = "html")
                 </svg>"""
 
     return (
-        Script(src="/static/editor.js"),
-        Script(src="/static/matchbrackets.js"),
-        Script(src="/static/sparql.js"),
+        Script(src=f"{MOUNT}shmarql/static/editor.js"),
+        Script(src=f"{MOUNT}shmarql/static/matchbrackets.js"),
+        Script(src=f"{MOUNT}shmarql/static/sparql.js"),
         Script(
             """document.addEventListener("DOMContentLoaded", function () {
   sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -309,11 +296,15 @@ document.body.addEventListener("htmx:afterRequest", function (evt) {
 });
 
 document.body.addEventListener("htmx:configRequest", function (evt) {
+  if (evt.shiftKey) {
+        console.log("Shift key was pressed during the click!");
+  }
+
   if (evt.detail.elt.id === "execute_sparql") {
     let the_query = sparqleditor.doc.getValue();
     evt.detail.parameters["query"] = the_query;
     results.innerHTML = '<div aria-busy="true">Loading...</div>';
-    history.pushState({ query: the_query }, "", "/sparql?query=" + encodeURIComponent(the_query));
+    history.pushState({ query: the_query }, "", "shmarql?query=" + encodeURIComponent(the_query));
     queryStarted = Date.now();
     progress_counter = setTimeout(updateProgress, 1000);    
   }
@@ -332,13 +323,13 @@ document.body.addEventListener("keypress", function (evt) {
         Link(
             rel="stylesheet",
             type="text/css",
-            href="/static/codemirror.css",
+            href=f"{MOUNT}shmarql/static/codemirror.css",
         ),
         Title("SHMARQL - SPARQL"),
         Div(
             Header(
                 Img(
-                    src="/static/n4c-logo-black.svg",
+                    src=f"{MOUNT}shmarql/static/sqrl.png",
                     cls="h-20 border-t-2 border-t-black",
                 ),
                 cls="mt-5",
@@ -348,7 +339,7 @@ document.body.addEventListener("keypress", function (evt) {
                     NotStr(svg_play_btn),
                     id="execute_sparql",
                     title="Execute this query, (also use Ctrl+Enter)",
-                    hx_post="/fragments/sparql",
+                    hx_post=f"{MOUNT}shmarql/fragments/sparql",
                     hx_target="#results",
                     hx_swap="innerHTML",
                     cls=f"{BTN_STYLE} items-center",
@@ -360,8 +351,7 @@ document.body.addEventListener("keypress", function (evt) {
 me().on("click", async ev => {{
 
     let editorContent = sparqleditor.doc.getValue();
-    let prefixContent = `{get_setting("prefixes")}
-`;
+    let prefixContent = `{PREFIXES_SNIPPET}`;
     sparqleditor.doc.setValue(prefixContent + editorContent);
 
 }})
@@ -382,6 +372,18 @@ me().on("click", async ev => {{
     )
 
 
-@rt("/sparql", methods=["POST"])
-def post(query: str):
+@app.get(f"{MOUNT}sparql", methods=["POST"])
+def sparql_post(query: str):
     return do_query(query)
+
+
+@app.get(f"{MOUNT}sparql")
+def sparql_get(s: str = "select * where {?s ?p ?o} limit 10"):
+    return shmarql_get(s)
+
+
+@app.get(MOUNT + "{fname:path}")
+def getter(fname: str):
+    if fname == "" or fname.endswith("/"):
+        fname += "index.html"
+    return FileResponse(f"site/{fname}")
