@@ -81,9 +81,8 @@ def do_query(query: str) -> dict:
     if to_use == "__local__":
         try:
             qquery = PREFIXES_SNIPPET + "\n" + query
-            open("/tmp/xxxx", "w").write(qquery)
             r = GRAPH.query(qquery)
-            result = OxigraphSerialization(r).json()
+            result = {"results": {"bindings": OxigraphSerialization(r).json()}}
         except Exception as e:
             return {"error": str(e)}
     else:
