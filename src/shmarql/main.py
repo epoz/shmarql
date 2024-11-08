@@ -73,6 +73,45 @@ def oinga():
         return Div(str(e))
 
 
+# See: https://www.chartjs.org/docs/latest/getting-started/integration.html
+@app.get(f"{MOUNT}shmarql/fragments/chart")
+def fragments_chart(query: str):
+    return """
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: [
+    'Abstract, Non-representational Art',
+    'Religion and Magic',
+    'Nature',
+    'Human Being, Man in General',
+    'Society, Civilization, Culture',
+    'Abstract Ideas and Concepts',
+    'History',
+    'Bible',
+    'Literature',
+    'Classical Mythology and Ancient History'
+],
+      datasets: [{
+        label: "ICONCLASS",
+        data: [13, 189234, 397281, 370052, 801637, 67315, 162090, 129660, 48452, 80144],
+        borderWidth: 1
+      }]
+    }
+  });
+</script>
+"""
+
+
 @app.post(f"{MOUNT}shmarql/fragments/sparql")
 def fragments_sparql(query: str):
     if query == "":
