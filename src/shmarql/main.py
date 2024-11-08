@@ -276,8 +276,19 @@ def json_results_to_csv(results: dict):
 
 @app.get(f"{MOUNT}shmarql")
 def shmarql_get(
-    query: str = "select * where {?s ?p ?o} limit 10", format: str = "html"
+    request: Request,
+    query: str = "select * where {?s ?p ?o} limit 10",
+    format: str = "html",
 ):
+    accept_header = request.headers.get("accept")
+    if accept_header:
+        accept_headers = [ah.strip() for ah in accept_header.split(",")]
+    else:
+        accept_headers = []
+
+    if "application/sparql-results+json" in accept_headers:
+        format = "json"
+
     if format in ("csv", "json"):
         results = do_query(query)
 
@@ -297,7 +308,7 @@ def shmarql_get(
             return Response(
                 json.dumps(results, indent=2),
                 headers={
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/sparql-results+json",
                 },
             )
 
@@ -412,13 +423,16 @@ me().on("click", async ev => {{
 
 
 @app.get(f"{MOUNT}sparql", methods=["POST"])
-def sparql_post(query: str):
-    return do_query(query)
+def sparql_post(request: Request, query: str):
+    return shmarql_get(request, query)
 
 
 @app.get(f"{MOUNT}sparql")
-def sparql_get(s: str = "select * where {?s ?p ?o} limit 10"):
-    return shmarql_get(s)
+def sparql_get(request: Request, query: str = "select * where {?s ?p ?o} limit 10"):
+    return shmarql_get(request, query)
+
+
+from .ext import *
 
 
 @app.get(MOUNT + "{fname:path}")
