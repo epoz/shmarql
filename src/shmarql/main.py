@@ -286,8 +286,9 @@ def shmarql_get(
     else:
         accept_headers = []
 
-    if "application/sparql-results+json" in accept_headers:
-        format = "json"
+    for h in accept_headers:
+        if h.startswith("application/sparql-results+json"):
+            format = "json"
 
     if format in ("csv", "json"):
         results = do_query(query)
