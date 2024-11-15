@@ -25,12 +25,12 @@ def cached_query(query: str, endpoint: str = None):
     # Only use the endpoint if specified
     if endpoint:
         theq = sqlite3.connect(QUERIES_DB).execute(
-            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? ORDER BY timestamp DESC LIMIT 1",
+            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? and not result is null ORDER BY timestamp DESC LIMIT 1",
             (hash_query(query), endpoint),
         )
     else:
         theq = sqlite3.connect(QUERIES_DB).execute(
-            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? ORDER BY timestamp DESC LIMIT 1",
+            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and not result is null ORDER BY timestamp DESC LIMIT 1",
             (hash_query(query),),
         )
 
@@ -42,7 +42,7 @@ def cached_query(query: str, endpoint: str = None):
         return result
 
 
-def do_query(query: str) -> dict:
+def do_query(query: str, format: str = "json") -> dict:
     to_use = ENDPOINT
 
     rewritten = fizzysearch.rewrite(
@@ -86,19 +86,30 @@ def do_query(query: str) -> dict:
         except Exception as e:
             return {"error": str(e)}
     else:
+        if format != "json":
+            accept_header = "application/sparql-results+json;q=0.8, text/turtle"
+        else:
+            accept_header = "application/sparql-results+json, text/turtle;q=0.8"
         headers = {
-            "Accept": "application/sparql-results+json",
+            "Accept": accept_header,
             "User-Agent": "SCHMARQL/2024 (https://shmarql.com/ ep@epoz.org)",
         }
-        data = {"query": PREFIXES_SNIPPET + "\n" + query, "format": "json"}
+
+        data = {
+            "query": PREFIXES_SNIPPET + "\n" + query,
+        }
         try:
             r = httpx.post(to_use, data=data, headers=headers, timeout=180)
             if r.status_code == 200:
-                result = r.json()
-
+                try:
+                    result = r.json()
+                except json.JSONDecodeError:
+                    return r.content
+            elif r.status_code == 500:
+                return {"error": r.text}
         except:
             logging.exception(f"Problem with {to_use}")
-            return {"error": "Could not connect to endpoint"}
+            return {"error": "Exception raised querying endpoint"}
 
     time_end = time.time()
     duration = time_end - time_start

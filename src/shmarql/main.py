@@ -1,6 +1,8 @@
 import logging, csv, io, string, json
 from urllib.parse import quote
 from fasthtml.common import *
+import pyoxigraph as px
+from .px_util import OxigraphSerialization
 from .config import PREFIXES_SNIPPET, MOUNT
 from .qry import do_query, hash_query
 
@@ -281,17 +283,52 @@ def shmarql_get(
     format: str = "html",
 ):
     accept_header = request.headers.get("accept")
+    accept_headers_incoming = []
     if accept_header:
-        accept_headers = [ah.strip() for ah in accept_header.split(",")]
-    else:
-        accept_headers = []
+        accept_headers_incoming = [ah.strip() for ah in accept_header.split(",")]
+    accept_headers = {}
+    for ah in accept_headers_incoming:
+        ql = ah.split(";")
+        if len(ql) > 1:
+            ah_left = ql[0]
+            ql = ql[1].split("=")
+            if len(ql) > 1 and ql[0] == "q":
+                try:
+                    ql = float(ql[1])
+                except ValueError:
+                    ql = 0
+        else:
+            ah_left = ql[0]
+            ql = 1
+        accept_headers[ah_left] = ql
 
-    for h in accept_headers:
-        if h.startswith("application/sparql-results+json"):
+    for ah, _ in sorted(accept_headers.items(), key=lambda x: x[1]):
+        if ah.startswith("application/sparql-results+json"):
             format = "json"
+            break
+        if ah.startswith("text/turtle"):
+            format = "turtle"
+            break
 
-    if format in ("csv", "json"):
-        results = do_query(query)
+    if format in ("csv", "json", "turtle"):
+        results = do_query(query, format=format)
+
+        if type(results) is bytes:
+            if format == "turtle":
+                return Response(
+                    results,
+                    headers={"Content-Type": "text/turtle"},
+                )
+            try:
+                # if format is not turtle, but the results are bytes, try to parse it and return as json
+                tmp_store = px.Store()
+                tmp_store.bulk_load(results, "text/turtle")
+                r = tmp_store.query("select * where {?s ?p ?o}")
+                results = {"results": {"bindings": OxigraphSerialization(r).json()}}
+            except Exception as e:
+                results = {
+                    "error": f"{e} Query returned non-parsable data: {repr(results[:500])}"
+                }
 
         if format == "csv":
             csv_data = json_results_to_csv(results)
