@@ -289,20 +289,21 @@ def shmarql_get(
     accept_headers = {}
     for ah in accept_headers_incoming:
         ql = ah.split(";")
+        ql_val = 1
         if len(ql) > 1:
             ah_left = ql[0]
             ql = ql[1].split("=")
             if len(ql) > 1 and ql[0] == "q":
                 try:
-                    ql = float(ql[1])
+                    ql_val = float(ql[1])
                 except ValueError:
-                    ql = 0
+                    ql_val = 0
         else:
             ah_left = ql[0]
-            ql = 1
-        accept_headers[ah_left] = ql
+            ql_val = 1
+        accept_headers[ah_left] = ql_val
 
-    for ah, _ in sorted(accept_headers.items(), key=lambda x: x[1]):
+    for ah, _ in sorted(accept_headers.items(), reverse=True, key=lambda x: x[1]):
         if ah.startswith("application/sparql-results+json"):
             format = "json"
             break
