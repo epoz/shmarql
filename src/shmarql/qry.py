@@ -42,7 +42,7 @@ def cached_query(query: str, endpoint: str = None):
         return result
 
 
-def do_query(query: str, format: str = "json") -> dict:
+def do_query(query: str) -> dict:
     to_use = ENDPOINT
 
     rewritten = fizzysearch.rewrite(
@@ -86,10 +86,10 @@ def do_query(query: str, format: str = "json") -> dict:
         except Exception as e:
             return {"error": str(e)}
     else:
-        if format != "json":
-            accept_header = "application/sparql-results+json;q=0.8, text/turtle"
+        if rewritten.get("query_type", "construct"):
+            accept_header = "text/turtle"
         else:
-            accept_header = "application/sparql-results+json, text/turtle;q=0.8"
+            accept_header = "application/sparql-results+json"
         headers = {
             "Accept": accept_header,
             "User-Agent": "SCHMARQL/2024 (https://shmarql.com/ ep@epoz.org)",
@@ -104,7 +104,7 @@ def do_query(query: str, format: str = "json") -> dict:
                 try:
                     result = r.json()
                 except json.JSONDecodeError:
-                    return r.content
+                    result = {"data": r.content.decode("utf8")}
             elif r.status_code == 500:
                 return {"error": r.text}
         except:

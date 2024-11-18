@@ -119,6 +119,8 @@ def fragments_sparql(query: str):
     if query == "":
         query = "select * where {?s ?p ?o} limit 10"
     results = do_query(query)
+    if "data" in results:  # this was a construct query
+        return Div(Pre(results["data"]))
     if "error" in results:
         return (
             Div(
@@ -236,7 +238,7 @@ def fragments_sparql(query: str):
     return Div(
         Div(
             Span(
-                f"{len(results['results']['bindings'])} results in {duration_display}{cached}",
+                f"{len(results.get('results', {}).get('bindings', []))} results in {duration_display}{cached}",
                 title="used: " + results.get("endpoint_name", ""),
             ),
             A(
@@ -312,23 +314,23 @@ def shmarql_get(
             break
 
     if format in ("csv", "json", "turtle"):
-        results = do_query(query, format=format)
+        results = do_query(query)
 
-        if type(results) is bytes:
+        if "data" in results:
             if format == "turtle":
                 return Response(
-                    results,
+                    results["data"],
                     headers={"Content-Type": "text/turtle"},
                 )
             try:
                 # if format is not turtle, but the results are bytes, try to parse it and return as json
                 tmp_store = px.Store()
-                tmp_store.bulk_load(results, "text/turtle")
+                tmp_store.bulk_load(results["data"], "text/turtle")
                 r = tmp_store.query("select * where {?s ?p ?o}")
-                results = {"results": {"bindings": OxigraphSerialization(r).json()}}
+                results["results"] = {"bindings": OxigraphSerialization(r).json()}
             except Exception as e:
                 results = {
-                    "error": f"{e} Query returned non-parsable data: {repr(results[:500])}"
+                    "error": f"{e} Query returned non-parsable data: {repr(results)[:500]}"
                 }
 
         if format == "csv":
