@@ -86,7 +86,7 @@ def do_query(query: str) -> dict:
         except Exception as e:
             return {"error": str(e)}
     else:
-        if rewritten.get("query_type", "construct"):
+        if rewritten.get("query_type") == "construct":
             accept_header = "text/turtle"
         else:
             accept_header = "application/sparql-results+json"
