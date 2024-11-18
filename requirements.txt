@@ -3,5 +3,5 @@ httpx==0.27.2
 tree-sitter==0.20.1
 rdflib==7.1.1
 pyoxigraph==0.4.1
-fizzysearch==0.26
+fizzysearch==0.27
 mkdocs-material==9.5.42
