@@ -53,6 +53,7 @@ STORE_PATH = os.environ.get("STORE_PATH")
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
 
+SPARQL_QUERY_UI = os.environ.get("SPARQL_QUERY_UI", "1") == "1"
 
 SITE_ID = os.environ.get(
     "SITE_ID", "".join([random.choice("abcdef0123456789") for _ in range(10)])

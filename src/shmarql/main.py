@@ -3,7 +3,7 @@ from urllib.parse import quote
 from fasthtml.common import *
 import pyoxigraph as px
 from .px_util import OxigraphSerialization
-from .config import PREFIXES_SNIPPET, MOUNT
+from .config import PREFIXES_SNIPPET, MOUNT, SPARQL_QUERY_UI
 from .qry import do_query, hash_query
 
 app = FastHTML(
@@ -352,6 +352,11 @@ def shmarql_get(
                     "Content-Type": "application/sparql-results+json",
                 },
             )
+
+    if not SPARQL_QUERY_UI:
+        return Div(
+            "There is currently no SPARQL query form to be found here, call it from a command line via a POST request."
+        )
 
     results = fragments_sparql(query)
 
