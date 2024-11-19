@@ -82,7 +82,7 @@ def do_query(query: str) -> dict:
         try:
             qquery = PREFIXES_SNIPPET + "\n" + query
             r = GRAPH.query(qquery)
-            result = {"results": {"bindings": OxigraphSerialization(r).json()}}
+            result = OxigraphSerialization(r).json()
         except Exception as e:
             return {"error": str(e)}
     else:
