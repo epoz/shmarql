@@ -2,7 +2,7 @@ import logging, csv, io, string, json
 from urllib.parse import quote
 from fasthtml.common import *
 import pyoxigraph as px
-from .px_util import OxigraphSerialization
+from .px_util import OxigraphSerialization, results_to_xml
 from .config import PREFIXES_SNIPPET, MOUNT, SPARQL_QUERY_UI
 from .qry import do_query, hash_query
 
@@ -312,8 +312,11 @@ def shmarql_get(
         if ah.startswith("text/turtle"):
             format = "turtle"
             break
+        if ah.startswith("application/sparql-results+xml"):
+            format = "xml"
+            break
 
-    if format in ("csv", "json", "turtle"):
+    if format in ("csv", "json", "turtle", "xml"):
         results = do_query(query)
 
         if "data" in results:
@@ -332,6 +335,16 @@ def shmarql_get(
                 results = {
                     "error": f"{e} Query returned non-parsable data: {repr(results)[:500]}"
                 }
+
+        if format == "xml":
+            xml_data = results_to_xml(results)
+            return Response(
+                xml_data,
+                headers={
+                    "Content-Type": "application/sparql-results+xml",
+                    "Content-Disposition": f"attachment; filename={hash_query(query)}.xml",
+                },
+            )
 
         if format == "csv":
             csv_data = json_results_to_csv(results)
