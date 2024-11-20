@@ -7,6 +7,7 @@ from pyoxigraph import (
     QueryTriples,
     Store,
     Variable,
+    RdfFormat,
 )
 from io import BytesIO
 import logging
@@ -60,7 +61,11 @@ class OxigraphSerialization:
         return tmp_store
 
     def qt_json(self):
-        return [list(map(termJSON, a)) for a in self.result]
+
+        result = {
+            "data": self.result.serialize(format=RdfFormat.N_TRIPLES).decode("utf8")
+        }
+        return result
 
     def qt_turtle(self):
         tmp_store = self.to_store()
