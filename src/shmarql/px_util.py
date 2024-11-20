@@ -234,3 +234,69 @@ def results_to_triples(results: dict, vars: dict):
                         continue
             buf.append(line)
     return buf
+
+
+def results_to_xml(results: dict) -> str:
+    SPARQL_XML_NAMESPACE = "http://www.w3.org/2005/sparql-results#"
+    stream = BytesIO()
+    sxw = SPARQLXMLWriter(stream, encoding="utf-8")
+    vars = results.get("head", {}).get("vars", [])
+    sxw.write_header(vars)
+    sxw.write_results_header()
+    for qs in results.get("results", {}).get("bindings", []):
+        sxw.write_start_result()
+        for name in vars:
+            if qs.get(name) is not None:
+                attr_vals = {
+                    (None, "name"): name,
+                }
+                attr_qnames = {
+                    (None, "name"): "name",
+                }
+                sxw.writer.startElementNS(
+                    (SPARQL_XML_NAMESPACE, "binding"),
+                    "binding",
+                    AttributesNSImpl(attr_vals, attr_qnames),
+                )
+                val = qs.get(name)
+                if val.get("type") == "uri":
+                    sxw.writer.startElementNS(
+                        (SPARQL_XML_NAMESPACE, "uri"),
+                        "uri",
+                        AttributesNSImpl({}, {}),
+                    )
+                    sxw.writer.characters(val.get("value"))
+                    sxw.writer.endElementNS((SPARQL_XML_NAMESPACE, "uri"), "uri")
+                elif val.get("type") == "bnode":
+                    sxw.writer.startElementNS(
+                        (SPARQL_XML_NAMESPACE, "bnode"),
+                        "bnode",
+                        AttributesNSImpl({}, {}),
+                    )
+                    sxw.writer.characters(val.value)
+                    sxw.writer.endElementNS((SPARQL_XML_NAMESPACE, "bnode"), "bnode")
+                elif type(val) == "literal":
+                    attr_vals = {}
+                    attr_qnames = {}
+                    if val.get("xml:lang"):
+                        attr_vals[(XML_NAMESPACE, "lang")] = val.get("xml:lang")
+                        attr_qnames[(XML_NAMESPACE, "lang")] = "xml:lang"
+                    elif val.get("datatype"):
+                        attr_vals[(None, "datatype")] = val.get("datatype")
+                        attr_qnames[(None, "datatype")] = "datatype"
+
+                    sxw.writer.startElementNS(
+                        (SPARQL_XML_NAMESPACE, "literal"),
+                        "literal",
+                        AttributesNSImpl(attr_vals, attr_qnames),
+                    )
+                    sxw.writer.characters(val.get("value"))
+                    sxw.writer.endElementNS(
+                        (SPARQL_XML_NAMESPACE, "literal"), "literal"
+                    )
+
+                sxw.writer.endElementNS((SPARQL_XML_NAMESPACE, "binding"), "binding")
+
+        sxw.write_end_result()
+    sxw.close()
+    return stream.getvalue().decode("utf8")
