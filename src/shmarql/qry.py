@@ -92,7 +92,7 @@ def do_query(query: str) -> dict:
             accept_header = "application/sparql-results+json"
         headers = {
             "Accept": accept_header,
-            "User-Agent": "SCHMARQL/2024 (https://shmarql.com/ ep@epoz.org)",
+            "User-Agent": "SHMARQL/2024 (https://shmarql.com/ ep@epoz.org)",
         }
 
         data = {
