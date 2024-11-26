@@ -52,6 +52,7 @@ def do_query(query: str) -> dict:
                 FTS_FILEPATH
             ),
             "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
+            "fizzy:ftsStats": fizzysearch.use_fts_stats(FTS_FILEPATH),
             "fizzy:rdf2vec": fizzysearch.use_rdf2vec(RDF2VEC_FILEPATH),
         },
     )
