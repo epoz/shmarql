@@ -323,7 +323,10 @@ def shmarql_get(
             if format == "turtle":
                 return Response(
                     results["data"],
-                    headers={"Content-Type": "text/turtle"},
+                    headers={
+                        "Content-Type": "text/turtle",
+                        "Access-Control-Allow-Origin": "*",
+                    },
                 )
             try:
                 # if format is not turtle, but the results are bytes, try to parse it and return as json
@@ -343,6 +346,7 @@ def shmarql_get(
                 headers={
                     "Content-Type": "application/sparql-results+xml",
                     "Content-Disposition": f"attachment; filename={hash_query(query)}.xml",
+                    "Access-Control-Allow-Origin": "*",
                 },
             )
 
@@ -354,6 +358,7 @@ def shmarql_get(
                 headers={
                     "Content-Type": "text/csv",
                     "Content-Disposition": f"attachment; filename={hash_query(query)}.csv",
+                    "Access-Control-Allow-Origin": "*",
                 },
             )
         if format == "json":
@@ -363,6 +368,7 @@ def shmarql_get(
                 json.dumps(results, indent=2),
                 headers={
                     "Content-Type": "application/sparql-results+json",
+                    "Access-Control-Allow-Origin": "*",
                 },
             )
 
