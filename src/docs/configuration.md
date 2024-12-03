@@ -13,6 +13,12 @@ When set to 1, more debug info is printed to the logs.
 docker run -e DEBUG=1 --rm ghcr.io/epoz/shmarql:latest
 ```
 
+## SPARQL_QUERY_UI
+
+Default is 1
+
+When set to 0, does not display a browsable SPARQL UI on the /sparql endpoint.
+
 ## ENDPOINT
 
 The address of a SPARQL triplestore to which queries are made. eg.

@@ -38,5 +38,6 @@ nav:
   - Introduction: index.md
   - Advanced Searching: fizzysearch.md
   - Configuration:
+    - List of Configuration Options: configuration.md
     - With existing websites: proxy.md
     - Using other triplestores: endpoints.md
