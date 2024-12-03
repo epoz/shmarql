@@ -15,7 +15,7 @@ The above will provide a Shmarql view of a Virtuoso instance running on an IP ad
 
 ## Multiple Endpoints
 
-It is also possible to have multiple endpoints exposed, for performance, reliability or testing reasons. Use the ENDPOINTS variable, with a space-seprated list of addresses prefixed with a name + | symbol, for example:
+It is also possible to have multiple endpoints exposed, for performance, reliability or testing reasons. Use the ENDPOINTS variable, with a space-separated list of addresses prefixed with a name + | symbol, for example:
 
 `virtuoso|http://192.168.1.15:8890/sparql qlever|http://192.168.1.15:7019/`
 
