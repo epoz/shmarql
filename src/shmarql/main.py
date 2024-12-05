@@ -1,9 +1,10 @@
-import logging, csv, io, string, json
+import logging, csv, io, string, json, os
 from urllib.parse import quote
 from fasthtml.common import *
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
-from .config import PREFIXES_SNIPPET, MOUNT, SPARQL_QUERY_UI
+from .config import PREFIXES_SNIPPET, MOUNT, SPARQL_QUERY_UI, SCHPIEL_PATH, SITE_URI
+
 from .qry import do_query, hash_query
 
 app = FastHTML(
@@ -201,6 +202,15 @@ def fragments_sparql(query: str):
                             style="margin-left: 1ch",
                         ),
                         fizzyquery,
+                        cls="border border-gray-300 px-4 py-2 text-sm",
+                    )
+                )
+            elif value.get("type") == "bnode":
+                row_columns.append(
+                    Td(
+                        Span(
+                            value["value"], style="font-size: 80%; font-style: italic"
+                        ),
                         cls="border border-gray-300 px-4 py-2 text-sm",
                     )
                 )
@@ -497,11 +507,38 @@ def sparql_get(request: Request, query: str = "select * where {?s ?p ?o} limit 1
     return shmarql_get(request, query)
 
 
+# Why the strange position of this import statement?
+# This means that it overrides the static page serving below, but not the main "built-in" functionalities
 from .ext import *
 
 
+def entity_check(iri: str):
+    q = f"SELECT * WHERE {{ <{iri}> ?p ?o }}"
+    res = do_query(q)
+    return len(res.get("results", {}).get("bindings", [])) > 0
+
+
 @app.get(MOUNT + "{fname:path}")
-def getter(fname: str):
+def getter(request: Request, fname: str):
+    new_name = fname
+    if fname.startswith("/"):
+        new_name = fname[1:]
     if fname == "" or fname.endswith("/"):
-        fname += "index.html"
-    return FileResponse(f"site/{fname}")
+        new_name += "index.html"
+
+    if SCHPIEL_PATH:
+        path_to_try = os.path.join(SCHPIEL_PATH, new_name)
+        if os.path.exists(path_to_try):
+            return FileResponse(path_to_try)
+
+    path_to_try = os.path.join(os.getcwd(), "site", new_name)
+    if os.path.exists(path_to_try):
+        return FileResponse(path_to_try)
+
+    if SITE_URI and entity_check(SITE_URI + fname):
+        return shmarql_get(
+            request=request, query=make_spo(SITE_URI + fname, "s", encode=False)
+        )
+
+    # The default 404 from FileResponse leaks the path, make it simpler:
+    raise HTTPException(404, f"File not found {fname}")
