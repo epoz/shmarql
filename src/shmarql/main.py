@@ -288,12 +288,7 @@ def json_results_to_csv(results: dict):
     return output.getvalue()
 
 
-@app.get(f"{MOUNT}shmarql")
-def shmarql_get(
-    request: Request,
-    query: str = "select * where {?s ?p ?o} limit 10",
-    format: str = "html",
-):
+def accept_header_to_format(request: Request) -> str:
     accept_header = request.headers.get("accept")
     accept_headers_incoming = []
     if accept_header:
@@ -317,15 +312,22 @@ def shmarql_get(
 
     for ah, _ in sorted(accept_headers.items(), reverse=True, key=lambda x: x[1]):
         if ah.startswith("application/sparql-results+json"):
-            format = "json"
-            break
+            return "json"
         if ah.startswith("text/turtle"):
-            format = "turtle"
-            break
+            return "turtle"
         if ah.startswith("application/sparql-results+xml"):
-            format = "xml"
-            break
+            return "xml"
 
+    return "html"
+
+
+@app.get(f"{MOUNT}shmarql")
+def shmarql_get(
+    request: Request,
+    query: str = "select * where {?s ?p ?o} limit 10",
+    format: str = "html",
+):
+    format = accept_header_to_format(request)
     if format in ("csv", "json", "turtle", "xml"):
         results = do_query(query)
 
@@ -503,7 +505,10 @@ def sparql_post(request: Request, query: str):
 
 
 @app.get(f"{MOUNT}sparql")
-def sparql_get(request: Request, query: str = "select * where {?s ?p ?o} limit 10"):
+def sparql_get(
+    request: Request,
+    query: str = "select distinct ?Concept where {[] a ?Concept} LIMIT 999",
+):
     return shmarql_get(request, query)
 
 
@@ -535,9 +540,17 @@ def getter(request: Request, fname: str):
     if os.path.exists(path_to_try):
         return FileResponse(path_to_try)
 
-    if SITE_URI and entity_check(SITE_URI + fname):
+    iri = SITE_URI + fname
+    if SITE_URI and entity_check(iri):
+        format = accept_header_to_format(request)
+        if format == "html":
+            q = f"SELECT ?p ?o WHERE {{ <{iri}> ?p ?o }}"
+        else:
+            q = f"CONSTRUCT {{ <{iri}> ?p ?o }} WHERE {{ <{iri}> ?p ?o }}"
+
         return shmarql_get(
-            request=request, query=make_spo(SITE_URI + fname, "s", encode=False)
+            request=request,
+            query=q,
         )
 
     # The default 404 from FileResponse leaks the path, make it simpler:
