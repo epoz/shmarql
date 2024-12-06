@@ -33,6 +33,9 @@ ENDPOINTS = {name: url for name, url in ens_pairs}
 SCHEME = os.environ.get("SCHEME", "http://")
 DOMAIN = os.environ.get("DOMAIN", "127.0.0.1")
 PORT = os.environ.get("PORT", "5001")
+# Note, we can't just build a SITE_URI from the above variables because the
+# app might be running behind a reverse proxy
+SITE_URI = os.environ.get("SITE_URI", "http://127.0.0.1:8000/")
 
 # This is a mountpoint that will be prefixed to all URIs served by the application
 MOUNT = os.environ.get("MOUNT", "/")
@@ -59,6 +62,7 @@ SITE_ID = os.environ.get(
     "SITE_ID", "".join([random.choice("abcdef0123456789") for _ in range(10)])
 )
 
+SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 DEFAULT_PREFIXES = {
