@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "shmarql"
+version = "0.46"
+description = "A Linked Data publishing platform for semantic web professionals in a hurry."
+authors = ["Etienne Posthumus <ep@epoz.org>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://shmarql.com/"
+repository = "https://github.com/epoz/shmarql"
+keywords = ["SPARQL", "search", "RDF", "Linked Data"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fizzysearch = "^0.28"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
