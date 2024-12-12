@@ -1,4 +1,4 @@
-site_name: Shmarql
+site_name: SHMARQL
 site_url: https://shmarql.com/
 repo_url: https://github.com/epoz/shmarql
 theme:
@@ -14,6 +14,7 @@ theme:
     - toc.follow
     - navigation.top
     - header.autohide
+    - content.code.annotate
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -27,13 +28,21 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 markdown_extensions:
+  - shmarql
   - pymdownx.highlight:
       anchor_linenums: true
       linenums: true
+      use_pygments: true
+      pygments_lang_class: true      
   - pymdownx.superfences
   - admonition
   - pymdownx.details
-
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji 
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg  
+extra_javascript:
+  - javascripts/extra.js
 nav:
   - Introduction: index.md
   - Advanced Searching: fizzysearch.md
