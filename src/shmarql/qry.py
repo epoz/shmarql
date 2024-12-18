@@ -45,17 +45,21 @@ def cached_query(query: str, endpoint: str = None):
 def do_query(query: str) -> dict:
     to_use = ENDPOINT
 
-    rewritten = fizzysearch.rewrite(
-        query,
-        {
-            "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
-                FTS_FILEPATH
-            ),
-            "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
-            "fizzy:ftsStats": fizzysearch.use_fts_stats(FTS_FILEPATH),
-            "fizzy:rdf2vec": fizzysearch.use_rdf2vec(RDF2VEC_FILEPATH),
-        },
-    )
+    try:
+        rewritten = fizzysearch.rewrite(
+            query,
+            {
+                "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
+                    FTS_FILEPATH
+                ),
+                "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
+                "fizzy:ftsStats": fizzysearch.use_fts_stats(FTS_FILEPATH),
+                "fizzy:rdf2vec": fizzysearch.use_rdf2vec(RDF2VEC_FILEPATH),
+            },
+        )
+    except Exception as e:
+        logging.exception(f"Problem with fizzysearch: {e}")
+        return {"error": f"Fizzysearch rewriting error: {e}"}
 
     for comment in rewritten["comments"]:
         logging.debug(f"fizzysearch SPARQL Comment: {comment}")

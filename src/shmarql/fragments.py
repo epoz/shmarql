@@ -1,6 +1,6 @@
 from urllib.parse import quote
 from fasthtml.common import *
-from .main import app
+from .main import app, BTN_STYLE
 from .config import MOUNT
 from .qry import do_query
 
@@ -43,6 +43,83 @@ def fragments_sparql(query: str):
                 style="max-height: 30vh; overflow: auto;",
             ),
         )
+    return build_plain_table(results, query)
+
+
+def build_plain_table(results: dict, query: str):
+    table_rows = []
+    heads = [Th(" ")]
+    heads.extend(
+        [
+            Th(var, style="font-weight: bold")
+            for var in results.get("head", {}).get("vars", [])
+        ]
+    )
+    rownum = 0
+    for row in results.get("results", {}).get("bindings", []):
+        rownum += 1
+        row_columns = []
+        row_columns.append(
+            Td(
+                rownum,
+                style="padding-right: 0.75ch; font-size: 75%; color: #aaa; text-align: right;",
+            )
+        )
+        for var in results.get("head", {}).get("vars", []):
+            value = row.get(var, {"value": ""})
+            if value.get("type") == "uri":
+                S_query = make_spo(value["value"], "s")
+
+                row_columns.append(
+                    Td(
+                        A(
+                            value["value"],
+                            href=make_spo(value["value"], "s"),
+                            style="margin-left: 1ch",
+                        )
+                    )
+                )
+            elif value.get("type") == "bnode":
+                row_columns.append(
+                    Td(
+                        Span(
+                            value["value"], style="font-size: 80%; font-style: italic"
+                        ),
+                    )
+                )
+            else:
+                lang = (
+                    Span(
+                        value.get("xml:lang"),
+                        style="font-size: 80%; vertical-align: super;",
+                    )
+                    if "xml:lang" in value
+                    else None
+                )
+
+                row_columns.append(
+                    Td(Span(value["value"], style="margin-left: 1ch"), lang)
+                )
+        table_rows.append(Tr(*row_columns))
+    cached = " (from cache) " if results.get("cached") else ""
+
+    duration_display = (
+        f"{int(results.get('duration', 0) * 1000)}ms"
+        if results.get("duration", 0) < 1
+        else f"{results.get('duration', 0):.3f}s"
+    )
+
+    return Div(
+        P(
+            f"{len(results.get('results', {}).get('bindings', []))} results in {duration_display}{cached}",
+            style="font-size: 50%;",
+            title="used: " + results.get("endpoint_name", ""),
+        ),
+        Table(Thead(Tr(*heads)), Tbody(*table_rows), data_tipe="sparql-results"),
+    )
+
+
+def build_standalone_table(results, query):
     table_rows = []
     heads = [Th(" ")]
     heads.extend(
