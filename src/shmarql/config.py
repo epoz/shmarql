@@ -106,10 +106,10 @@ try:
                 if len(parts) < 2:
                     continue
                 prefix = parts[0][8:] + ":"
-                prefix_uri = "".join(parts[1:]).strip("<> ")
+                prefix_uri = ":".join(parts[1:]).strip("<> ")
                 if prefix == ":":
                     prefix = " "
-                PREFIXES[prefix] = prefix_uri
+                PREFIXES[prefix_uri] = prefix
         else:
             PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
     else:
