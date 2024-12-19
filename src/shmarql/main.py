@@ -1,9 +1,16 @@
-import logging, csv, io, string, json, os
+import csv, io, string, json, os
 from urllib.parse import quote
 from fasthtml.common import *
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
-from .config import PREFIXES_SNIPPET, MOUNT, SPARQL_QUERY_UI, SCHPIEL_PATH, SITE_URI
+from .config import (
+    PREFIXES_SNIPPET,
+    MOUNT,
+    SPARQL_QUERY_UI,
+    SCHPIEL_PATH,
+    SITE_URI,
+    log,
+)
 
 from .qry import do_query, hash_query
 
@@ -213,6 +220,7 @@ def entity_check(iri: str):
 @app.get(MOUNT + "{fname:path}")
 @app.get("/{fname:path}")
 def getter(request: Request, fname: str):
+    log.debug(f"Getter on {fname}")
     new_name = fname
     if fname.startswith("/"):
         new_name = fname[1:]
@@ -225,10 +233,19 @@ def getter(request: Request, fname: str):
             return FileResponse(path_to_try)
 
     path_to_try = os.path.join(os.getcwd(), "site", new_name)
+    if MOUNT:
+        path_to_try = os.path.join(
+            os.getcwd(), "site", new_name.replace(MOUNT[1:], "", 1)
+        )
+    else:
+        path_to_try = os.path.join(os.getcwd(), "site", new_name)
+
+    log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
         return FileResponse(path_to_try)
 
     iri = SITE_URI + fname
+    log.debug(f"Entity Checking {iri}")
     if SITE_URI and entity_check(iri):
         format = accept_header_to_format(request)
         if format == "html":
