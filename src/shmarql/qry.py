@@ -61,10 +61,17 @@ def do_query(query: str) -> dict:
         logging.exception(f"Problem with fizzysearch: {e}")
         return {"error": f"Fizzysearch rewriting error: {e}"}
 
+    shmarql_settings = {}
     for comment in rewritten["comments"]:
         logging.debug(f"fizzysearch SPARQL Comment: {comment}")
         if comment.find("shmarql-engine:") > -1:
             to_use = ENDPOINTS.get(comment.split(" ")[-1])
+        if comment.startswith("shmarql-"):
+            comment_value = [x.strip(" ") for x in comment[8:].split(":")]
+            if len(comment_value) > 1:
+                shmarql_settings.setdefault(comment_value[0], []).append(
+                    ":".join(comment_value[1:])
+                )
 
     query = rewritten.get("rewritten", query)
     logging.debug(f"fizzysearch rewritten query: {query[:1000]}...{query[-1000:]}")
@@ -129,6 +136,7 @@ def do_query(query: str) -> dict:
         result["duration"] = duration
         result["endpoint_name"] = endpoint_name
         result["endpoint"] = to_use
+        result["shmarql_settings"] = shmarql_settings
 
         thequerydb = sqlite3.connect(QUERIES_DB)
         thequerydb.execute(
