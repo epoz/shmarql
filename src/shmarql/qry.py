@@ -93,7 +93,7 @@ def do_query(query: str) -> dict:
     if to_use == "__local__":
         try:
             qquery = PREFIXES_SNIPPET + "\n" + query
-            r = GRAPH.query(qquery)
+            r = GRAPH.query(qquery, use_default_graph_as_union=True)
             result = OxigraphSerialization(r).json()
         except Exception as e:
             return {"error": str(e)}
