@@ -5,4 +5,5 @@ rdflib==7.1.1
 pyoxigraph==0.4.1
 fizzysearch==0.28
 mkdocs-material==9.5.42
+sqlite_minutils==4.0.3
 shmarql==0.46
