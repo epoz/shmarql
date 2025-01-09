@@ -1,4 +1,5 @@
 from urllib.parse import quote
+import random
 from fasthtml.common import *
 from .main import app
 from .config import MOUNT, PREFIXES_SNIPPET, PREFIXES
@@ -9,11 +10,15 @@ BTN_STYLE = "bg-slate-300 hover:bg-slate-400 text-black px-2 rounded-lg shadow-x
 
 
 class HashableResult:
+    """
+    This class is used to make the results of a SPARQL query hashable.
+    Convenience that you can then add them to a set or dict, or sort them.
+    """
+
     def __init__(self, value):
         self.value = value
 
     def __hash__(self):
-        # Custom hash function
         return hash(self.value.get("value"))
 
     def __eq__(self, other):
@@ -65,7 +70,7 @@ def do_prefixes(iris: Union[str, list]):
     return " ".join(buf)
 
 
-def make_spo(uri: str, spo: str, encode=True, limit=999):
+def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
     uri = f"<{uri}>"
     tp = dict([(c, f"?{c}") for c in "spo"])
     if spo not in ("s", "p", "o"):
@@ -75,7 +80,7 @@ def make_spo(uri: str, spo: str, encode=True, limit=999):
     tp[spo] = uri
     vars = " ".join([vars[c] for c in "spo"])
     tp = " ".join([tp[c] for c in "spo"])
-    Q = f"select {vars} where {{ {tp} }} limit {limit}"
+    Q = f"{extra}select {vars} where {{ {tp} }} limit {limit}"
     if encode:
         return quote(Q)
     else:
@@ -109,7 +114,7 @@ def fragments_sparql(query: str, results=None):
 
 def build_plain_table(query: str, results: dict):
     table_rows = []
-    heads = [Th(" ")]
+    heads = [Th("#", style="color: #aaa; text-align: right;")]
     heads.extend(
         [
             Th(var, style="font-weight: bold")
@@ -123,21 +128,51 @@ def build_plain_table(query: str, results: dict):
         row_columns.append(
             Td(
                 rownum,
-                style="padding-right: 0.75ch; font-size: 75%; color: #aaa; text-align: right;",
+                style="color: #aaa; text-align: right;",
             )
         )
         for var in results.get("head", {}).get("vars", []):
             value = row.get(var, {"value": ""})
             if value.get("type") == "uri":
                 S_query = make_spo(value["value"], "s")
+                P_query = make_spo(value["value"], "p")
+                O_query = make_spo(value["value"], "o")
 
+                nonce = random.randint(0, pow(2, 32))
+
+                if var in ("s", "p", "o"):
+                    var_spo = var
+                else:
+                    var_spo = "s"
+
+                extra = """# shmarql-editor: hide
+                # shmarql-view: resource
+"""
                 row_columns.append(
                     Td(
                         A(
-                            value["value"],
-                            href=make_spo(value["value"], "s"),
-                            style="margin-left: 1ch",
-                        )
+                            do_prefixes(value["value"]),
+                            href="sparql?query="
+                            + make_spo(value["value"], var_spo, extra=extra),
+                        ),
+                        Div(
+                            A(
+                                "S",
+                                href=f"{MOUNT}shmarql?query={S_query}",
+                                style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
+                            ),
+                            A(
+                                "P",
+                                href=f"{MOUNT}shmarql?query={P_query}",
+                                style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
+                            ),
+                            A(
+                                "O",
+                                href=f"{MOUNT}shmarql?query={O_query}",
+                                style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
+                            ),
+                            style="font-size: 80%; display: inline-block; margin-left: 0.5em;",
+                        ),
                     )
                 )
             elif value.get("type") == "bnode":
@@ -158,9 +193,7 @@ def build_plain_table(query: str, results: dict):
                     else None
                 )
 
-                row_columns.append(
-                    Td(Span(value["value"], style="margin-left: 1ch"), lang)
-                )
+                row_columns.append(Td(Span(value["value"]), lang))
         table_rows.append(Tr(*row_columns))
     cached = " (from cache) " if results.get("cached") else ""
 
@@ -213,6 +246,7 @@ def fragments_resource(results):
     for title_field in (
         "https://schema.org/name",
         "http://www.w3.org/2000/01/rdf-schema#label",
+        "http://www.w3.org/2004/02/skos/core#prefLabel",
     ):
         if title_field in data:
             title = list(data[title_field])[0]
@@ -259,10 +293,13 @@ def fragments_resource(results):
                     else:
                         v_label_list.append(Span(v_label[0], style="margin-right: 1em"))
             else:
-                v_label_list.append(Span(v["value"]))
+                v_label_list.append(
+                    A(v["value"], href="sparql?query=" + make_spo(v["value"], "o"))
+                )
+        P_query = "sparql?query=" + make_spo(field, "p")
         ba(
             (
-                H3(do_prefixes(field), style="margin: 0.5em 0 0 0"),
+                H3(A(do_prefixes(field), href=P_query), style="margin: 0.5em 0 0 0"),
                 P(
                     *[vv for vv in v_label_list],
                     style="font-size: 120%; margin: 0",
@@ -290,7 +327,7 @@ def build_standalone_table(results, query):
         row_columns.append(
             Td(
                 rownum,
-                style="padding-right: 0.75ch; font-size: 75%; color: #aaa; text-align: right;",
+                style="padding-right: 0.75ch; color: #aaa; text-align: right;",
             )
         )
         for var in results.get("head", {}).get("vars", []):
