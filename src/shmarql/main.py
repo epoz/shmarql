@@ -253,7 +253,7 @@ def getter(request: Request, fname: str):
 # shmarql-view: resource
 # shmarql-editor: hide
 
-SELECT ?p ?o WHERE {{ 
+SELECT ?p ?o ?pp ?oo WHERE {{ 
   <{iri}> ?p ?o .
   OPTIONAL {{
     ?o ?pp ?oo .
