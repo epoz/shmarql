@@ -1,5 +1,5 @@
 from urllib.parse import quote
-import random
+import random, json
 from fasthtml.common import *
 from .main import app
 from .config import MOUNT, PREFIXES_SNIPPET, PREFIXES
@@ -72,15 +72,14 @@ def do_prefixes(iris: Union[str, list]):
 
 def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
     uri = f"<{uri}>"
-    tp = dict([(c, f"?{c}") for c in "spo"])
     if spo not in ("s", "p", "o"):
         return f"select ?s ?p ?o where {{ ?s ?p ?o }} limit {limit}"
-    vars = tp.copy()
-    vars[spo] = ""
-    tp[spo] = uri
-    vars = " ".join([vars[c] for c in "spo"])
-    tp = " ".join([tp[c] for c in "spo"])
-    Q = f"{extra}select {vars} where {{ {tp} }} limit {limit}"
+
+    Q = f"""{extra}select ?s ?p ?o where {{ 
+  values ?{spo} {{ {uri} }} 
+  ?s ?p ?o .
+}} limit {limit}"""
+
     if encode:
         return quote(Q)
     else:
@@ -94,6 +93,9 @@ def fragments_sparql(query: str, results=None):
         query = "select * where {?s ?p ?o} limit 10"
     if results is None:
         results = do_query(query)
+
+    settings = results.get("shmarql_settings", {})
+
     if "data" in results:  # this was a construct query
         return Div(Pre(results["data"]))
     if "error" in results:
@@ -109,7 +111,13 @@ def fragments_sparql(query: str, results=None):
                 style="max-height: 30vh; overflow: auto;",
             ),
         )
-    return build_plain_table(query, results)
+
+    if "resource" in settings.get("view", []):
+        return Html(fragments_resource(results))
+    if "barchart" in settings.get("view", []):
+        return Html(fragments_chart(query))
+    else:
+        return Html(build_plain_table(query, results))
 
 
 def build_plain_table(query: str, results: dict):
@@ -145,16 +153,20 @@ def build_plain_table(query: str, results: dict):
                 else:
                     var_spo = "s"
 
-                extra = """# shmarql-editor: hide
-                # shmarql-view: resource
-"""
+                q = f"""
+# shmarql-view: resource
+# shmarql-editor: hide
+
+SELECT ?p ?o ?pp ?oo WHERE {{ 
+  <{value["value"]}> ?p ?o .
+  OPTIONAL {{
+    ?o ?pp ?oo .
+  }}
+}}"""
+
                 row_columns.append(
                     Td(
-                        A(
-                            do_prefixes(value["value"]),
-                            href="sparql?query="
-                            + make_spo(value["value"], var_spo, extra=extra),
-                        ),
+                        A(do_prefixes(value["value"]), href="sparql?query=" + quote(q)),
                         Div(
                             A(
                                 "S",
@@ -449,41 +461,48 @@ def build_standalone_table(results, query):
 
 # See: https://www.chartjs.org/docs/latest/getting-started/integration.html
 @app.get(f"{MOUNT}shmarql/fragments/chart")
-def fragments_chart(query: str):
-    return """
-<div>
-  <canvas id="myChart"></canvas>
-</div>
+def fragments_chart(query: str, results=None):
+    if results is None:
+        results = do_query(query)
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    settings = results.get("shmarql_settings", {})
+    label = settings.get("label", "Unlabeled Dataset")
 
-<script>
-  const ctx = document.getElementById('myChart');
+    labels = []
+    values = []
+    for row in results.get("results", {}).get("bindings", []):
+        labels.append(do_prefixes(row.get("label", {"value": ""})["value"]))
+        values.append(row.get("value", {"value": 0})["value"])
+
+    return (
+        Script(src="https://cdn.jsdelivr.net/npm/chart.js"),
+        Div(Canvas(id="myChart")),
+        Script(
+            """
+setTimeout(function() {
+const ctx = document.getElementById('myChart');
 
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: [
-    'Abstract, Non-representational Art',
-    'Religion and Magic',
-    'Nature',
-    'Human Being, Man in General',
-    'Society, Civilization, Culture',
-    'Abstract Ideas and Concepts',
-    'History',
-    'Bible',
-    'Literature',
-    'Classical Mythology and Ancient History'
-],
+      labels: """
+            + json.dumps(labels)
+            + """,
       datasets: [{
-        label: "ICONCLASS",
-        data: [13, 189234, 397281, 370052, 801637, 67315, 162090, 129660, 48452, 80144],
+        label: """
+            + json.dumps(label)
+            + """,
+        data: """
+            + json.dumps(values)
+            + """ ,
         borderWidth: 1
       }]
     }
-  });
-</script>
+  });            
+}, 300);
 """
+        ),
+    )
 
 
 def build_sparql_ui(query, results):
@@ -507,6 +526,8 @@ def build_sparql_ui(query, results):
 
     if "resource" in settings.get("view", []):
         results_fragment = Div(fragments_resource(results), cls="md-typeset")
+    if "barchart" in settings.get("view", []):
+        results_fragment = Div(fragments_chart(query), cls="md-typeset")
     else:
         results_fragment = Div(fragments_sparql(query, results), cls="md-typeset")
 
@@ -549,6 +570,75 @@ def build_sparql_ui(query, results):
             style="margin-top: 2vh;",  # max-height: 50vh; overflow-y: scroll
         ),
         Script(
-            'const link = document.createElement("link");\r\n  link.rel = "stylesheet";\r\n  link.href = "/shmarql/static/codemirror.css";\r\n  document.head.appendChild(link);\r\n\r\n\r\ndocument.addEventListener("DOMContentLoaded", function () {\r\n  sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {\r\n    mode: "application/sparql-query",\r\n    matchBrackets: true,\r\n    lineNumbers: true,\r\n  });\r\n  results = document.getElementById("results");\r\n});\r\n\r\nfunction executeQuery() {  \r\n    let the_query = sparqleditor.doc.getValue();    \r\n    results.innerHTML = \'<div aria-busy="true">Loading...</div>\';\r\n    history.pushState({ query: the_query }, "", "shmarql?query=" + encodeURIComponent(the_query));\r\n    queryStarted = Date.now();\r\n    progress_counter = setTimeout(updateProgress, 1000);\r\n    fetch(`/shmarql/fragments/sparql`, {\r\n        method: "POST",\r\n        headers: {\r\n            "Content-Type": "application/x-www-form-urlencoded"\r\n        },\r\n        body: `query=${encodeURIComponent(the_query)}`\r\n    }).then(response => response.text()).then(data => {        \r\n        if(progress_counter) {\r\n            clearTimeout(progress_counter);\r\n        }\r\n        results.innerHTML = data;\r\n        var tables = document.querySelectorAll("table[data-tipe=\'sparql-results\']");\r\n        tables.forEach(function(table) {            \r\n                new Tablesort(table)            \r\n        })        \r\n    })\r\n\r\n}\r\n\r\nfunction updateProgress() {\r\n    let progress = Math.round((Date.now() - queryStarted) / 1000);\r\n    results.innerHTML = `<div aria-busy="true">Query in progress, took ${progress}s so far...</div>`;\r\n    progress_counter = setTimeout(updateProgress, 1000);\r\n}\r\n\r\ndocument.body.addEventListener("keypress", function (evt) {\r\n    if (evt.ctrlKey && evt.key === "Enter") {\r\n        evt.preventDefault();\r\n        executeQuery()\r\n    }\r\n});'
+            """
+const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "/shmarql/static/codemirror.css";
+  document.head.appendChild(link);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    mode: "application/sparql-query",
+    matchBrackets: true,
+    lineNumbers: true,
+  });
+  results = document.getElementById("results");
+});
+
+function executeQuery() {
+    let the_query = sparqleditor.doc.getValue();
+    results.innerHTML = '<div aria-busy="true">Loading...</div>';
+    history.pushState({ query: the_query }, "", "shmarql?query=" + encodeURIComponent(the_query));
+    queryStarted = Date.now();
+    progress_counter = setTimeout(updateProgress, 1000);
+    fetch(`/shmarql/fragments/sparql`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `query=${encodeURIComponent(the_query)}`
+    }).then(response => response.text()).then(data => {
+        if(progress_counter) {
+            clearTimeout(progress_counter);
+        }
+        results.innerHTML = data;
+        const scripts = results.querySelectorAll("script");
+            scripts.forEach((script) => {
+                const newScript = document.createElement("script");
+                if (script.src) {
+                    newScript.src = script.src;
+                    newScript.async = false; // To preserve execution order if needed
+                } else {
+                    newScript.textContent = script.textContent;
+                }
+                document.body.appendChild(newScript);
+                document.body.removeChild(newScript);
+        });
+
+
+
+
+        var tables = document.querySelectorAll("table[data-tipe='sparql-results']");
+        tables.forEach(function(table) {
+                new Tablesort(table)
+        })
+    })
+
+}
+
+function updateProgress() {
+    let progress = Math.round((Date.now() - queryStarted) / 1000);
+    results.innerHTML = `<div aria-busy="true">Query in progress, took ${progress}s so far...</div>`;
+    progress_counter = setTimeout(updateProgress, 1000);
+}
+
+document.body.addEventListener("keypress", function (evt) {
+    if (evt.ctrlKey && evt.key === "Enter") {
+        evt.preventDefault();
+        executeQuery()
+    }
+});
+"""
         ),
     )
