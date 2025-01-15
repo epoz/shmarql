@@ -73,6 +73,10 @@ docker run -e MOUNT=/yoga/ -e DATA_LOAD_PATHS=https://yogaontology.org/ontology.
 
 And now, you would access this from the browser at http://127.0.0.1:8000/yoga/shmarql
 
+## SITEDOCS_PATH
+
+The default behaviour is to compile all docs found in the ./src/docs/ folder of the container to ./src/site/ with [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) and serve those documents as the content of your site. If you would like to override this, you can specify a different path on the filesystem inside the container to use with this configuration.
+
 ## SCHPIEL_PATH
 
 A path to a location from which files will be served over HTTP. These files are "overlayed" into the files served from the docs folder, and have priority over the docs. So you can replace items in the docs folder by files from here. See also the `MOUNT` configuration option.
