@@ -62,6 +62,7 @@ SITE_ID = os.environ.get(
     "SITE_ID", "".join([random.choice("abcdef0123456789") for _ in range(10)])
 )
 
+SITEDOCS_PATH = os.environ.get("SITEDOCS_PATH", os.path.join(os.getcwd(), "site"))
 SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")

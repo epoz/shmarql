@@ -75,9 +75,18 @@ def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
     if spo not in ("s", "p", "o"):
         return f"select ?s ?p ?o where {{ ?s ?p ?o }} limit {limit}"
 
-    Q = f"""{extra}select ?s ?p ?o where {{ 
+    if spo == "s":
+        tolabel = "o"
+    else:
+        tolabel = "s"
+
+    Q = f"""{extra}select ?s ?p ?o ?{tolabel}label where {{ 
   values ?{spo} {{ {uri} }} 
   ?s ?p ?o .
+  optional {{
+    ?{tolabel} rdfs:label ?{tolabel}label .    
+  }}
+  
 }} limit {limit}"""
 
     if encode:
@@ -166,21 +175,24 @@ SELECT ?p ?o ?pp ?oo WHERE {{
 
                 row_columns.append(
                     Td(
-                        A(do_prefixes(value["value"]), href="sparql?query=" + quote(q)),
+                        A(
+                            do_prefixes(value["value"]),
+                            href=f"{MOUNT}shmarql/?query=" + quote(q),
+                        ),
                         Div(
                             A(
                                 "S",
-                                href=f"{MOUNT}shmarql?query={S_query}",
+                                href=f"{MOUNT}shmarql/?query={S_query}",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             A(
                                 "P",
-                                href=f"{MOUNT}shmarql?query={P_query}",
+                                href=f"{MOUNT}shmarql/?query={P_query}",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             A(
                                 "O",
-                                href=f"{MOUNT}shmarql?query={O_query}",
+                                href=f"{MOUNT}shmarql/?query={O_query}",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             style="font-size: 80%; display: inline-block; margin-left: 0.5em;",
@@ -270,7 +282,12 @@ def fragments_resource(results):
     if rdf_type:
         skip_fields.append("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
         rdf_types = [
-            Span(do_prefixes(str(x)), style="margin-right: 0.5em") for x in rdf_type
+            A(
+                do_prefixes(str(x)),
+                href=f"{MOUNT}shmarql/?query=" + make_spo(x, "o"),
+                style="margin-right: 0.5em",
+            )
+            for x in rdf_type
         ]
 
         ba(P("a ", *rdf_types, style="font-style: italic;"))
@@ -306,9 +323,12 @@ def fragments_resource(results):
                         v_label_list.append(Span(v_label[0], style="margin-right: 1em"))
             else:
                 v_label_list.append(
-                    A(v["value"], href="sparql?query=" + make_spo(v["value"], "o"))
+                    A(
+                        v["value"],
+                        href=f"{MOUNT}shmarql/?query=" + make_spo(v["value"], "o"),
+                    )
                 )
-        P_query = "sparql?query=" + make_spo(field, "p")
+        P_query = f"{MOUNT}shmarql/?query=" + make_spo(field, "p")
         ba(
             (
                 H3(A(do_prefixes(field), href=P_query), style="margin: 0.5em 0 0 0"),
@@ -360,7 +380,7 @@ def build_standalone_table(results, query):
                     )
                     fizzyquery = A(
                         "✨",
-                        href="/sparql?query=" + fizzy_query,
+                        href="?query=" + fizzy_query,
                         title="Show items similar to this entity using fizzysearch",
                     )
                 else:
@@ -370,17 +390,17 @@ def build_standalone_table(results, query):
                     Td(
                         A(
                             "S",
-                            href=f"{MOUNT}shmarql?query={S_query}",
+                            href=f"{MOUNT}shmarql/?query={S_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "P",
-                            href=f"{MOUNT}shmarql?query={P_query}",
+                            href=f"{MOUNT}shmarql/?query={P_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
                             "O",
-                            href=f"{MOUNT}shmarql?query={O_query}",
+                            href=f"{MOUNT}shmarql/?query={O_query}",
                             style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                         ),
                         A(
@@ -404,7 +424,7 @@ def build_standalone_table(results, query):
             else:
                 o_link = A(
                     "O",
-                    href=f"{MOUNT}shmarql?query={make_literal_query(value)}",
+                    href=f"{MOUNT}shmarql/?query={make_literal_query(value)}",
                     style="font-size: 80%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                 )
                 lang = (
@@ -441,13 +461,13 @@ def build_standalone_table(results, query):
             A(
                 "CSV",
                 title="Download as CSV",
-                href=f"{MOUNT}shmarql?query={quote(query)}&format=csv",
+                href=f"{MOUNT}shmarql/?query={quote(query)}&format=csv",
                 cls=BTN_STYLE,
             ),
             A(
                 "JSON",
                 title="Download as JSON",
-                href=f"{MOUNT}shmarql?query={quote(query)}&format=json",
+                href=f"{MOUNT}shmarql/?query={quote(query)}&format=json",
                 cls=BTN_STYLE,
             ),
             cls="bg-slate-200 text-black p-2 flex flex-row gap-1 text-xs",
@@ -532,11 +552,11 @@ def build_sparql_ui(query, results):
         results_fragment = Div(fragments_sparql(query, results), cls="md-typeset")
 
     return (
-        Script(src="/shmarql/static/editor.js"),
-        Script(src="/shmarql/static/matchbrackets.js"),
-        Script(src="/shmarql/static/sparql.js"),
-        Script(src="/shmarql/static/surreal-1.3.0.js"),
-        Script(src="/shmarql/static/tablesort-5.3.0.min.js"),
+        Script(src=f"{MOUNT}static/editor.js"),
+        Script(src=f"{MOUNT}static/matchbrackets.js"),
+        Script(src=f"{MOUNT}static/sparql.js"),
+        Script(src=f"{MOUNT}static/surreal-1.3.0.js"),
+        Script(src=f"{MOUNT}static/tablesort-5.3.0.min.js"),
         sparql_editor_block_style_button,
         Div(
             Button(
@@ -570,13 +590,15 @@ def build_sparql_ui(query, results):
             style="margin-top: 2vh;",  # max-height: 50vh; overflow-y: scroll
         ),
         Script(
-            """
+            f"""
 const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "/shmarql/static/codemirror.css";
-  document.head.appendChild(link);
-
-
+  link.href = "{MOUNT}static/codemirror.css";
+  document.head.appendChild(link);"""
+        ),
+        Script(f"const MOUNT = '{MOUNT}';"),
+        Script(
+            """
 document.addEventListener("DOMContentLoaded", function () {
   sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: "application/sparql-query",
@@ -589,10 +611,11 @@ document.addEventListener("DOMContentLoaded", function () {
 function executeQuery() {
     let the_query = sparqleditor.doc.getValue();
     results.innerHTML = '<div aria-busy="true">Loading...</div>';
-    history.pushState({ query: the_query }, "", "shmarql?query=" + encodeURIComponent(the_query));
+    history.pushState({ query: the_query }, "", MOUNT+"shmarql/?query=" + encodeURIComponent(the_query));
     queryStarted = Date.now();
     progress_counter = setTimeout(updateProgress, 1000);
-    fetch(`/shmarql/fragments/sparql`, {
+    
+    fetch(`${MOUNT}shmarql/fragments/sparql`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"

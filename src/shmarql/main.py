@@ -7,6 +7,7 @@ from .config import (
     PREFIXES_SNIPPET,
     MOUNT,
     SPARQL_QUERY_UI,
+    SITEDOCS_PATH,
     SCHPIEL_PATH,
     SITE_URI,
     log,
@@ -35,6 +36,7 @@ def favicon():
 
 @app.get("/shmarql/static/{fname:path}")
 @app.get(MOUNT + "shmarql/static/{fname:path}")
+@app.get(MOUNT + "static/{fname:path}")
 def shmarql_get_static(fname: str):
     return FileResponse(f"static/{fname}")
 
@@ -233,13 +235,11 @@ def getter(request: Request, fname: str):
         if os.path.exists(path_to_try):
             return FileResponse(path_to_try)
 
-    path_to_try = os.path.join(os.getcwd(), "site", new_name)
+    path_to_try = os.path.join(SITEDOCS_PATH, new_name)
     if MOUNT:
-        path_to_try = os.path.join(
-            os.getcwd(), "site", new_name.replace(MOUNT[1:], "", 1)
-        )
+        path_to_try = os.path.join(SITEDOCS_PATH, new_name.replace(MOUNT[1:], "", 1))
     else:
-        path_to_try = os.path.join(os.getcwd(), "site", new_name)
+        path_to_try = os.path.join(SITEDOCS_PATH, new_name)
 
     log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
@@ -263,7 +263,7 @@ SELECT ?p ?o ?pp ?oo WHERE {{
         else:
             q = f"CONSTRUCT {{ <{iri}> ?p ?o }} WHERE {{ <{iri}> ?p ?o }}"
 
-        return RedirectResponse(f"{MOUNT}shmarql?query={quote(q)}")
+        return RedirectResponse(f"{MOUNT}shmarql/?query={quote(q)}")
 
     # The default 404 from FileResponse leaks the path, make it simpler:
     raise HTTPException(404, f"File not found {fname}")
