@@ -14,3 +14,5 @@ docker run --rm -it \
   -v $(pwd):/data -e DATA_LOAD_PATHS=/data \
   -p 8000:8000 ghcr.io/epoz/shmarql
 ```
+
+Now you can browse and query your data at [http://localhost8000:shmarql/](http://localhost:/shmarql/)
