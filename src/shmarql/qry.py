@@ -14,8 +14,6 @@ from .config import (
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, string_iterator
 
-print(" " * 20, time.time())
-
 
 def hash_query(query: str) -> str:
     return hashlib.md5(query.encode("utf8")).hexdigest()
@@ -58,12 +56,12 @@ def do_query(query: str) -> dict:
             },
         )
     except Exception as e:
-        logging.exception(f"Problem with fizzysearch: {e}")
+        log.exception(f"Problem with fizzysearch: {e}")
         return {"error": f"Fizzysearch rewriting error: {e}"}
 
     shmarql_settings = {}
     for comment in rewritten["comments"]:
-        logging.debug(f"fizzysearch SPARQL Comment: {comment}")
+        log.debug(f"fizzysearch SPARQL Comment: {comment}")
         if comment.find("shmarql-engine:") > -1:
             to_use = ENDPOINTS.get(comment.split(" ")[-1])
         if comment.startswith("shmarql-"):
@@ -74,7 +72,7 @@ def do_query(query: str) -> dict:
                 )
 
     query = rewritten.get("rewritten", query)
-    logging.debug(f"fizzysearch rewritten query: {query[:1000]}...{query[-1000:]}")
+    log.debug(f"fizzysearch rewritten query: {query[:1000]}...{query[-1000:]}")
 
     if not to_use:
         if len(ENDPOINTS) > 0:
@@ -84,9 +82,10 @@ def do_query(query: str) -> dict:
         else:
             return {"error": "No endpoint found"}
 
-    cached_query_result = cached_query(query)
-    if cached_query_result:
-        return cached_query_result
+    if not "nocache" in shmarql_settings:
+        cached_query_result = cached_query(query)
+        if cached_query_result:
+            return cached_query_result
 
     time_start = time.time()
     result = {}
@@ -120,7 +119,7 @@ def do_query(query: str) -> dict:
             elif r.status_code == 500:
                 return {"error": r.text}
         except:
-            logging.exception(f"Problem with {to_use}")
+            log.exception(f"Problem with {to_use}")
             return {"error": "Exception raised querying endpoint"}
 
     time_end = time.time()
@@ -151,7 +150,7 @@ def do_query(query: str) -> dict:
 
 
 def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
-
+    log.debug(f"Initialize graph with configs: {data_load_paths} and {store_path}")
     store_primary = True
     if store_path:
         log.debug(f"Opening store from {store_path}")
@@ -204,7 +203,7 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
                         except SyntaxError:
                             log.error(f"Failed to parse {filepath}")
 
-    log.debug(f"Graph has {len(GRAPH)} triples")
+    log.debug(f"Graph haz {len(GRAPH)} triples")
 
     if store_primary and FTS_FILEPATH and not os.path.exists(FTS_FILEPATH):
         count = fizzysearch.fts.build_fts_index(
@@ -244,4 +243,5 @@ def load_file_to_graph(graph: px.Store, filepath: str) -> bool:
 
 
 if not (ENDPOINT or len(ENDPOINTS) > 0):
+    log.debug("No ENDPOINT or ENDPOINTS defined, using local graph")
     GRAPH = initialize_graph(DATA_LOAD_PATHS, STORE_PATH)
