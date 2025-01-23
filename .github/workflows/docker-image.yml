@@ -29,3 +29,5 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           docker build -t $REGISTRY/${REPO}:${TAG} -t $REGISTRY/${REPO}:$(date +%s) .
           docker push $REGISTRY/${REPO} --all-tags
+      - name: Notify When Done
+        run: curl -d "Github Workflow  ${REPO}:$(date +%s) Done 💪" ntfy.sh/epoz
