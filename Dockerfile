@@ -33,6 +33,7 @@ RUN pip install -r requirements.txt
 
 COPY src .
 
+ENV PYTHONPATH=/src/
 RUN mkdocs build
 
 CMD ["sh", "-c", "uvicorn --host 0.0.0.0 --port 8000 --log-level debug shmarql:app"]
