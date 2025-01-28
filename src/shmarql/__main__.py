@@ -12,8 +12,9 @@ from mkdocs.__main__ import cli as mkdocs_cli
 )
 @click.command("docs_build")
 def docs_build(filepath: str):
+    log.debug(f"Trying to open filepath:   {filepath}")
     nav = yaml.safe_load(open(filepath).read())
-    SRC_MKDOCS = "./src/mkdocs.yml"
+    SRC_MKDOCS = "mkdocs.yml"
     log.debug(f"Assuming the site mkdocs.yml file is in:   {SRC_MKDOCS}")
     try:
         site_mkdocs = yaml.load(open(SRC_MKDOCS).read(), yaml.UnsafeLoader)
