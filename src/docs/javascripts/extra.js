@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var xLink = document.createElement("a");
     xLink.style.display = "block";
     xLink.title = "Execute Query";
-    xLink.href = "/sparql?query=" + encodeURIComponent(thecode.innerText);
+    xLink.href = "../shmarql/?query=" + encodeURIComponent(thecode.innerText);
     xLink.innerHTML = fa_aeroplane;
 
     thepre.appendChild(xLink);
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".language-shmarql").forEach(function (block) {
     thecode = block.querySelector("code");
     fetch(
-      "/shmarql/fragments/sparql?query=" +
+      "../shmarql/fragments/sparql?query=" +
         encodeURIComponent(thecode.innerText),
       {
         method: "POST",
