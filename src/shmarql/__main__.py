@@ -1,6 +1,7 @@
 import click
 import yaml
 from shmarql.config import log
+from mkdocs.__main__ import cli as mkdocs_cli
 
 
 @click.option(
@@ -9,8 +10,8 @@ from shmarql.config import log
     type=click.Path(exists=True),
     help="Path to the mkdocs.yml file",
 )
-@click.command("mkdocs_nav")
-def mkdocs_nav(filepath: str):
+@click.command("docs_build")
+def docs_build(filepath: str):
     nav = yaml.safe_load(open(filepath).read())
     SRC_MKDOCS = "./src/mkdocs.yml"
     log.debug(f"Assuming the site mkdocs.yml file is in:   {SRC_MKDOCS}")
@@ -28,13 +29,18 @@ def mkdocs_nav(filepath: str):
     open(SRC_MKDOCS, "w").write(yaml.dump(site_mkdocs))
     click.echo(f"Wrote new {SRC_MKDOCS} file")
 
+    try:
+        mkdocs_cli(["build", "--site-dir", "site"], standalone_mode=False)
+    except Exception as e:
+        log.error(str(e))
+
 
 @click.group()
 def cli():
     pass
 
 
-cli.add_command(mkdocs_nav)
+cli.add_command(docs_build)
 
 if __name__ == "__main__":
     cli()
