@@ -7,7 +7,7 @@ Documentation here: https://shmarql.com/
 ## TL;DR
 
 SHMARQL also has a built-in triplestore which you can use to share your RDF data over a SPARQL interface. To use it, you need to specify the path from which to load the datafiles at startup, using an environment variable: `DATA_LOAD_PATHS`.
-This also means that the path in which the data is stored is is "visible" to the docker container via for example a mounted volume.
+This also means that the path in which the data is stored is "visible" to the docker container via for example a mounted volume.
 
 Here is an example, where you have some .ttl files stored in your current directory:
 
