@@ -22,7 +22,9 @@ def docs_build(filepath: str):
         log.error(f"No {SRC_MKDOCS} file found, exiting.")
         return
     changed = False
-    for key in ("site_name", "site_url", "nav"):
+    for key in ("site_name", "site_url", "repo_url", "nav"):
+        del site_mkdocs[key]
+    for key in ("site_name", "site_url", "repo_url", "nav", "plugins"):
         if key in nav:
             site_mkdocs[key] = nav[key]
             changed = True
