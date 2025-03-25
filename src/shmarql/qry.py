@@ -187,8 +187,10 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
                     d = r.content
                     # Try and guess content type from extention, default is turtle
                     # if .rdf or .nt use on of those
-                    if data_load_path.endswith(".rdf") or data_load_path.endswith(
-                        ".xml"
+                    if (
+                        data_load_path.endswith(".rdf")
+                        or data_load_path.endswith(".xml")
+                        or data_load_path.endswith(".owl")
                     ):
                         GRAPH.bulk_load(r.content, "application/rdf+xml")
                     elif data_load_path.endswith(".nt") or data_load_path.endswith(
