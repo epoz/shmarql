@@ -70,6 +70,24 @@ def do_prefixes(iris: Union[str, list]):
     return " ".join(buf)
 
 
+def make_resource_query(uri: str, encode=True, limit=999):
+    Q = f"""
+# shmarql-view: resource
+# shmarql-editor: hide
+
+SELECT ?p ?o ?pp ?oo WHERE {{ 
+  <{uri}> ?p ?o .
+  OPTIONAL {{
+    ?o ?pp ?oo .
+  }}
+}}  limit {limit}"""
+
+    if encode:
+        return quote(Q)
+    else:
+        return Q
+
+
 def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
     uri = f"<{uri}>"
     if spo not in ("s", "p", "o"):
@@ -122,7 +140,7 @@ def fragments_sparql(query: str, results=None):
         )
 
     if "resource" in settings.get("view", []):
-        return Html(fragments_resource(results))
+        return Html(fragments_resource(results, query))
     if "barchart" in settings.get("view", []):
         return Html(fragments_chart(query))
     else:
@@ -162,22 +180,12 @@ def build_plain_table(query: str, results: dict):
                 else:
                     var_spo = "s"
 
-                q = f"""
-# shmarql-view: resource
-# shmarql-editor: hide
-
-SELECT ?p ?o ?pp ?oo WHERE {{ 
-  <{value["value"]}> ?p ?o .
-  OPTIONAL {{
-    ?o ?pp ?oo .
-  }}
-}}"""
-
                 row_columns.append(
                     Td(
                         A(
                             do_prefixes(value["value"]),
-                            href=f"{MOUNT}shmarql/?query=" + quote(q),
+                            href=f"{MOUNT}shmarql/?query="
+                            + make_resource_query(value["value"]),
                         ),
                         Div(
                             A(
@@ -237,7 +245,7 @@ SELECT ?p ?o ?pp ?oo WHERE {{
     )
 
 
-def fragments_resource(results):
+def fragments_resource(results: dict, query: str):
     """Assuming that in results is a query:
     SELECT ?p ?o ?pp ?oo WHERE {
       <some_uri> ?p ?o .
@@ -292,17 +300,32 @@ def fragments_resource(results):
 
         ba(P("a ", *rdf_types, style="font-style: italic;"))
 
-    schema_logo = data.get("https://schema.org/logo")
-    if schema_logo:
-        skip_fields.append("https://schema.org/logo")
-        for i in schema_logo:
-            ba(Img(src=i["value"], style="max-width: 100%;"))
+    for description_field in (
+        "https://schema.org/description",
+        "http://schema.org/description",
+    ):
+        sdo_description = data.get(description_field)
+        if sdo_description:
+            ba(P(sdo_description[0]["value"]))
+            skip_fields.append(description_field)
+
+    for image_field in (
+        "https://schema.org/logo",
+        "https://schema.org/image",
+        "http://schema.org/logo",
+        "http://schema.org/image",
+    ):
+        an_image = data.get(image_field)
+        if an_image:
+            for i in an_image:
+                ba(Img(src=i["value"], style="max-width: 100%;"))
 
     for field, val in data.items():
         if field in skip_fields:
             continue
         v_label_list = []
-        for v in val:
+        for v in val[:50]:
+
             if v in seconds:
                 v_label = seconds[v].get(
                     "http://www.w3.org/2000/01/rdf-schema#label", [str(v)]
@@ -312,7 +335,12 @@ def fragments_resource(results):
                 )
                 if v["type"] == "uri":
                     v_label_list.append(
-                        A(v_label[0], href=v["value"], style="margin-right: 1em")
+                        A(
+                            v_label[0],
+                            href=f"{MOUNT}shmarql/?query="
+                            + make_resource_query(v["value"]),
+                            style="margin-right: 1em",
+                        )
                     )
                 else:
                     if v_type:
@@ -329,9 +357,29 @@ def fragments_resource(results):
                     )
                 )
         P_query = f"{MOUNT}shmarql/?query=" + make_spo(field, "p")
+        if len(val) > 50:
+            plain_query = query.replace("# shmarql-view: resource\n", "")
+
+            field_heading = H3(
+                A(do_prefixes(field), href=P_query),
+                Span(
+                    f"There are {len(val)} values for this field, showing the first 50,",
+                    style="font-size: 80%; font-style: italic",
+                ),
+                A(
+                    "click here to show all",
+                    href=f"{MOUNT}shmarql/?query=" + quote(plain_query),
+                    style="font-size: 80%",
+                ),
+                style="margin: 0.5em 0 0 0",
+            )
+        else:
+            field_heading = H3(
+                A(do_prefixes(field), href=P_query), style="margin: 0.5em 0 0 0"
+            )
         ba(
             (
-                H3(A(do_prefixes(field), href=P_query), style="margin: 0.5em 0 0 0"),
+                field_heading,
                 P(
                     *[vv for vv in v_label_list],
                     style="font-size: 120%; margin: 0",
@@ -545,7 +593,7 @@ def build_sparql_ui(query, results):
         sparql_editor_block_style_button = None
 
     if "resource" in settings.get("view", []):
-        results_fragment = Div(fragments_resource(results), cls="md-typeset")
+        results_fragment = Div(fragments_resource(results, query), cls="md-typeset")
     if "barchart" in settings.get("view", []):
         results_fragment = Div(fragments_chart(query), cls="md-typeset")
     else:
