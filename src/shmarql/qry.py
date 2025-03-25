@@ -72,7 +72,6 @@ def do_query(query: str) -> dict:
                 )
 
     query = rewritten.get("rewritten", query)
-    log.debug(f"fizzysearch rewritten query: {query[:1000]}...{query[-1000:]}")
 
     if not to_use:
         if len(ENDPOINTS) > 0:
@@ -179,8 +178,12 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
             ):
                 log.debug(f"Downloading {data_load_path}")
                 # Try downloading this file and parsing it as a string
-                r = httpx.get(data_load_path, follow_redirects=True)
+                start_download = time.time()
+                r = httpx.get(data_load_path, follow_redirects=True, timeout=180)
                 if r.status_code == 200:
+                    log.debug(
+                        f"Downloading {data_load_path} took {int(time.time() - start_download)} seconds"
+                    )
                     d = r.content
                     # Try and guess content type from extention, default is turtle
                     # if .rdf or .nt use on of those
@@ -188,7 +191,9 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
                         ".xml"
                     ):
                         GRAPH.bulk_load(r.content, "application/rdf+xml")
-                    elif data_load_path.endswith(".nt"):
+                    elif data_load_path.endswith(".nt") or data_load_path.endswith(
+                        ".nt.gz"
+                    ):
                         GRAPH.bulk_load(r.content, "application/n-triples")
                     else:
                         GRAPH.bulk_load(r.content, "text/turtle")
