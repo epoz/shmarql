@@ -4,6 +4,7 @@ from fasthtml.common import *
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
 from .config import (
+    WATCH_DOCS,
     PREFIXES_SNIPPET,
     MOUNT,
     SPARQL_QUERY_UI,
@@ -12,6 +13,11 @@ from .config import (
     SITE_URI,
     log,
 )
+from plotly.offline._plotlyjs_version import __plotlyjs_version__ as plotlyjs_version
+import asyncio
+from typing import List, Callable, Dict, Any
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 from .qry import do_query, hash_query
 
@@ -23,10 +29,86 @@ app = FastHTML(
                 rel="stylesheet",
                 type="text/css",
                 href=f"{MOUNT}shmarql/static/shmarql.css",
-            )
+            ),
+            Script(src=f"https://cdn.plot.ly/plotly-{plotlyjs_version}.min.js"),
         ),
     ),
 )
+
+global_observer = None
+main_event_loop = None
+
+
+class FileChangeHandler(FileSystemEventHandler):
+    def __init__(self, file_types: List[str], callback_function: Callable, loop):
+        self.file_types = [
+            ext.lower() if ext.startswith(".") else f".{ext.lower()}"
+            for ext in file_types
+        ]
+        self.callback_function = callback_function
+        self.loop = loop
+
+    def on_modified(self, event):
+        if not event.is_directory:
+            file_ext = os.path.splitext(event.src_path)[1].lower()
+            if file_ext in self.file_types:
+                # Run the callback in the asyncio event loop
+                asyncio.run_coroutine_threadsafe(
+                    self.callback_function(event.src_path, event_type="modified"),
+                    self.loop,
+                )
+
+    def on_created(self, event):
+        if not event.is_directory:
+            file_ext = os.path.splitext(event.src_path)[1].lower()
+            if file_ext in self.file_types:
+                # Run the callback in the asyncio event loop
+                asyncio.run_coroutine_threadsafe(
+                    self.callback_function(event.src_path, event_type="created"),
+                    self.loop,
+                )
+
+
+def start_directory_watcher(
+    directory_path: str,
+    file_types: List[str],
+    callback_function: Callable,
+    loop,
+    recursive: bool = True,
+) -> Observer:
+    event_handler = FileChangeHandler(file_types, callback_function, loop)
+    observer = Observer()
+    observer.schedule(event_handler, directory_path, recursive=recursive)
+    observer.start()
+    return observer
+
+
+async def regenerate_docs_site(file_path: str, event_type: str = "modified") -> None:
+    from mkdocs.__main__ import cli
+
+    log.debug(f"Regenerating docs site due to {event_type} on {file_path}")
+    try:
+        cli(["build", "--site-dir", "site"], standalone_mode=False)
+    except Exception as e:
+        log.debug(str(e))
+
+
+@app.on_event("startup")
+async def startup_event():
+    if not WATCH_DOCS:
+        return
+    global global_observer, main_event_loop
+    main_event_loop = asyncio.get_running_loop()
+
+    directory_to_watch = "./docs"
+    file_types_to_watch = [".md", ".yml", ".json"]
+
+    global_observer = start_directory_watcher(
+        directory_to_watch, file_types_to_watch, regenerate_docs_site, main_event_loop
+    )
+    log.debug(
+        f"Started watching {directory_to_watch} for changes to {file_types_to_watch} files"
+    )
 
 
 @app.get("/favicon.ico")
