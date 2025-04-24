@@ -1,6 +1,14 @@
 
 # 2025-04-24
 
+## Added
+
+- Add fabio, swirl and dcat default prefixes
+
+- Add mkdocs-nfdi4culture to the installed packages in requirements.txt
+
+# 2025-04-24
+
 ## Removed
 
 - Remove the debug output of rewritten query on each execution
