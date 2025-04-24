@@ -6,4 +6,5 @@ pyoxigraph==0.4.1
 fizzysearch==0.28
 mkdocs-material==9.5.42
 sqlite_minutils==4.0.3
-bikidata==0.2.8
+pandas==2.2.3
+plotly==6.0.1

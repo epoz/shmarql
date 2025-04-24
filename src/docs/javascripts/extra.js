@@ -2,7 +2,7 @@ fa_aeroplane = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" wi
 
 if (typeof Plotly === "undefined") {
   var script = document.createElement("script");
-  script.src = "/src/static/plotly-3.0.1.min.js";
+  script.src = "/static/plotly-3.0.1.min.js";
   script.type = "text/javascript";
   document.head.appendChild(script);
 }

@@ -1,6 +1,4 @@
 site_name: SHMARQL
-site_url: https://shmarql.com/
-repo_url: https://github.com/epoz/shmarql
 theme:
   name: material
   custom_dir: docs/overrides
@@ -44,9 +42,5 @@ markdown_extensions:
 extra_javascript:
   - javascripts/extra.js
 nav:
-  - Introduction: index.md
-  - Advanced Searching: fizzysearch.md
-  - Configuration:
-    - List of Configuration Options: configuration.md
-    - With existing websites: proxy.md
-    - Using other triplestores: endpoints.md
+  - Data Overview: index.md
+  - Queries: /shmarql/

@@ -291,8 +291,6 @@ def sparql_get(
     return shmarql_get(request, query)
 
 
-from .biki import *
-
 # Why the strange position of this import statement?
 # This means that it overrides the static page serving below, but not the main "built-in" functionalities
 from .ext import *
