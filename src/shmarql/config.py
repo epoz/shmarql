@@ -122,4 +122,4 @@ PREFIXES_SNIPPET = "".join(
     f"PREFIX {prefix} <{uri}>\n" for uri, prefix in PREFIXES.items()
 )
 
-WATCH_DOCS = os.environ.get("WATCH_DOCS", "1") == "1"
+WATCH_DOCS = os.environ.get("WATCH_DOCS", "0") == "1"
