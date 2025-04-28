@@ -1,18 +1,58 @@
-A Linked Data publishing platform for semantic web professionals in a hurry.
-Make compelling queries and documentation of your RDF data, using an open-source, simple platform.
+# Welcome to SHMARQL
 
-## [TL;DR](https://en.wikipedia.org/wiki/TL;DR)
+## Instance Count
 
-Similar to LODView, LODE, YASGUI and a triplestore, but in Python with modern web standards.
+```shmarql
+# shmarql-view: piechart
+# shmarql-names: type
+# shmarql-values: count
+# shmarql-label: Instance Count
 
-## Quickstart
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-You have some RDF documents in a folder on your disk somewhere, and you have Docker installed, then from the folder that contains your .nt or .ttl files, run:
-
-```shell
-docker run --rm -it \
-  -v $(pwd):/data -e DATA_LOAD_PATHS=/data \
-  -p 8000:8000 ghcr.io/epoz/shmarql
+SELECT ?type (xsd:integer(COUNT(?subject)) AS ?count)
+WHERE {
+  ?subject a ?type .
+}
+GROUP BY ?type
+ORDER BY ?count
 ```
 
-Now you can browse and query your data at [http://localhost8000:shmarql/](http://localhost:/shmarql/)
+Or you can also view the above as a table.
+
+```shmarql
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?type (xsd:integer(COUNT(?subject)) AS ?count)
+WHERE {
+  ?subject a ?type .
+}
+GROUP BY ?type
+ORDER BY desc(?count)
+```
+
+Or as a barchart.
+
+```shmarql
+# shmarql-view: barchart
+# shmarql-x: type
+# shmarql-y: count
+# shmarql-label: Instance Count
+
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?type (xsd:integer(COUNT(?subject)) AS ?count)
+WHERE {
+  ?subject a ?type .
+}
+GROUP BY ?type
+ORDER BY desc(?count)
+```
+
+## Property Counts
+
+```shmarql
+select ?p (xsd:integer(COUNT(?s)) AS ?count) where {?s ?p ?o}
+group by ?p
+order by desc(?count)
+```

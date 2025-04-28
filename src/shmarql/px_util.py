@@ -14,6 +14,9 @@ import logging
 from rdflib.plugins.sparql.results.xmlresults import SPARQLXMLWriter
 from xml.sax.xmlreader import AttributesNSImpl
 from xml.dom import XML_NAMESPACE
+import pandas as pd
+from typing import Union
+from .config import PREFIXES
 
 
 def string_iterator(graph: Store):
@@ -300,3 +303,30 @@ def results_to_xml(results: dict) -> str:
         sxw.write_end_result()
     sxw.close()
     return stream.getvalue().decode("utf8")
+
+
+def results_to_df(results: dict) -> pd.DataFrame:
+    data = {}
+    vars = results.get("head", {}).get("vars", [])
+    for row in results.get("results", {}).get("bindings", []):
+        for var in vars:
+            val = row.get(var)
+            data.setdefault(var, []).append(val.get("value") if val else None)
+    # this loses the type of the item in the results!
+    return pd.DataFrame(data)
+
+
+def do_prefixes(iris: Union[str, list]):
+    """Given a list of IRI values, return a string with the IRIs prefixed"""
+    if isinstance(iris, str):
+        iris = [iris]
+    buf = []
+    for iri in iris:
+        found = False
+        for uri, prefix in PREFIXES.items():
+            if iri.startswith(uri):
+                buf.append(f"{prefix}{iri[len(uri):]}")
+                found = True
+        if not found:
+            buf.append(iri)
+    return " ".join(buf)

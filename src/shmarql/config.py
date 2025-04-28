@@ -85,6 +85,9 @@ DEFAULT_PREFIXES = {
     "http://www.w3.org/2001/XMLSchema#": "xsd:",
     "http://www.openlinksw.com/virtrdf-data-formats#": "virtrdfdata:",
     "http://www.openlinksw.com/schemas/virtrdf#": "virtrdf:",
+    "http://purl.org/spar/fabio/": "fabio:",
+    "http://www.w3.org/2003/11/swrl#": "swrl:",
+    "http://www.w3.org/ns/dcat#": "dcat:",
     "https://shmarql.com/": "shmarql:",
     "https://nfdi4culture.de/ontology#": "cto:",
     "https://nfdi4culture.de/id/": "nfdi4culture:",
@@ -121,3 +124,5 @@ except:
 PREFIXES_SNIPPET = "".join(
     f"PREFIX {prefix} <{uri}>\n" for uri, prefix in PREFIXES.items()
 )
+
+WATCH_DOCS = os.environ.get("WATCH_DOCS", "0") == "1"

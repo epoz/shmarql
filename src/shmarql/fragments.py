@@ -3,6 +3,12 @@ import random, json
 from fasthtml.common import *
 from .main import app
 from .config import MOUNT, PREFIXES_SNIPPET, PREFIXES
+from uuid import uuid4
+
+from plotly.io import to_json
+from .px_util import results_to_df, do_prefixes
+import traceback
+from .charts import do_barchart, do_piechart
 
 from .qry import do_query
 
@@ -54,29 +60,15 @@ class HashableResult:
         return str(self.value.get("value"))
 
 
-def do_prefixes(iris: Union[str, list]):
-    """Given a list of IRI values, return a string with the IRIs prefixed"""
-    if isinstance(iris, str):
-        iris = [iris]
-    buf = []
-    for iri in iris:
-        found = False
-        for uri, prefix in PREFIXES.items():
-            if iri.startswith(uri):
-                buf.append(f"{prefix}{iri[len(uri):]}")
-                found = True
-        if not found:
-            buf.append(iri)
-    return " ".join(buf)
-
-
 def make_resource_query(uri: str, encode=True, limit=999):
     Q = f"""
 # shmarql-view: resource
 # shmarql-editor: hide
 
-SELECT ?p ?o ?pp ?oo WHERE {{ 
-  <{uri}> ?p ?o .
+SELECT ?resource ?p ?o ?pp ?oo WHERE {{
+    values ?resource {{ <{uri}> }}
+
+  ?resource ?p ?o .
   OPTIONAL {{
     ?o ?pp ?oo .
   }}
@@ -141,7 +133,7 @@ def fragments_sparql(query: str, results=None):
 
     if "resource" in settings.get("view", []):
         return Html(fragments_resource(results, query))
-    if "barchart" in settings.get("view", []):
+    if settings.get("view", [""])[0].endswith("chart"):
         return Html(fragments_chart(query))
     else:
         return Html(build_plain_table(query, results))
@@ -527,49 +519,35 @@ def build_standalone_table(results, query):
     )
 
 
-# See: https://www.chartjs.org/docs/latest/getting-started/integration.html
 @app.get(f"{MOUNT}shmarql/fragments/chart")
 def fragments_chart(query: str, results=None):
     if results is None:
         results = do_query(query)
 
     settings = results.get("shmarql_settings", {})
-    label = settings.get("label", "Unlabeled Dataset")
+    chart_type = settings.get("view")[0]
 
-    labels = []
-    values = []
-    for row in results.get("results", {}).get("bindings", []):
-        labels.append(do_prefixes(row.get("label", {"value": ""})["value"]))
-        values.append(row.get("value", {"value": 0})["value"])
+    df = results_to_df(results)
 
-    return (
-        Script(src="https://cdn.jsdelivr.net/npm/chart.js"),
-        Div(Canvas(id="myChart")),
+    chart_id = f"uniq-{uuid4()}"
+    chart_func = {"barchart": do_barchart, "piechart": do_piechart}.get(chart_type)
+    try:
+        chart_json = to_json(chart_func(settings, df, settings.get("label", [None])[0]))
+        js_options = {}
+    except Exception as e:
+        return Div(
+            f"Chart Error: {traceback.format_exc()}",
+            style="border: 2px solid red; font-size: 150%; padding: 1em;",
+        )
+
+    return Div(
         Script(
-            """
-setTimeout(function() {
-const ctx = document.getElementById('myChart');
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: """
-            + json.dumps(labels)
-            + """,
-      datasets: [{
-        label: """
-            + json.dumps(label)
-            + """,
-        data: """
-            + json.dumps(values)
-            + """ ,
-        borderWidth: 1
-      }]
-    }
-  });            
-}, 300);
-"""
+            f"""
+        var plotly_data = {chart_json};
+        Plotly.newPlot('{chart_id}', plotly_data.data, plotly_data.layout, {json.dumps(js_options)});
+    """
         ),
+        id=chart_id,
     )
 
 
@@ -594,8 +572,15 @@ def build_sparql_ui(query, results):
 
     if "resource" in settings.get("view", []):
         results_fragment = Div(fragments_resource(results, query), cls="md-typeset")
-    if "barchart" in settings.get("view", []):
-        results_fragment = Div(fragments_chart(query), cls="md-typeset")
+    if settings.get("view", [""])[0].endswith("chart"):
+        try:
+            chart_fragment = fragments_chart(query)
+        except Exception as e:
+            chart_fragment = Div(
+                f"Error: {e}",
+                style="color: red; font-weight: bold; font-size: 150%;",
+            )
+        results_fragment = Div(chart_fragment, cls="md-typeset")
     else:
         results_fragment = Div(fragments_sparql(query, results), cls="md-typeset")
 
