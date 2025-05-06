@@ -276,7 +276,7 @@ def results_to_xml(results: dict) -> str:
                         "bnode",
                         AttributesNSImpl({}, {}),
                     )
-                    sxw.writer.characters(val.value)
+                    sxw.writer.characters(val.get("value"))
                     sxw.writer.endElementNS((SPARQL_XML_NAMESPACE, "bnode"), "bnode")
                 elif type(val) == "literal":
                     attr_vals = {}
