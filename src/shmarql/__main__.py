@@ -23,7 +23,8 @@ def docs_build(filepath: str):
         return
     changed = False
     for key in ("site_name", "site_url", "repo_url", "nav"):
-        del site_mkdocs[key]
+        if key in site_mkdocs:
+            del site_mkdocs[key]
     for key in ("site_name", "site_url", "repo_url", "nav", "plugins"):
         if key in nav:
             site_mkdocs[key] = nav[key]
