@@ -53,8 +53,24 @@ else:
     DATA_LOAD_PATHS = []
 STORE_PATH = os.environ.get("STORE_PATH")
 
+BIKIDATA_DB = os.environ.get("BIKIDATA_DB")
+SEMANTIC_INDEX = os.environ.get("SEMANTIC_INDEX", "0") == "1"
+RDF2VEC_INDEX = os.environ.get("RDF2VEC_INDEX", "0") == "1"
+
 FTS_FILEPATH = os.environ.get("FTS_FILEPATH")
 RDF2VEC_FILEPATH = os.environ.get("RDF2VEC_FILEPATH")
+
+if FTS_FILEPATH:
+    log.exception(
+        "FTS_FILEPATH is set, but this config has been removed. Please use BIKIDATA_DB instead. See https://shmarql.com/fizzysearch/ for more information."
+    )
+    FTS_FILEPATH = None
+if RDF2VEC_FILEPATH:
+    log.exception(
+        "RDF2VEC_FILEPATH is set, but this config has been removed. Please use RDF2VEC_INDEX boolean and BIKIDATA_DB instead. See https://shmarql.com/rdf2vec/ for more information."
+    )
+    RDF2VEC_FILEPATH = None
+
 
 SPARQL_QUERY_UI = os.environ.get("SPARQL_QUERY_UI", "1") == "1"
 

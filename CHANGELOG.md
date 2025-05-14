@@ -1,3 +1,16 @@
+# 2025-05-14
+
+## Added
+
+- Map chart type added
+
+- Support for BIKIDATA_DB, this allows fulltext and semantic search via the BIKIDATA DuckDb.
+
+## Deprecated
+
+- FTS_FILEPATH is deprecated. This is replaced by the BIKIDATA_DB path
+
+- RDF2VEC_FILEPATH is deprecated. This is now replaced by the RDF2VEC boolean flag, and also requires the BIKIDATA_DB path to also be set.
 
 # 2025-04-28
 

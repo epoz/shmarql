@@ -8,7 +8,8 @@ from uuid import uuid4
 from plotly.io import to_json
 from .px_util import results_to_df, do_prefixes
 import traceback
-from .charts import do_barchart, do_piechart
+from .charts import do_barchart, do_piechart, do_mapchart
+
 
 from .qry import do_query
 
@@ -530,7 +531,11 @@ def fragments_chart(query: str, results=None):
     df = results_to_df(results)
 
     chart_id = f"uniq-{uuid4()}"
-    chart_func = {"barchart": do_barchart, "piechart": do_piechart}.get(chart_type)
+    chart_func = {
+        "barchart": do_barchart,
+        "piechart": do_piechart,
+        "mapchart": do_mapchart,
+    }.get(chart_type)
     try:
         chart_json = to_json(chart_func(settings, df, settings.get("label", [None])[0]))
         js_options = {}

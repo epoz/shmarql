@@ -4,8 +4,8 @@ from .config import (
     ENDPOINT,
     ENDPOINTS,
     QUERIES_DB,
-    FTS_FILEPATH,
-    RDF2VEC_FILEPATH,
+    BIKIDATA_DB,
+    SEMANTIC_INDEX,
     PREFIXES_SNIPPET,
     DATA_LOAD_PATHS,
     STORE_PATH,
@@ -47,12 +47,9 @@ def do_query(query: str) -> dict:
         rewritten = fizzysearch.rewrite(
             query,
             {
-                "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(
-                    FTS_FILEPATH
-                ),
-                "fizzy:fts": fizzysearch.use_fts(FTS_FILEPATH),
-                "fizzy:ftsStats": fizzysearch.use_fts_stats(FTS_FILEPATH),
-                "fizzy:rdf2vec": fizzysearch.use_rdf2vec(RDF2VEC_FILEPATH),
+                "https://fizzysearch.ise.fiz-karlsruhe.de/fts": fizzysearch.use_fts(),
+                "fizzy:fts": fizzysearch.use_fts(),
+                "fizzy:ftsStats": fizzysearch.use_fts_stats(),
             },
         )
     except Exception as e:
@@ -212,17 +209,11 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
 
     log.debug(f"Graph haz {len(GRAPH)} triples")
 
-    if store_primary and FTS_FILEPATH and not os.path.exists(FTS_FILEPATH):
-        count = fizzysearch.fts.build_fts_index(
-            [], FTS_FILEPATH, string_iterator(GRAPH)
+    if store_primary and BIKIDATA_DB and not os.path.exists(BIKIDATA_DB):
+        r = fizzysearch.build_from_iterator(string_iterator(GRAPH))
+        log.debug(
+            f"NEW bikidata built at {BIKIDATA_DB} with {r.get('count', '?')} literals"
         )
-        log.debug(f"FTS index at {FTS_FILEPATH} with {count} literals")
-
-    if store_primary and RDF2VEC_FILEPATH and not os.path.exists(RDF2VEC_FILEPATH):
-        count = fizzysearch.rdf2vec.build_rdf2vec_index(
-            [], RDF2VEC_FILEPATH, string_iterator(GRAPH)
-        )
-        log.debug(f"RDF2Vec index at {RDF2VEC_FILEPATH} with {count} entities")
 
     return GRAPH
 
