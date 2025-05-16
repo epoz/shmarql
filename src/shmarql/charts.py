@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.express as px
 from .px_util import do_prefixes
-import re
 
 
 def do_barchart(settings: dict, data: pd.DataFrame, label=None):
