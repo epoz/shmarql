@@ -3,9 +3,11 @@ httpx==0.27.2
 tree-sitter==0.20.1
 rdflib==7.1.1
 pyoxigraph==0.4.1
-fizzysearch==0.28
 mkdocs-material==9.5.42
+mkdocs-awesome-nav==3.1.1
 sqlite_minutils==4.0.3
 pandas==2.2.3
 plotly==6.0.1
 watchdog==4.0.0
+git+https://github.com/ISE-FIZKarlsruhe/bikidata.git@dev#egg=bikidata
+git+https://github.com/ISE-FIZKarlsruhe/fizzysearch.git@bikidata#egg=fizzysearch

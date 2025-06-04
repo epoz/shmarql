@@ -61,10 +61,10 @@ async def query(request: Request):
     except Exception as e:
         r = {"error": str(e)}
 
-    if opts.get("format") == "html":
-        return results_to_div(r)
+    if opts.get("format") == "json":
+        return JSONResponse(r)
 
-    return JSONResponse(r)
+    return results_to_div(r)
 
 
 @app.get(MOUNT + "bikidata/")
@@ -132,6 +132,7 @@ def biki_browse():
             Option("fts", value="fts"),
             Option(" - ", value="_", title="No value"),
             Option("id", value="id"),
+            Option("semantic", value="semantic"),
             *[Option(f"{c} {p}", value=p) for c, p in props],
             cls="pred",
             style="margin: 1ch; padding: 0.5ch;",

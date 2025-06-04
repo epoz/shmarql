@@ -1,3 +1,12 @@
+# 2025-06-04
+
+## Changed
+
+- Better support for `{MOUNT}sparql` endpoints to handle HTTP OPTIONS methods.
+  These are done by third-party services that would like to call the SPARQL endpoint without actually executing a query, to check CORS support.
+
+- Install Fizzysearch and Bikidata libraries from the Github repos while development is in flux, in stead of from PyPI. This will be reverted later to published packages once the interface settles down a bit more.
+
 # 2025-05-14
 
 ## Added
