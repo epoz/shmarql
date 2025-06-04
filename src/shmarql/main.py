@@ -200,14 +200,41 @@ def accept_header_to_format(request: Request) -> str:
     return "html"
 
 
-@app.get(f"/shmarql")
+@app.options(f"{MOUNT}sparql")
+def handle_options():
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    }
+    return Response(status_code=204, headers=headers)
+
+
+@app.route(f"{MOUNT}sparql", methods=["GET", "POST"])
+async def sparql(request: Request):
+    if request.headers.get("content-type") == "application/sparql-query":
+        query = await request.body()
+        query = query.decode("utf-8")
+    else:
+        query = request.query_params.get("query")
+    if not query or len(query.strip()) < 2:
+        return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
+    response = await shmarql_get(request, query)
+    return response
+
+
 @app.get(f"{MOUNT}shmarql")
+def shmarql_redir():
+    return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
+
+
 @app.get(f"{MOUNT}shmarql/")
 def shmarql_get(
     request: Request,
     query: str = "select * where {?s ?p ?o} limit 10",
     format: str = None,
 ):
+
     if format is None:
         format = accept_header_to_format(request)
     results = do_query(query)
@@ -278,22 +305,11 @@ def shmarql_get(
     )
 
 
-@app.get(f"{MOUNT}sparql", methods=["POST"])
-def sparql_post(request: Request, query: str):
-    return shmarql_get(request, query)
-
-
-@app.get(f"{MOUNT}sparql")
-def sparql_get(
-    request: Request,
-    query: str = "select distinct ?Concept where {[] a ?Concept} LIMIT 999",
-):
-    return shmarql_get(request, query)
-
-
 # Why the strange position of this import statement?
 # This means that it overrides the static page serving below, but not the main "built-in" functionalities
 from .ext import *
+
+from .biki import *
 
 
 def entity_check(iri: str):
