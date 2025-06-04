@@ -219,8 +219,7 @@ async def sparql(request: Request):
         query = request.query_params.get("query")
     if not query or len(query.strip()) < 2:
         return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
-    response = await shmarql_get(request, query)
-    return response
+    return shmarql_get(request, query)
 
 
 @app.get(f"{MOUNT}shmarql")
