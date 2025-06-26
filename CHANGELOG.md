@@ -1,3 +1,9 @@
+# 2025-06-26
+
+## Added
+
+- Add Mermaid charts support for docs to default mkdocs.yml
+
 # 2025-06-04
 
 ## Changed
