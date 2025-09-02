@@ -9,5 +9,6 @@ sqlite_minutils==4.0.3
 pandas==2.2.3
 plotly==6.0.1
 watchdog==4.0.0
-git+https://github.com/ISE-FIZKarlsruhe/bikidata.git@dev#egg=bikidata
-git+https://github.com/ISE-FIZKarlsruhe/fizzysearch.git@bikidata#egg=fizzysearch
+bikidata==0.3.0
+fizzysearch==0.29
+voyager==2.1.0
