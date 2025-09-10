@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shmarql"
-version = "0.46"
+version = "0.58"
 description = "A Linked Data publishing platform for semantic web professionals in a hurry."
 authors = ["Etienne Posthumus <ep@epoz.org>"]
 license = "MIT"
@@ -11,7 +11,6 @@ keywords = ["SPARQL", "search", "RDF", "Linked Data"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fizzysearch = "^0.28"
 
 [build-system]
 requires = ["poetry-core"]
