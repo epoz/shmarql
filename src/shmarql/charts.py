@@ -27,13 +27,15 @@ def do_mapchart(settings: dict, data: pd.DataFrame, label=None):
 
         def safe_extract_lat(point):
             try:
-                return float(point.replace("Point(", "").split(" ")[0])
+                return float(point.upper().replace("POINT(", "").split(" ")[0])
             except Exception:
                 return None
 
         def safe_extract_lon(point):
             try:
-                return float(point.replace("Point(", "").strip(")").split(" ")[1])
+                return float(
+                    point.upper().replace("POINT(", "").strip(")").split(" ")[1]
+                )
             except Exception:
                 return None
 
