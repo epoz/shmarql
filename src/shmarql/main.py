@@ -304,10 +304,6 @@ def shmarql_get(
     )
 
 
-# Why the strange position of this import statement?
-# This means that it overrides the static page serving below, but not the main "built-in" functionalities
-from .ext import *
-
 from .biki import *
 
 
@@ -320,7 +316,7 @@ def entity_check(iri: str):
 @app.get(MOUNT + "{fname:path}")
 @app.get("/{fname:path}")
 def getter(request: Request, fname: str):
-    log.debug(f"Getter on {fname}")
+    log.debug(f"Getter on {repr(fname)}")
     new_name = fname
     if fname.startswith("/"):
         new_name = fname[1:]
