@@ -4,6 +4,7 @@ from markdown import Markdown
 from pygments.lexers import find_lexer_class_by_name
 from pygments.util import ClassNotFound
 
+SparqlLexer.aliases.append("shmarql")
 
 __all__ = ["ShmarqlLexer"]
 

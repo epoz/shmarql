@@ -1,7 +1,8 @@
 from urllib.parse import quote
 import random, json
 from fasthtml.common import *
-from .main import app
+from monsterui.all import *
+
 from .config import MOUNT, PREFIXES_SNIPPET, PREFIXES
 from uuid import uuid4
 
@@ -10,6 +11,7 @@ from .px_util import results_to_df, do_prefixes
 import traceback
 from .charts import do_barchart, do_piechart, do_mapchart
 
+rt = APIRouter()
 
 from .qry import do_query
 
@@ -106,8 +108,8 @@ def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
         return Q
 
 
-@app.post(f"/shmarql/fragments/sparql")
-@app.post(f"{MOUNT}shmarql/fragments/sparql")
+@rt.post(f"/shmarql/fragments/sparql")
+@rt.post(f"{MOUNT}shmarql/fragments/sparql")
 def fragments_sparql(query: str, results=None):
     if query == "":
         query = "select * where {?s ?p ?o} limit 10"
@@ -520,7 +522,7 @@ def build_standalone_table(results, query):
     )
 
 
-@app.get(f"{MOUNT}shmarql/fragments/chart")
+@rt.get(f"{MOUNT}shmarql/fragments/chart")
 def fragments_chart(query: str, results=None):
     if results is None:
         results = do_query(query)
@@ -597,27 +599,30 @@ def build_sparql_ui(query, results):
         Script(src=f"{MOUNT}static/tablesort-5.3.0.min.js"),
         sparql_editor_block_style_button,
         Div(
-            Button(
-                "▶",
-                Script(
-                    'me().on("click", async ev => {\r\n  if (ev.shiftKey) {\r\n    console.log("Shift key was pressed during the click!");\r\n  }\r\n  executeQuery()\r\n})'
+            Div(
+                Button(
+                    "▶",
+                    Script(
+                        'me().on("click", async ev => {\r\n  if (ev.shiftKey) {\r\n    console.log("Shift key was pressed during the click!");\r\n  }\r\n  executeQuery()\r\n})'
+                    ),
+                    id="execute_sparql",
+                    title="Execute this query, (also use Ctrl+Enter)",
+                    style="padding: 4px 8px; font-size: 12px;",
+                    cls=(ButtonT.primary),
                 ),
-                id="execute_sparql",
-                title="Execute this query, (also use Ctrl+Enter)",
-                style="padding: 4px 8px; font-size: 12px;",
-                cls="md-button md-button--primary",
-            ),
-            Button(
-                "Prefixes",
-                Script(
-                    'me().on("click", async ev => {\n\n    let editorContent = sparqleditor.doc.getValue();\r\n    let prefixContent = `'
-                    + PREFIXES_SNIPPET
-                    + "\n\n`;\r\nsparqleditor.doc.setValue(prefixContent + editorContent);\r\n\r\n})"
+                Button(
+                    "Prefixes",
+                    Script(
+                        'me().on("click", async ev => {\n\n    let editorContent = sparqleditor.doc.getValue();\r\n    let prefixContent = `'
+                        + PREFIXES_SNIPPET
+                        + "\n\n`;\r\nsparqleditor.doc.setValue(prefixContent + editorContent);\r\n\r\n})"
+                    ),
+                    id="prefixes",
+                    name="prefixes",
+                    style="padding: 4px 8px; font-size: 12px;",
+                    cls=(ButtonT.secondary, "ml-4"),
                 ),
-                id="prefixes",
-                name="prefixes",
-                style="padding: 4px 8px; font-size: 12px;",
-                cls="md-button md-button--primary",
+                cls="mb-2",
             ),
             Div(Textarea(query, id="code", name="code")),
             id="sparql_editor_block",

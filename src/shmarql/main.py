@@ -1,10 +1,9 @@
-import csv, io, string, json, os
+import csv, io, string, json, os, yaml
 from urllib.parse import quote
 from fasthtml.common import *
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
 from .config import (
-    WATCH_DOCS,
     PREFIXES_SNIPPET,
     MOUNT,
     SPARQL_QUERY_UI,
@@ -16,99 +15,31 @@ from .config import (
 from plotly.offline._plotlyjs_version import __plotlyjs_version__ as plotlyjs_version
 import asyncio
 from typing import List, Callable, Dict, Any
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+from monsterui.all import Theme
+from .layout import markdown_container, main_container
 
 from .qry import do_query, hash_query
+from .fragments import rt as fragments_rt
+from .fragments import build_sparql_ui
+
+
+hdrs = [
+    Script(src=f"https://cdn.plot.ly/plotly-{plotlyjs_version}.min.js"),
+]
+hdrs.extend(Theme.blue.headers())
+
 
 app = FastHTML(
     pico=False,
-    hdrs=(
-        (
-            Link(
-                rel="stylesheet",
-                type="text/css",
-                href=f"{MOUNT}shmarql/static/shmarql.css",
-            ),
-            Script(src=f"https://cdn.plot.ly/plotly-{plotlyjs_version}.min.js"),
-        ),
-    ),
+    hdrs=hdrs,
 )
 
-global_observer = None
-main_event_loop = None
-
-
-class FileChangeHandler(FileSystemEventHandler):
-    def __init__(self, file_types: List[str], callback_function: Callable, loop):
-        self.file_types = [
-            ext.lower() if ext.startswith(".") else f".{ext.lower()}"
-            for ext in file_types
-        ]
-        self.callback_function = callback_function
-        self.loop = loop
-
-    def on_modified(self, event):
-        if not event.is_directory:
-            file_ext = os.path.splitext(event.src_path)[1].lower()
-            if file_ext in self.file_types:
-                # Run the callback in the asyncio event loop
-                asyncio.run_coroutine_threadsafe(
-                    self.callback_function(event.src_path, event_type="modified"),
-                    self.loop,
-                )
-
-    def on_created(self, event):
-        if not event.is_directory:
-            file_ext = os.path.splitext(event.src_path)[1].lower()
-            if file_ext in self.file_types:
-                # Run the callback in the asyncio event loop
-                asyncio.run_coroutine_threadsafe(
-                    self.callback_function(event.src_path, event_type="created"),
-                    self.loop,
-                )
-
-
-def start_directory_watcher(
-    directory_path: str,
-    file_types: List[str],
-    callback_function: Callable,
-    loop,
-    recursive: bool = True,
-) -> Observer:
-    event_handler = FileChangeHandler(file_types, callback_function, loop)
-    observer = Observer()
-    observer.schedule(event_handler, directory_path, recursive=recursive)
-    observer.start()
-    return observer
-
-
-async def regenerate_docs_site(file_path: str, event_type: str = "modified") -> None:
-    from mkdocs.__main__ import cli
-
-    log.debug(f"Regenerating docs site due to {event_type} on {file_path}")
-    try:
-        cli(["build", "--site-dir", "site"], standalone_mode=False)
-    except Exception as e:
-        log.debug(str(e))
+fragments_rt.to_app(app)
 
 
 @app.on_event("startup")
 async def startup_event():
-    if not WATCH_DOCS:
-        return
-    global global_observer, main_event_loop
-    main_event_loop = asyncio.get_running_loop()
-
-    directory_to_watch = "./docs"
-    file_types_to_watch = [".md", ".yml", ".json"]
-
-    global_observer = start_directory_watcher(
-        directory_to_watch, file_types_to_watch, regenerate_docs_site, main_event_loop
-    )
-    log.debug(
-        f"Started watching {directory_to_watch} for changes to {file_types_to_watch} files"
-    )
+    log.debug(f"App started up")
 
 
 @app.get("/favicon.ico")
@@ -136,19 +67,6 @@ def make_literal_query(some_literal: dict, encode=True, limit=999):
         return quote(Q)
     else:
         return Q
-
-
-@app.post("/_/oOo")
-def oinga():
-    from mkdocs.__main__ import cli
-
-    try:
-        cli(["build", "--site-dir", "site"], standalone_mode=False)
-    except Exception as e:
-        return Div(str(e))
-
-
-from .fragments import *
 
 
 def json_results_to_csv(results: dict):
@@ -296,12 +214,7 @@ def shmarql_get(
             "There is currently no SPARQL query form to be found here, call it from a command line via a POST request."
         )
 
-    h = open("site/_/index.html").read()
-    h_txt = build_sparql_ui(query, results)
-
-    return h.replace("BODY_PLACE_HOLDER", to_xml(h_txt)).replace(
-        "TITLE_PLACE_HOLDER", ""
-    )
+    return main_container(Div(build_sparql_ui(query, results), cls="mt-4"))
 
 
 from .biki import *
@@ -328,15 +241,29 @@ def getter(request: Request, fname: str):
         if os.path.exists(path_to_try):
             return FileResponse(path_to_try)
 
+    if new_name == "index.html":
+        new_name = "index.md"
     path_to_try = os.path.join(SITEDOCS_PATH, new_name)
     if MOUNT:
         path_to_try = os.path.join(SITEDOCS_PATH, new_name.replace(MOUNT[1:], "", 1))
     else:
         path_to_try = os.path.join(SITEDOCS_PATH, new_name)
 
+    for nav_name in ("mkdocs.yml", "mkdocs.yaml"):
+        nav_path = os.path.join(SITEDOCS_PATH, nav_name)
+        if os.path.exists(nav_path):
+            nav = []
+            try:
+                nav = yaml.safe_load(open(nav_path, "r")).get("nav", [])
+            except Exception as e:
+                log.warning(f"Could not parse {nav_path}: {e}")
+            break
+
     log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
-        return FileResponse(path_to_try)
+        return markdown_container(path_to_try, nav=nav)
+    if os.path.exists(path_to_try + ".md"):
+        return markdown_container(path_to_try + ".md", nav=nav)
 
     iri = SITE_URI + fname
     log.debug(f"Entity Checking {iri}")
