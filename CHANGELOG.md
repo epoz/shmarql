@@ -1,3 +1,10 @@
+# 2025-10-10
+
+## Major change
+
+- Remove the default mkdocs rendering of query and info pages, and switch to using MonsterUI.
+  Still possible to make mkdocs(-material) sites using shmarql, but the default markdown rendering is now done with mistletoe.
+
 # 2025-06-26
 
 ## Added
@@ -62,3 +69,12 @@
 ## Added
 
 - Start using [scriv](https://scriv.readthedocs.io/) for changelog.
+
+# 2024-05-15
+
+## Changed
+
+- bugfix for the XML serializations when queries are "application/sparql-results+xml"
+- pin scipy==1.10.1 version due to deprecated methods in newer versions causing problems
+- allow loading datafiles (.nt.gz and .ttl.gz) from DATA_LOAD_PATHS that are gzipped
+- add locking to the FTS index creation
