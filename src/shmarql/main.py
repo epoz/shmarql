@@ -249,10 +249,10 @@ def getter(request: Request, fname: str):
     else:
         path_to_try = os.path.join(SITEDOCS_PATH, new_name)
 
+    nav = []
     for nav_name in ("mkdocs.yml", "mkdocs.yaml"):
         nav_path = os.path.join(SITEDOCS_PATH, nav_name)
         if os.path.exists(nav_path):
-            nav = []
             try:
                 nav = yaml.safe_load(open(nav_path, "r")).get("nav", [])
             except Exception as e:

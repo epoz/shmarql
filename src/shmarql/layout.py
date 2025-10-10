@@ -80,7 +80,7 @@ def build_nav(navlist: list, depth=0.25):
 def markdown_container(filepath: str, nav=[]):
     sidebar = None
     if nav:
-        sidebar = Div(build_nav(nav), cls="pt-16 w-3/5")
+        sidebar = Div(build_nav(nav), cls="pt-11 w-3/5")
 
     md_content = open(filepath, "r").read()
     c = render_md(md_content, renderer=LanguageAwarePygmentsRenderer)
