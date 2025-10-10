@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
     "fizzysearch==0.31",
     "markdown>=3.9",
+    "mkdocs-material>=9.6.21",
     "monsterui>=1.0.29",
     "pandas>=2.3.3",
     "plotly>=6.3.1",
@@ -17,7 +18,7 @@ dependencies = [
     "pyoxigraph>=0.5.0",
     "python-fasthtml>=0.12.29",
     "rdflib>=7.2.1",
-    "tree-sitter-sparql==0.1.0"
+    "tree-sitter-sparql==0.1.0",
 ]
 
 [project.urls]
