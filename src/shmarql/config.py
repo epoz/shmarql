@@ -141,3 +141,5 @@ PREFIXES_SNIPPET = "".join(
 ADMIN_DATABASE = os.environ.get("ADMIN_DATABASE")
 
 LOGINS = os.environ.get("LOGINS") == "1"
+
+SITE_TITLE = os.environ.get("SITE_TITLE", "SHMARQL")
