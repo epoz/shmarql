@@ -595,8 +595,6 @@ def build_sparql_ui(query, results):
         Script(src=f"{MOUNT}static/editor.js"),
         Script(src=f"{MOUNT}static/matchbrackets.js"),
         Script(src=f"{MOUNT}static/sparql.js"),
-        Script(src=f"{MOUNT}static/surreal-1.3.0.js"),
-        Script(src=f"{MOUNT}static/tablesort-5.3.0.min.js"),
         sparql_editor_block_style_button,
         Div(
             Div(
@@ -681,14 +679,6 @@ function executeQuery() {
                 document.body.appendChild(newScript);
                 document.body.removeChild(newScript);
         });
-
-
-
-
-        var tables = document.querySelectorAll("table[data-tipe='sparql-results']");
-        tables.forEach(function(table) {
-                new Tablesort(table)
-        })
     })
 
 }
