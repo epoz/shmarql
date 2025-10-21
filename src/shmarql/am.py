@@ -4,29 +4,51 @@ from fasthtml.common import *
 from monsterui.all import *
 from fastlite import database
 from .layout import base
-from .config import ADMIN_DATABASE, log
+from .config import ADMIN_DATABASE, log, LOGINS
 from passlib.context import CryptContext
+from functools import wraps
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+if LOGINS:
+    admin_database = database(ADMIN_DATABASE)
+    users = admin_database.t.users
+    if "users" not in admin_database.t:
+        users.create(
+            username=str, name=str, password=str, activation_date=str, pk="username"
+        )
+        admin_password = "".join(random.choice("01234567890abcdef") for _ in range(20))
+        users.insert(
+            username="admin",
+            name="Administrator",
+        )
+        reset_admin_password()
+    users.dataclass()
 
-admin_database = database(ADMIN_DATABASE)
-users = admin_database.t.users
-if "users" not in admin_database.t:
-    users.create(
-        username=str, name=str, password=str, activation_date=str, pk="username"
-    )
+
+def reset_admin_password(admin_filepath: str):
+    admin_database = database(admin_filepath)
+    users = admin_database.t.users
+    users.dataclass()
     admin_password = "".join(random.choice("01234567890abcdef") for _ in range(20))
-    users.insert(
-        username="admin",
-        name="Administrator",
-        password=pwd_context.hash(admin_password),
-    )
-    log.info(f"*****>>> created default admin user with password: [ {admin_password} ]")
-users.dataclass()
+    admin_user = users["admin"]
+    admin_user.password = pwd_context.hash(admin_password)
+    users.update(admin_user)
+    log.info(f"*****>>> admin user password: [ {admin_password} ] <<<*****")
 
 
 ar = APIRouter()
+
+
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        session = kwargs.get("session")
+        if not session or not session.get("user"):
+            return RedirectResponse(url="/login", status_code=302)
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 @ar.get("/admin/users")

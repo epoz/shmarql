@@ -2,6 +2,19 @@ import click
 import yaml
 from shmarql.config import log
 from mkdocs.__main__ import cli as mkdocs_cli
+from .am import reset_admin_password
+
+
+@click.option(
+    "-f",
+    "--filepath",
+    type=click.Path(exists=True),
+    help="Path to the admin database file",
+    required=True,
+)
+@click.command("reset_admin")
+def reset_admin(filepath: str):
+    reset_admin_password(filepath)
 
 
 @click.option(
@@ -45,6 +58,7 @@ def cli():
 
 
 cli.add_command(docs_build)
+cli.add_command(reset_admin)
 
 if __name__ == "__main__":
     cli()
