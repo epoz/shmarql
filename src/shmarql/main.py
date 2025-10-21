@@ -16,12 +16,12 @@ from plotly.offline._plotlyjs_version import __plotlyjs_version__ as plotlyjs_ve
 import asyncio
 from typing import List, Callable, Dict, Any
 from monsterui.all import Theme
-from .layout import markdown_container, main_container
+from .layout import markdown_container, base
 
 from .qry import do_query, hash_query
 from .fragments import rt as fragments_rt
 from .fragments import build_sparql_ui
-
+from .am import ar as am_rt
 
 hdrs = [
     Script(src=f"https://cdn.plot.ly/plotly-{plotlyjs_version}.min.js"),
@@ -35,6 +35,7 @@ app = FastHTML(
 )
 
 fragments_rt.to_app(app)
+am_rt.to_app(app)
 
 
 @app.on_event("startup")
@@ -148,6 +149,7 @@ def shmarql_redir():
 @app.get(f"{MOUNT}shmarql/")
 def shmarql_get(
     request: Request,
+    session,
     query: str = "select * where {?s ?p ?o} limit 10",
     format: str = None,
 ):
@@ -214,7 +216,7 @@ def shmarql_get(
             "There is currently no SPARQL query form to be found here, call it from a command line via a POST request."
         )
 
-    return main_container(Div(build_sparql_ui(query, results), cls="mt-4"))
+    return base(Div(build_sparql_ui(query, results), cls="mt-4"), session=session)
 
 
 from .biki import *
@@ -228,7 +230,7 @@ def entity_check(iri: str):
 
 @app.get(MOUNT + "{fname:path}")
 @app.get("/{fname:path}")
-def getter(request: Request, fname: str):
+def getter(request: Request, session, fname: str):
     log.debug(f"Getter on {repr(fname)}")
     new_name = fname
     if fname.startswith("/"):
@@ -261,9 +263,9 @@ def getter(request: Request, fname: str):
 
     log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
-        return markdown_container(path_to_try, nav=nav)
+        return markdown_container(path_to_try, nav=nav, session=session)
     if os.path.exists(path_to_try + ".md"):
-        return markdown_container(path_to_try + ".md", nav=nav)
+        return markdown_container(path_to_try + ".md", nav=nav, session=session)
 
     iri = SITE_URI + fname
     log.debug(f"Entity Checking {iri}")

@@ -8,11 +8,14 @@ readme = "README.md"
 keywords = ["SPARQL", "search", "RDF", "Linked Data"]
 requires-python = ">=3.10"
 dependencies = [
+    "apsw==3.50.3.0",
+    "bcrypt==3.2.0",
     "fizzysearch==0.31",
     "markdown>=3.9",
     "mkdocs-material>=9.6.21",
     "monsterui>=1.0.29",
     "pandas>=2.3.3",
+    "passlib>=1.7.4",
     "plotly>=6.3.1",
     "pygments>=2.19.2",
     "pyoxigraph>=0.5.0",
@@ -31,3 +34,8 @@ py3 = "shmarql:ShmarqlLexer"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "ipython>=8.37.0",
+]

@@ -1,9 +1,26 @@
+# 2025-10-21
+
+## Added
+
+- User management via an 'admin' account, which is created and set to a random password shown in console when server is started with an empty admin database first time.
+
+# 2025-10-17
+
+## Added
+
+The config option ADMIN_DATABASE specifies a path to a sqlite database used for access management and general admin.
+A new module `am.py` to handle access management and admin
+
 # 2025-10-10
 
 ## Major change
 
 - Remove the default mkdocs rendering of query and info pages, and switch to using MonsterUI.
   Still possible to make mkdocs(-material) sites using shmarql, but the default markdown rendering is now done with mistletoe.
+
+## Removed
+
+The WATCH_DOCS config option is superflous and removed
 
 # 2025-06-26
 

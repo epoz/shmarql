@@ -3,13 +3,32 @@ from monsterui.all import *
 from mistletoe.contrib.pygments_renderer import PygmentsRenderer
 from urllib.parse import quote
 from .fragments import fragments_sparql
+from .config import LOGINS
 import yaml
 
 
-def navbar():
+def navbar(session={}):
+    user = session.get("user")
+    if LOGINS:
+        login_link = (
+            A(
+                f"Logout {user.get('username')}",
+                href="/logout",
+                cls="btn btn-sm btn-outline",
+            )
+            if user
+            else A("Login", href="/login", cls="btn btn-sm btn-primary")
+        )
+
     return Div(
         NavBar(
             A("Query", href="/shmarql/"),
+            (
+                A("Users", href="/admin/users", cls="btn btn-sm btn-outline")
+                if user and user.get("username") == "admin"
+                else None
+            ),
+            login_link if LOGINS else None,
             brand=DivLAligned(
                 A(UkIcon("home", height=30, width=30), href="/"),
                 A(H3("SHMARQL", cls="text-zinc-100"), href="/"),
@@ -33,14 +52,13 @@ def footer():
     )
 
 
-def main_container(content, extra_script=None, title="SHMARQL"):
+def base(content, extra_script=None, title="SHMARQL", session={}):
     return (
         Title(title),
         extra_script,
-        navbar(),
+        navbar(session=session),
         Container(content, cls="lg:w-4/5 w-11/12"),
         footer(),
-        Script("hljs.highlightAll()"),
     )
 
 
@@ -77,11 +95,11 @@ def build_nav(navlist: list, depth=0.25):
     return Ul(*buf, cls=(f"pr-2", TextT.sm), style=f"padding-left: {depth}ch")
 
 
-def markdown_container(filepath: str, nav=[]):
+def markdown_container(filepath: str, nav=[], session={}):
     sidebar = None
     if nav:
         sidebar = Div(build_nav(nav), cls="pt-11 w-3/5")
 
     md_content = open(filepath, "r").read()
     c = render_md(md_content, renderer=LanguageAwarePygmentsRenderer)
-    return main_container(Div(sidebar, Div(c), cls="flex gap-12"))
+    return base(Div(sidebar, Div(c), cls="flex gap-12"), session=session)

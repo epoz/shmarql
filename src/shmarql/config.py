@@ -138,4 +138,6 @@ PREFIXES_SNIPPET = "".join(
     f"PREFIX {prefix} <{uri}>\n" for uri, prefix in PREFIXES.items()
 )
 
-WATCH_DOCS = os.environ.get("WATCH_DOCS", "0") == "1"
+ADMIN_DATABASE = os.environ.get("ADMIN_DATABASE")
+
+LOGINS = os.environ.get("LOGINS") == "1"
