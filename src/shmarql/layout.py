@@ -3,7 +3,7 @@ from monsterui.all import *
 from mistletoe.contrib.pygments_renderer import PygmentsRenderer
 from urllib.parse import quote
 from .fragments import fragments_sparql
-from .config import LOGINS
+from .config import LOGINS, SITE_TITLE, ENDPOINT, DATA_LOAD_PATHS
 import yaml
 
 
@@ -22,7 +22,7 @@ def navbar(session={}):
 
     return Div(
         NavBar(
-            A("Query", href="/shmarql/"),
+            A("Query", href="/shmarql/") if ENDPOINT or DATA_LOAD_PATHS else None,
             (
                 A("Users", href="/admin/users", cls="btn btn-sm btn-outline")
                 if user and user.get("username") == "admin"
@@ -31,7 +31,7 @@ def navbar(session={}):
             login_link if LOGINS else None,
             brand=DivLAligned(
                 A(UkIcon("home", height=30, width=30), href="/"),
-                A(H3("SHMARQL", cls="text-zinc-100"), href="/"),
+                A(H3(SITE_TITLE, cls="text-zinc-100"), href="/"),
             ),
         ),
         cls="bg-sky-600 text-white",
