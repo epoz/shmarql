@@ -10,6 +10,18 @@ from functools import wraps
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
+def reset_admin_password(admin_filepath: str):
+    admin_database = database(admin_filepath)
+    users = admin_database.t.users
+    users.dataclass()
+    admin_password = "".join(random.choice("01234567890abcdef") for _ in range(20))
+    admin_user = users["admin"]
+    admin_user.password = pwd_context.hash(admin_password)
+    users.update(admin_user)
+    log.info(f"*****>>> admin user password: [ {admin_password} ] <<<*****")
+
+
 if LOGINS:
     admin_database = database(ADMIN_DATABASE)
     users = admin_database.t.users
@@ -24,17 +36,6 @@ if LOGINS:
         )
         reset_admin_password()
     users.dataclass()
-
-
-def reset_admin_password(admin_filepath: str):
-    admin_database = database(admin_filepath)
-    users = admin_database.t.users
-    users.dataclass()
-    admin_password = "".join(random.choice("01234567890abcdef") for _ in range(20))
-    admin_user = users["admin"]
-    admin_user.password = pwd_context.hash(admin_password)
-    users.update(admin_user)
-    log.info(f"*****>>> admin user password: [ {admin_password} ] <<<*****")
 
 
 ar = APIRouter()
