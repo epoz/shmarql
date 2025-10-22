@@ -34,7 +34,7 @@ if LOGINS:
             username="admin",
             name="Administrator",
         )
-        reset_admin_password()
+        reset_admin_password(ADMIN_DATABASE)
     users.dataclass()
 
 
