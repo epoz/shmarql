@@ -189,13 +189,15 @@ def initialize_graph(data_load_paths: list, store_path: str = None) -> px.Store:
                         or data_load_path.endswith(".xml")
                         or data_load_path.endswith(".owl")
                     ):
-                        GRAPH.bulk_load(r.content, "application/rdf+xml")
+                        GRAPH.bulk_load(r.content, "application/rdf+xml", lenient=True)
                     elif data_load_path.endswith(".nt") or data_load_path.endswith(
                         ".nt.gz"
                     ):
-                        GRAPH.bulk_load(r.content, "application/n-triples")
+                        GRAPH.bulk_load(
+                            r.content, "application/n-triples", lenient=True
+                        )
                     else:
-                        GRAPH.bulk_load(r.content, "text/turtle")
+                        GRAPH.bulk_load(r.content, "text/turtle", lenient=True)
             else:
                 if load_file_to_graph(GRAPH, data_load_path):
                     continue
@@ -228,12 +230,16 @@ def load_file_to_graph(graph: px.Store, filepath: str) -> bool:
         else:
             filepath = open(filepath, "rb")
         if filename.lower().endswith(".ttl"):
-            log.debug(f"Parsing {filepath}")
-            graph.bulk_load(filepath, "text/turtle")
+            log.debug(f"Parsing {filepath} as ttl")
+            graph.bulk_load(filepath, px.RdfFormat.TURTLE, lenient=True)
             was_file = True
         elif filename.lower().endswith(".nt"):
-            log.debug(f"Parsing {filepath}")
-            graph.bulk_load(filepath, "application/n-triples")
+            log.debug(f"Parsing {filepath} as nt")
+            graph.bulk_load(filepath, px.RdfFormat.N_TRIPLES, lenient=True)
+            was_file = True
+        elif filename.lower().endswith(".trig"):
+            log.debug(f"Parsing {filepath} as trig")
+            graph.bulk_load(filepath, px.RdfFormat.TRIG, lenient=True)
             was_file = True
     except Exception as e:
         log.debug(f"{filepath} exception {e}")
