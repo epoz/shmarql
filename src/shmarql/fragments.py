@@ -178,7 +178,7 @@ def build_plain_table(query: str, results: dict):
                 row_columns.append(
                     Td(
                         A(
-                            do_prefixes(value["value"]),
+                            do_prefixes(value["value"], results.get("prefixes", {})),
                             href=f"{MOUNT}shmarql/?query="
                             + make_resource_query(value["value"]),
                         ),
@@ -286,7 +286,7 @@ def fragments_resource(results: dict, query: str):
         skip_fields.append("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
         rdf_types = [
             A(
-                do_prefixes(str(x)),
+                do_prefixes(str(x), results.get("prefixes", {})),
                 href=f"{MOUNT}shmarql/?query=" + make_spo(x, "o"),
                 style="margin-right: 0.5em",
             )
@@ -356,7 +356,7 @@ def fragments_resource(results: dict, query: str):
             plain_query = query.replace("# shmarql-view: resource\n", "")
 
             field_heading = H3(
-                A(do_prefixes(field), href=P_query),
+                A(do_prefixes(field, results.get("prefixes", {})), href=P_query),
                 Span(
                     f"There are {len(val)} values for this field, showing the first 50,",
                     style="font-size: 80%; font-style: italic",
@@ -370,7 +370,8 @@ def fragments_resource(results: dict, query: str):
             )
         else:
             field_heading = H3(
-                A(do_prefixes(field), href=P_query), style="margin: 0.5em 0 0 0"
+                A(do_prefixes(field, results.get("prefixes", {})), href=P_query),
+                style="margin: 0.5em 0 0 0",
             )
         ba(
             (

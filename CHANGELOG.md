@@ -1,3 +1,13 @@
+# 2025-10-27
+
+## Changed
+
+- Use the `lenient=true` flag for Oxigraph bulk_load calls when loading data from DATA_LOAD_PATHS
+
+- Also allow loading of .trig files for named graphs
+
+- Use prefixes declared in SPARQL queries in the result display pages
+
 # 2025-10-21
 
 ## Added
@@ -13,7 +23,9 @@ A new module `am.py` to handle access management and admin
 
 # 2025-10-10
 
-## Major change
+## Changed
+
+### Major
 
 - Remove the default mkdocs rendering of query and info pages, and switch to using MonsterUI.
   Still possible to make mkdocs(-material) sites using shmarql, but the default markdown rendering is now done with mistletoe.

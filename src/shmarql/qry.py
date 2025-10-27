@@ -40,6 +40,24 @@ def cached_query(query: str, endpoint: str = None):
         return result
 
 
+def parse_prefixes(querystring: str) -> dict:
+    prefixes = {}
+    for line in querystring.split("\n"):
+        if not line.lower().startswith("prefix "):
+            continue
+        if not line.lower().endswith(">"):
+            continue
+        parts = line.split(":")
+        if len(parts) < 2:
+            continue
+        prefix = parts[0][7:] + ":"
+        prefix_uri = ":".join(parts[1:]).strip("<> ")
+        if prefix == ":":
+            prefix = " "
+        prefixes[prefix_uri] = prefix
+    return prefixes
+
+
 def do_query(query: str) -> dict:
     to_use = ENDPOINT
 
@@ -128,6 +146,10 @@ def do_query(query: str) -> dict:
             endpoint_name = k
 
     if result:
+        try:
+            result["prefixes"] = parse_prefixes(query)
+        except:
+            log.error("Error parsing prefixes from query")
         result["duration"] = duration
         result["endpoint_name"] = endpoint_name
         result["endpoint"] = to_use

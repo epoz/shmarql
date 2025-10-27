@@ -316,14 +316,15 @@ def results_to_df(results: dict) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def do_prefixes(iris: Union[str, list]):
+def do_prefixes(iris: Union[str, list], pfxs: dict = {}):
     """Given a list of IRI values, return a string with the IRIs prefixed"""
     if isinstance(iris, str):
         iris = [iris]
     buf = []
+    pfxs.update(PREFIXES)
     for iri in iris:
         found = False
-        for uri, prefix in PREFIXES.items():
+        for uri, prefix in pfxs.items():
             if iri.startswith(uri):
                 buf.append(f"{prefix}{iri[len(uri):]}")
                 found = True
