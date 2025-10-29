@@ -21,18 +21,16 @@ RUN apt update && apt install -y curl wget vim
 COPY --from=builder /fts5-snowball/fts5stemmer.so /usr/local/lib/
 COPY --from=builder /spellfix/spellfix.so /usr/local/lib/
 COPY --from=builder /usr/local/bin/d2 /usr/local/bin/d2 
-
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 WORKDIR /app
 
 COPY src src
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock .python-version ./
 
-RUN /root/.local/bin/uv sync 
-
+RUN uv sync --frozen --no-dev
 
 WORKDIR /app/src
-ENTRYPOINT ["/root/.local/bin/uv", "run", "-m", "uvicorn", "shmarql:app", "--log-level", "debug", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["uv", "run", "-m", "uvicorn", "shmarql:app", "--log-level", "debug", "--host", "0.0.0.0", "--port", "8000"]
 
 
