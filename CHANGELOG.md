@@ -1,3 +1,11 @@
+# 2025-10-29
+
+## Changed
+
+- Improved uv tweaks in Dockerfile
+
+- Warn of missing WATCH_DOCS config if still used, and put back default ./src/site/index.md for a simple homepage if none provided by end-users
+
 # 2025-10-27
 
 ## Changed
