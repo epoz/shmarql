@@ -143,3 +143,10 @@ ADMIN_DATABASE = os.environ.get("ADMIN_DATABASE")
 LOGINS = os.environ.get("LOGINS") == "1"
 
 SITE_TITLE = os.environ.get("SITE_TITLE", "SHMARQL")
+
+########## Config values that do not exist any more ##########
+
+if os.environ.get("WATCH_DOCS"):
+    log.warning(
+        "WATCH_DOCS config has been removed. The automatic rebuild of mkdocs files is not supported any more. The system can now render mkdocs files on the fly."
+    )
