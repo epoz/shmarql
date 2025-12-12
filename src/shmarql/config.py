@@ -108,35 +108,46 @@ DEFAULT_PREFIXES = {
     "https://database.factgrid.de/entity/": "factgrid:",
 }
 
+
+def read_prefixes_from_ttl(filepath: str):
+    tmp_prefixes = {}
+    for line in open(filepath).readlines():
+        if not line.lower().startswith("@prefix "):
+            continue
+        if not line.lower().endswith(" .\n"):
+            continue
+        line = line.strip("\n .")
+        parts = line.split(":")
+        if len(parts) < 2:
+            continue
+        prefix = parts[0][8:] + ":"
+        prefix_uri = ":".join(parts[1:]).strip("<> ")
+        if prefix == ":":
+            prefix = " "
+        tmp_prefixes[prefix_uri] = prefix
+    return tmp_prefixes
+
+
+PREFIXES = DEFAULT_PREFIXES
 try:
     if PREFIXES_FILEPATH:
         # also support reading the prefixed from a .ttl file for convenience
         if PREFIXES_FILEPATH.endswith(".ttl"):
-            PREFIXES = DEFAULT_PREFIXES
-            for line in open(PREFIXES_FILEPATH).readlines():
-                if not line.lower().startswith("@prefix "):
-                    continue
-                if not line.lower().endswith(" .\n"):
-                    continue
-                line = line.strip("\n .")
-                parts = line.split(":")
-                if len(parts) < 2:
-                    continue
-                prefix = parts[0][8:] + ":"
-                prefix_uri = ":".join(parts[1:]).strip("<> ")
-                if prefix == ":":
-                    prefix = " "
-                PREFIXES[prefix_uri] = prefix
+            PREFIXES = DEFAULT_PREFIXES | read_prefixes_from_ttl(PREFIXES_FILEPATH)
         else:
             PREFIXES = DEFAULT_PREFIXES | json.load(open(PREFIXES_FILEPATH))
-    else:
-        PREFIXES = DEFAULT_PREFIXES
 except:
     log.exception(f"Problem binding PREFIXES from {PREFIXES_FILEPATH}")
 
 PREFIXES_SNIPPET = "".join(
     f"PREFIX {prefix} <{uri}>\n" for uri, prefix in PREFIXES.items()
 )
+
+if os.environ.get("NFDI_PREFIXES", "1") == "1":
+    NFDI_PREFIXES_FILEPATH = os.path.join(
+        os.path.dirname(__file__), "nfdi_prefixes.ttl"
+    )
+    PREFIXES = PREFIXES | read_prefixes_from_ttl(NFDI_PREFIXES_FILEPATH)
 
 ADMIN_DATABASE = os.environ.get("ADMIN_DATABASE")
 
