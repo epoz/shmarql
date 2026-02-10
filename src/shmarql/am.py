@@ -41,15 +41,19 @@ if LOGINS:
 ar = APIRouter()
 
 
-def login_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        session = kwargs.get("session")
-        if not session or not session.get("user"):
-            return RedirectResponse(url="/login", status_code=302)
-        return func(*args, **kwargs)
-
-    return wrapper
+def login_required(session):
+    if not session or not session.get("user"):
+        raise HTTPException(
+            status_code=303,  # 303 See Other is often better for redirects after POST
+            headers={"Location": "/login"},
+        )
+    username = session.get("user", {}).get("username")
+    if not username:
+        raise HTTPException(
+            status_code=303,
+            headers={"Location": "/login"},
+        )
+    return username
 
 
 @ar.get("/admin/users")
