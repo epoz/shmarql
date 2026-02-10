@@ -110,6 +110,10 @@ DEFAULT_PREFIXES = {
 
 
 def read_prefixes_from_ttl(filepath: str):
+    if not os.path.exists(filepath):
+        log.warning(f"PREFIXES_FILEPATH {filepath} does not exist.")
+        return {}
+
     tmp_prefixes = {}
     for line in open(filepath).readlines():
         if not line.lower().startswith("@prefix "):
