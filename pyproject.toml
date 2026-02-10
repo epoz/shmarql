@@ -1,6 +1,6 @@
 [project]
 name = "shmarql"
-version = "0.66"
+version = "0.67"
 description = "A Linked Data publishing platform for semantic web professionals in a hurry."
 authors = [{name = "Etienne Posthumus", email = "ep@epoz.org"}]
 license = "MIT"
