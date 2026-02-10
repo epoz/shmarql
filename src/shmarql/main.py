@@ -263,7 +263,7 @@ def getter(request: Request, session, fname: str):
 
     log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
-        return markdown_container(path_to_try, nav=nav, session=session)
+        return FileResponse(path_to_try)
     if os.path.exists(path_to_try + ".md"):
         return markdown_container(path_to_try + ".md", nav=nav, session=session)
 
