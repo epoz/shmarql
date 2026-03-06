@@ -149,9 +149,9 @@ def shmarql_redir():
 @app.get(f"{MOUNT}shmarql/")
 def shmarql_get(
     request: Request,
-    session,
     query: str = "select * where {?s ?p ?o} limit 10",
     format: str = None,
+    session: dict = {},
 ):
 
     if format is None:
