@@ -134,6 +134,11 @@ async def sparql(request: Request):
     if request.headers.get("content-type") == "application/sparql-query":
         query = await request.body()
         query = query.decode("utf-8")
+    elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
+        body = await request.body()
+        body = body.decode("utf-8")
+        params = dict(param.split("=") for param in body.split("&"))
+        query = params.get("query")
     else:
         query = request.query_params.get("query")
     if not query or len(query.strip()) < 2:
