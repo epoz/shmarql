@@ -19,6 +19,16 @@ else:
     log.info("SHMARQL Logging at INFO level")
 
 
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+log.debug("Trying Redis at " + REDIS_HOST)
+try:
+    import redis.asyncio as redis
+
+    redis_client = redis.Redis(host=REDIS_HOST)
+except:
+    log.exception(f"Redis at {REDIS_HOST} not available")
+
+
 ENDPOINT = os.environ.get("ENDPOINT")
 
 # ENDPOINTS variable with name|url pairs
@@ -39,13 +49,6 @@ SITE_URI = os.environ.get("SITE_URI", "http://127.0.0.1:8000/")
 
 # This is a mountpoint that will be prefixed to all URIs served by the application
 MOUNT = os.environ.get("MOUNT", "/")
-
-QUERIES_DB = os.environ.get("QUERIES_DB", "queries.db")
-thequerydb = sqlite3.connect(QUERIES_DB)
-thequerydb.executescript(
-    """CREATE TABLE IF NOT EXISTS queries (queryhash TEXT, query TEXT, timestamp TEXT, endpoint TEXT, result TEXT, duration FLOAT);
-pragma journal_mode=WAL;"""
-)
 
 if "DATA_LOAD_PATHS" in os.environ:
     DATA_LOAD_PATHS = os.environ.get("DATA_LOAD_PATHS").split(" ")
@@ -161,7 +164,12 @@ SITE_TITLE = os.environ.get("SITE_TITLE", "SHMARQL")
 
 ########## Config values that do not exist any more ##########
 
-if os.environ.get("WATCH_DOCS"):
-    log.warning(
-        "WATCH_DOCS config has been removed. The automatic rebuild of mkdocs files is not supported any more. The system can now render mkdocs files on the fly."
-    )
+removed_config_values = {
+    "WATCH_DOCS": "The automatic rebuild of mkdocs files is not supported any more. The system can now render mkdocs files on the fly.",
+    "QUERIES_DB": "We do not cache queries in a SQLIte database any more, Redis is now used",
+}
+for removed_config_value, removed_config_warning in removed_config_values.items():
+    if os.environ.get(removed_config_value):
+        log.warning(
+            f"{removed_config_value} has been removed. " + removed_config_warning
+        )
