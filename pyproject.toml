@@ -10,10 +10,10 @@ requires-python = ">=3.10"
 dependencies = [
     "apsw==3.50.3.0",
     "bcrypt==3.2.0",
+    "fastapi>=0.138.1",
     "fizzysearch==0.31",
     "markdown>=3.9",
     "mkdocs-material>=9.6.21",
-    "monsterui>=1.0.29",
     "pandas>=2.3.3",
     "passlib>=1.7.4",
     "plotly>=6.3.1",
@@ -22,7 +22,7 @@ dependencies = [
     "python-fasthtml>=0.12.29",
     "pyyaml>=6.0.3",
     "rdflib>=7.2.1",
-    "tree-sitter-sparql==0.1.0",
+    "tree-sitter-sparql==0.1.0",    
 ]
 
 [project.urls]
@@ -38,5 +38,7 @@ build-backend = "setuptools.build_meta"
 
 [dependency-groups]
 dev = [
+    "debugpy>=1.8.21",
     "ipython>=8.37.0",
+    "scriv>=1.8.0",
 ]

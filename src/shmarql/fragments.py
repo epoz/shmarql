@@ -1,21 +1,27 @@
 from urllib.parse import quote
 import random, json
-from fasthtml.common import *
-from monsterui.all import *
 
-from .config import MOUNT, PREFIXES_SNIPPET, PREFIXES
+from fastcore.xml import *
+from fastcore.basics import NotStr
+from .config import MOUNT, PREFIXES_SNIPPET
 from uuid import uuid4
 
 from plotly.io import to_json
 from .px_util import results_to_df, do_prefixes
 import traceback
 from .charts import do_barchart, do_piechart, do_mapchart
+from .render import APIRouter
 
 rt = APIRouter()
 
 from .qry import do_query
 
 BTN_STYLE = "bg-slate-300 hover:bg-slate-400 text-black px-2 rounded-lg shadow-xl transition duration-300 font-bold"
+
+
+ARROW_LEFT_SVG = """<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+</svg>"""
 
 
 class HashableResult:
@@ -93,7 +99,7 @@ def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
     else:
         tolabel = "s"
 
-    Q = f"""{extra}select ?s ?p ?o ?{tolabel}label where {{ 
+    Q = f"""{extra}select ?{tolabel}label ?s ?p ?o  where {{ 
   values ?{spo} {{ {uri} }} 
   ?s ?p ?o .
   optional {{
@@ -110,11 +116,11 @@ def make_spo(uri: str, spo: str, encode=True, limit=999, extra=""):
 
 @rt.post(f"/shmarql/fragments/sparql")
 @rt.post(f"{MOUNT}shmarql/fragments/sparql")
-def fragments_sparql(query: str, results=None):
+async def fragments_sparql(query: str, prev_query: str = "", results=None):
     if query == "":
         query = "select * where {?s ?p ?o} limit 10"
     if results is None:
-        results = do_query(query)
+        results = await do_query(query)
 
     settings = results.get("shmarql_settings", {})
 
@@ -135,14 +141,14 @@ def fragments_sparql(query: str, results=None):
         )
 
     if "resource" in settings.get("view", []):
-        return Html(fragments_resource(results, query))
+        return await fragments_resource(results, query, prev_query)
     if settings.get("view", [""])[0].endswith("chart"):
-        return Html(fragments_chart(query))
+        return await fragments_chart(query)
     else:
-        return Html(build_plain_table(query, results))
+        return build_plain_table(query, prev_query, results)
 
 
-def build_plain_table(query: str, results: dict):
+def build_plain_table(query: str, prev_query: str, results: dict):
     table_rows = []
     heads = [Th("#", style="color: #aaa; text-align: right;")]
     heads.extend(
@@ -179,23 +185,34 @@ def build_plain_table(query: str, results: dict):
                     Td(
                         A(
                             do_prefixes(value["value"], results.get("prefixes", {})),
-                            href=f"{MOUNT}shmarql/?query="
-                            + make_resource_query(value["value"]),
+                            data_shmarqlspo=make_resource_query(value["value"]),
+                            data_shmarqlprevq=query,
+                            cls="shmarql_spo_link",
+                            href="#",
                         ),
                         Div(
                             A(
                                 "S",
-                                href=f"{MOUNT}shmarql/?query={S_query}",
+                                data_shmarqlspo=S_query,
+                                data_shmarqlprevq=query,
+                                cls="shmarql_spo_link",
+                                href="#",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             A(
                                 "P",
-                                href=f"{MOUNT}shmarql/?query={P_query}",
+                                data_shmarqlspo=P_query,
+                                data_shmarqlprevq=query,
+                                cls="shmarql_spo_link",
+                                href="#",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             A(
                                 "O",
-                                href=f"{MOUNT}shmarql/?query={O_query}",
+                                data_shmarqlspo=O_query,
+                                data_shmarqlprevq=query,
+                                cls="shmarql_spo_link",
+                                href="#",
                                 style="font-size: 70%; background-color: #ddd; color: #000; padding: 3px; text-decoration: none; margin: 0",
                             ),
                             style="font-size: 80%; display: inline-block; margin-left: 0.5em;",
@@ -233,14 +250,29 @@ def build_plain_table(query: str, results: dict):
     return Div(
         P(
             f"{len(results.get('results', {}).get('bindings', []))} results in {duration_display}{cached}",
+            (
+                (
+                    A(
+                        NotStr(ARROW_LEFT_SVG),
+                        title="Show Previous Query",
+                        href="#",
+                        data_shmarqlspo=prev_query,
+                        data_shmarqlprevq=query,
+                        cls="shmarql_spo_link",
+                    )
+                    if prev_query
+                    else None
+                )
+            ),
             style="font-size: 50%;",
             title="used: " + results.get("endpoint_name", ""),
         ),
         Table(Thead(Tr(*heads)), Tbody(*table_rows), data_tipe="sparql-results"),
+        shmarql_fragment_type="table",
     )
 
 
-def fragments_resource(results: dict, query: str):
+async def fragments_resource(results: dict, query: str, prev_query: str = ""):
     """Assuming that in results is a query:
     SELECT ?p ?o ?pp ?oo WHERE {
       <some_uri> ?p ?o .
@@ -267,7 +299,20 @@ def fragments_resource(results: dict, query: str):
         for kk, vv in v.items():
             seconds[k][kk] = list(sorted(vv))
 
-    buf = []
+    buf = [
+        (
+            A(
+                NotStr(ARROW_LEFT_SVG),
+                title="Show Previous Query",
+                href="#",
+                data_shmarqlspo=prev_query,
+                data_shmarqlprevq=query,
+                cls="shmarql_spo_link",
+            )
+            if prev_query
+            else None
+        )
+    ]
     ba = buf.append
     skip_fields = []
     for title_field in (
@@ -382,7 +427,7 @@ def fragments_resource(results: dict, query: str):
                 ),
             )
         )
-    return tuple(buf)
+    return Div(*buf)
 
 
 def build_standalone_table(results, query):
@@ -524,9 +569,9 @@ def build_standalone_table(results, query):
 
 
 @rt.get(f"{MOUNT}shmarql/fragments/chart")
-def fragments_chart(query: str, results=None):
+async def fragments_chart(query: str, results=None):
     if results is None:
-        results = do_query(query)
+        results = await do_query(query)
 
     settings = results.get("shmarql_settings", {})
     chart_type = settings.get("view")[0]
@@ -549,17 +594,15 @@ def fragments_chart(query: str, results=None):
         )
 
     return Div(
-        Script(
-            f"""
+        Script(f"""
         var plotly_data = {chart_json};
         Plotly.newPlot('{chart_id}', plotly_data.data, plotly_data.layout, {json.dumps(js_options)});
-    """
-        ),
+    """),
         id=chart_id,
     )
 
 
-def build_sparql_ui(query, results):
+async def build_sparql_ui(query, results):
     settings = results.get("shmarql_settings", {})
     if "hide" in settings.get("editor", []):
         sparql_editor_block_style_button = (
@@ -579,10 +622,10 @@ def build_sparql_ui(query, results):
         sparql_editor_block_style_button = None
 
     if "resource" in settings.get("view", []):
-        results_fragment = Div(fragments_resource(results, query), cls="md-typeset")
+        results_fragment = await fragments_resource(results, query)
     if settings.get("view", [""])[0].endswith("chart"):
         try:
-            chart_fragment = fragments_chart(query)
+            chart_fragment = await fragments_chart(query)
         except Exception as e:
             chart_fragment = Div(
                 f"Error: {e}",
@@ -631,16 +674,13 @@ def build_sparql_ui(query, results):
             id="results",
             style="margin-top: 2vh;",  # max-height: 50vh; overflow-y: scroll
         ),
-        Script(
-            f"""
+        Script(f"""
 const link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = "{MOUNT}static/codemirror.css";
-  document.head.appendChild(link);"""
-        ),
+  document.head.appendChild(link);"""),
         Script(f"const MOUNT = '{MOUNT}';"),
-        Script(
-            """
+        Script("""
 document.addEventListener("DOMContentLoaded", function () {
   sparqleditor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: "application/sparql-query",
@@ -696,6 +736,5 @@ document.body.addEventListener("keypress", function (evt) {
         executeQuery()
     }
 });
-"""
-        ),
+"""),
     )

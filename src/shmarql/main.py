@@ -1,6 +1,8 @@
 import csv, io, string, json, os, yaml
 from urllib.parse import quote
-from fasthtml.common import *
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import Response, HTMLResponse, FileResponse, RedirectResponse
+from fasthtml.common import Div, to_xml
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
 from .config import (
@@ -8,39 +10,26 @@ from .config import (
     MOUNT,
     SPARQL_QUERY_UI,
     SITEDOCS_PATH,
-    SCHPIEL_PATH,
     SITE_URI,
     log,
 )
-from plotly.offline._plotlyjs_version import __plotlyjs_version__ as plotlyjs_version
 import asyncio
 from typing import List, Callable, Dict, Any
-from monsterui.all import Theme
-from .layout import markdown_container, base
 
 from .qry import do_query, hash_query
 from .fragments import rt as fragments_rt
 from .fragments import build_sparql_ui
 from .am import ar as am_rt
 
-hdrs = [
-    Script(src=f"https://cdn.plot.ly/plotly-{plotlyjs_version}.min.js"),
-]
-hdrs.extend(Theme.blue.headers())
+app = FastAPI()
 
-
-app = FastHTML(
-    pico=False,
-    hdrs=hdrs,
-)
-
-fragments_rt.to_app(app)
-am_rt.to_app(app)
+app.include_router(fragments_rt)
+# app.include_router(am_rt)
 
 
 @app.on_event("startup")
 async def startup_event():
-    log.debug(f"App started up")
+    log.debug(f">>>> App started up")
 
 
 @app.get("/favicon.ico")
@@ -61,7 +50,7 @@ def make_literal_query(some_literal: dict, encode=True, limit=999):
     txt = [x for x in txt.split(" ") if len(x) > 1][:10]
     txt = " ".join(txt).strip(" ")
 
-    Q = f"""select ?s ?p ?o where {{ 
+    Q = f"""select ?s ?p ?o where {{
         ?s ?p ?o .
         ?s fizzy:fts "{txt}" . }} limit {limit}"""
     if encode:
@@ -129,7 +118,7 @@ def handle_options():
     return Response(status_code=204, headers=headers)
 
 
-@app.route(f"{MOUNT}sparql", methods=["GET", "POST"])
+@app.api_route(f"{MOUNT}sparql", methods=["GET", "POST"])
 async def sparql(request: Request):
     if request.headers.get("content-type") == "application/sparql-query":
         query = await request.body()
@@ -143,7 +132,7 @@ async def sparql(request: Request):
         query = request.query_params.get("query")
     if not query or len(query.strip()) < 2:
         return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
-    return shmarql_get(request, query)
+    return await shmarql_get(request, query)
 
 
 @app.get(f"{MOUNT}shmarql")
@@ -152,16 +141,15 @@ def shmarql_redir():
 
 
 @app.get(f"{MOUNT}shmarql/")
-def shmarql_get(
+async def shmarql_get(
     request: Request,
     query: str = "select * where {?s ?p ?o} limit 10",
     format: str = None,
-    session: dict = {},
 ):
 
     if format is None:
         format = accept_header_to_format(request)
-    results = do_query(query)
+    results = await do_query(query)
     if format in ("csv", "json", "turtle", "xml"):
         if "data" in results:
             if format == "turtle":
@@ -217,25 +205,25 @@ def shmarql_get(
             )
 
     if not SPARQL_QUERY_UI:
-        return Div(
-            "There is currently no SPARQL query form to be found here, call it from a command line via a POST request."
+        return HTMLResponse(
+            "<div>There is currently no SPARQL query form to be found here, call it from a command line via a POST request.</div>"
         )
 
-    return base(Div(build_sparql_ui(query, results), cls="mt-4"), session=session)
+    return HTMLResponse(to_xml(Div(build_sparql_ui(query, results), cls="mt-4")))
 
 
 from .biki import *
 
 
-def entity_check(iri: str):
+async def entity_check(iri: str):
     q = f"SELECT * WHERE {{ <{iri}> ?p ?o }}"
-    res = do_query(q)
+    res = await do_query(q)
     return len(res.get("results", {}).get("bindings", [])) > 0
 
 
 @app.get(MOUNT + "{fname:path}")
 @app.get("/{fname:path}")
-def getter(request: Request, session, fname: str):
+async def getter(request: Request, fname: str):
     log.debug(f"Getter on {repr(fname)}")
     new_name = fname
     if fname.startswith("/"):
@@ -243,45 +231,26 @@ def getter(request: Request, session, fname: str):
     if fname == "" or fname.endswith("/"):
         new_name += "index.html"
 
-    if SCHPIEL_PATH:
-        path_to_try = os.path.join(SCHPIEL_PATH, new_name)
-        if os.path.exists(path_to_try):
-            return FileResponse(path_to_try)
-
-    if new_name == "index.html":
-        new_name = "index.md"
     path_to_try = os.path.join(SITEDOCS_PATH, new_name)
     if MOUNT:
         path_to_try = os.path.join(SITEDOCS_PATH, new_name.replace(MOUNT[1:], "", 1))
     else:
         path_to_try = os.path.join(SITEDOCS_PATH, new_name)
 
-    nav = []
-    for nav_name in ("mkdocs.yml", "mkdocs.yaml"):
-        nav_path = os.path.join(SITEDOCS_PATH, nav_name)
-        if os.path.exists(nav_path):
-            try:
-                nav = yaml.safe_load(open(nav_path, "r")).get("nav", [])
-            except Exception as e:
-                log.warning(f"Could not parse {nav_path}: {e}")
-            break
-
     log.debug(f"Trying {path_to_try}")
     if os.path.exists(path_to_try):
         return FileResponse(path_to_try)
-    if os.path.exists(path_to_try + ".md"):
-        return markdown_container(path_to_try + ".md", nav=nav, session=session)
 
     iri = SITE_URI + fname
     log.debug(f"Entity Checking {iri}")
-    if SITE_URI and entity_check(iri):
+    if SITE_URI and await entity_check(iri):
         format = accept_header_to_format(request)
         if format == "html":
             q = f"""
 # shmarql-view: resource
 # shmarql-editor: hide
 
-SELECT ?p ?o ?pp ?oo WHERE {{ 
+SELECT ?p ?o ?pp ?oo WHERE {{
   <{iri}> ?p ?o .
   OPTIONAL {{
     ?o ?pp ?oo .

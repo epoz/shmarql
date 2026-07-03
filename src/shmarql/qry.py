@@ -1,43 +1,33 @@
+from datetime import datetime
+from unittest import result
+
 import httpx, logging, random, hashlib, json, time, sqlite3, os, gzip
 import fizzysearch
 from .config import (
     ENDPOINT,
     ENDPOINTS,
-    QUERIES_DB,
     BIKIDATA_DB,
-    SEMANTIC_INDEX,
     PREFIXES_SNIPPET,
     DATA_LOAD_PATHS,
     STORE_PATH,
     log,
+    redis_client,
 )
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, string_iterator
 
 
-def hash_query(query: str) -> str:
-    return hashlib.md5(query.encode("utf8")).hexdigest()
+def hash_query(query: str, endpoint: str = "") -> str:
+    return hashlib.md5((query + endpoint).encode("utf8")).hexdigest()
 
 
-def cached_query(query: str, endpoint: str = None):
-    # Only use the endpoint if specified
-    if endpoint:
-        theq = sqlite3.connect(QUERIES_DB).execute(
-            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and endpoint = ? and not result is null ORDER BY timestamp DESC LIMIT 1",
-            (hash_query(query), endpoint),
-        )
-    else:
-        theq = sqlite3.connect(QUERIES_DB).execute(
-            "SELECT timestamp, result, duration FROM queries WHERE queryhash = ? and not result is null ORDER BY timestamp DESC LIMIT 1",
-            (hash_query(query),),
-        )
-
-    for timestamp, result, duration in theq:
-        result = json.loads(result)
-        result["timestamp"] = timestamp
-        result["duration"] = duration
-        result["cached"] = True
-        return result
+async def cached_query(query: str, endpoint: str = ""):
+    if redis_client:
+        cached_q = await redis_client.get(hash_query(query, endpoint))
+        if cached_q:
+            result = json.loads(cached_q)
+            result["cached"] = True
+            return result
 
 
 def parse_prefixes(querystring: str) -> dict:
@@ -58,7 +48,7 @@ def parse_prefixes(querystring: str) -> dict:
     return prefixes
 
 
-def do_query(query: str) -> dict:
+async def do_query(query: str) -> dict:
     to_use = ENDPOINT
 
     try:
@@ -97,7 +87,7 @@ def do_query(query: str) -> dict:
             return {"error": "No endpoint found"}
 
     if not "nocache" in shmarql_settings:
-        cached_query_result = cached_query(query)
+        cached_query_result = await cached_query(query, to_use)
         if cached_query_result:
             return cached_query_result
 
@@ -154,13 +144,16 @@ def do_query(query: str) -> dict:
         result["endpoint_name"] = endpoint_name
         result["endpoint"] = to_use
         result["shmarql_settings"] = shmarql_settings
+        result["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        thequerydb = sqlite3.connect(QUERIES_DB)
-        thequerydb.execute(
-            "INSERT INTO queries (queryhash, query, timestamp, endpoint, result, duration) VALUES (?, ?, datetime(), ?, ?, ?)",
-            (hash_query(query), query, to_use, json.dumps(result), duration),
-        )
-        thequerydb.commit()
+        if redis_client:
+            dumped = json.dumps(result)
+
+            await redis_client.set(
+                hash_query(query, to_use),
+                dumped,
+                60 * 60 * 24 * 3,
+            )  # 3 days expiry
 
         return result
     else:
