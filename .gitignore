@@ -1,3 +1,7 @@
 databases
 .env
 docker-compose.yml
+
+__pycache__
+tmp
+.DS_Store
