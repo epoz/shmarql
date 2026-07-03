@@ -1,3 +1,21 @@
+# 2026-07-03
+
+## Removed
+
+- Remove the FastHTML app, and go back to a plain FastAPI app. Still using the fasthtml.core for crate HTML elements, but these are renmdered to a FastAPI compatible Response.
+
+- Remove the caching to sqlite file, and do cacheing via Redis
+
+## Added
+
+- Use a YASGUI fork https://github.com/Matdata-eu/Yasgui for the query editor
+
+## Changed
+
+- Go back to using Markdown files for the default UI
+
+- Start preparing for the Zensical move from the mkdocs-material project
+
 # 2025-10-29
 
 ## Changed
