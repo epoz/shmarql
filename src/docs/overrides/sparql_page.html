@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+{{ super() }}
+
+  <link rel="stylesheet" href="../css/yasgui.min.css" />
+  <style>
+    .yasgui. endpointText, .yasgui .yasqe_endpoint , .yasgui .endpointCatalogueToggle { display: none !important; }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+{{ super() }}
+
+<div id="yasgui"></div>
+  
+  <script src="../javascript/yasgui.min.js"></script>
+  <script>
+    const yasgui = new Yasgui(document.getElementById("yasgui"), {
+      requestConfig: {
+        endpoint: "../sparql"
+      }, endpointCatalogueOptions: { getData: () => [] }
+    });
+  </script>
+  
+{% endblock %}
