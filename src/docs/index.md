@@ -1,3 +1,8 @@
+---
+hide:
+  - toc
+---
+
 # Welcome to SHMARQL
 
 You can start [exploring the data](data_overview.md) in the KG which has been configured.

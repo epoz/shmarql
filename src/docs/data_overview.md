@@ -1,4 +1,9 @@
-# Welcome to SHMARQL
+---
+hide:
+  - toc
+---
+
+# Data Overview
 
 ## Instance Count
 
