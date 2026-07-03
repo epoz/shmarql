@@ -45,9 +45,10 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 extra_javascript:
-  - overrides/assets/javascripts/extra.js
-  - overrides/assets/vendor/plotly-3.0.1.min.js
+  - javascript/shmarql.js
+  - javascript/plotly-3.6.0.min.js
 
 nav:
-  - Data Overview: index.md
-  - Queries: /shmarql/
+  - Welcome: index.md
+  - Data Overview: data_overview.md
+  - Queries: queries.md

@@ -26,6 +26,7 @@ try:
 
     redis_client = redis.Redis(host=REDIS_HOST)
 except:
+    redis_client = None
     log.exception(f"Redis at {REDIS_HOST} not available")
 
 
@@ -82,7 +83,6 @@ SITE_ID = os.environ.get(
 )
 
 SITEDOCS_PATH = os.environ.get("SITEDOCS_PATH", os.path.join(os.getcwd(), "site"))
-SCHPIEL_PATH = os.environ.get("SCHPIEL_PATH")
 
 PREFIXES_FILEPATH = os.environ.get("PREFIXES_FILEPATH")
 DEFAULT_PREFIXES = {
@@ -167,6 +167,7 @@ SITE_TITLE = os.environ.get("SITE_TITLE", "SHMARQL")
 removed_config_values = {
     "WATCH_DOCS": "The automatic rebuild of mkdocs files is not supported any more. The system can now render mkdocs files on the fly.",
     "QUERIES_DB": "We do not cache queries in a SQLIte database any more, Redis is now used",
+    "SCHPIEL_PATH": "The schpiel path is not supported any more, please use SITEDOCS_PATH instead.",
 }
 for removed_config_value, removed_config_warning in removed_config_values.items():
     if os.environ.get(removed_config_value):
