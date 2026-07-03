@@ -1,25 +1,18 @@
-import csv, io, string, json, os, yaml
-from urllib.parse import quote
+import csv, io, string, json, os
+from urllib.parse import quote, unquote_plus
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import Response, HTMLResponse, FileResponse, RedirectResponse
 from fasthtml.common import Div, to_xml
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
-from .config import (
-    PREFIXES_SNIPPET,
-    MOUNT,
-    SPARQL_QUERY_UI,
-    SITEDOCS_PATH,
-    SITE_URI,
-    log,
-)
-import asyncio
+from .config import MOUNT, SPARQL_QUERY_UI, SITEDOCS_PATH, SITE_URI, log, _init_redis
 from typing import List, Callable, Dict, Any
 
 from .qry import do_query, hash_query
 from .fragments import rt as fragments_rt
 from .fragments import build_sparql_ui
-from .am import ar as am_rt
+
+# from .am import ar as am_rt
 
 app = FastAPI()
 
@@ -30,6 +23,7 @@ app.include_router(fragments_rt)
 @app.on_event("startup")
 async def startup_event():
     log.debug(f">>>> App started up")
+    redis_client = await _init_redis()
 
 
 @app.get("/favicon.ico")
@@ -128,6 +122,9 @@ async def sparql(request: Request):
         body = body.decode("utf-8")
         params = dict(param.split("=") for param in body.split("&"))
         query = params.get("query")
+        # this should also be unescaped before passing on
+        if query:
+            query = unquote_plus(query)
     else:
         query = request.query_params.get("query")
     if not query or len(query.strip()) < 2:

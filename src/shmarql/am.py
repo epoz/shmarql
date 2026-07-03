@@ -1,7 +1,5 @@
 import random
 from urllib.parse import quote
-from fasthtml.common import *
-from monsterui.all import *
 from fastlite import database
 from .config import ADMIN_DATABASE, log, LOGINS
 from passlib.context import CryptContext

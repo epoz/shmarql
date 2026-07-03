@@ -1,4 +1,4 @@
-import os, sqlite3, random, json, logging
+import os, random, json, logging
 
 log = logging.getLogger("SHMARQL")
 handler = logging.StreamHandler()
@@ -21,14 +21,22 @@ else:
 
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 log.debug("Trying Redis at " + REDIS_HOST)
-try:
-    import redis.asyncio as redis
 
-    redis_client = redis.Redis(host=REDIS_HOST)
-except:
-    redis_client = None
-    log.exception(f"Redis at {REDIS_HOST} not available")
 
+async def _init_redis():
+    try:
+        import redis.asyncio as redis
+
+        redis_client = redis.Redis(host=REDIS_HOST)
+        await redis_client.ping()
+        log.debug(f"Redis at {REDIS_HOST} available")
+        return redis_client
+    except:
+        log.exception(f"Redis at {REDIS_HOST} not available")
+        return None
+
+
+redis_client = None
 
 ENDPOINT = os.environ.get("ENDPOINT")
 
