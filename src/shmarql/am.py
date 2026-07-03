@@ -3,7 +3,6 @@ from urllib.parse import quote
 from fasthtml.common import *
 from monsterui.all import *
 from fastlite import database
-from .layout import base
 from .config import ADMIN_DATABASE, log, LOGINS
 from passlib.context import CryptContext
 from functools import wraps
@@ -336,3 +335,58 @@ def login_page(session, msg: str | None = None):
     )
 
     return base(content, title="Login")
+
+
+def base(content, title="SHMARQL", session=None):
+    user = session.get("user") if session else None
+    return Page(
+        Head(
+            Meta(charset="UTF-8"),
+            Meta(name="viewport", content="width=device-width, initial-scale=1.0"),
+            Title(title),
+            Link(rel="stylesheet", href="/static/tailwind.css"),
+            Link(rel="stylesheet", href="/static/ukit.css"),
+            Script(src="/static/ukit.js"),
+            Script(src="/static/htmx.min.js"),
+        ),
+        Body(
+            Div(
+                Div(
+                    A("SHMARQL", href="/", cls="text-xl font-bold text-white"),
+                    Div(
+                        A(
+                            "Query",
+                            href="/shmarql/",
+                            cls="text-white hover:text-gray-300",
+                        ),
+                        (
+                            A(
+                                "Admin",
+                                href="/admin/users",
+                                cls="text-white hover:text-gray-300",
+                            )
+                            if user and user.get("username") == "admin"
+                            else None
+                        ),
+                        (
+                            A(
+                                "Logout",
+                                href="/logout",
+                                cls="text-white hover:text-gray-300",
+                            )
+                            if user
+                            else A(
+                                "Login",
+                                href="/login",
+                                cls="text-white hover:text-gray-300",
+                            )
+                        ),
+                        cls="space-x-4",
+                    ),
+                    cls="flex justify-between items-center p-4 bg-blue-600",
+                ),
+                content,
+                cls="min-h-screen bg-gray-100",
+            )
+        ),
+    )
