@@ -31,6 +31,9 @@ COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --frozen --no-dev
 
 WORKDIR /app/src
+
+RUN uv run mkdocs build
+
 ENTRYPOINT ["uv", "run", "-m", "uvicorn", "shmarql:app", "--log-level", "debug", "--host", "0.0.0.0", "--port", "8000"]
 
 
