@@ -1,5 +1,4 @@
-import click
-import yaml
+import os, click, zipfile
 from shmarql.config import log
 from mkdocs.__main__ import cli as mkdocs_cli
 from .am import reset_admin_password
@@ -25,29 +24,28 @@ def reset_admin(filepath: str):
 )
 @click.command("docs_build")
 def docs_build(filepath: str):
-    log.debug(f"Trying to open filepath:   {filepath}")
-    nav = yaml.safe_load(open(filepath).read())
-    SRC_MKDOCS = "mkdocs.yml"
-    log.debug(f"Assuming the site mkdocs.yml file is in:   {SRC_MKDOCS}")
-    try:
-        site_mkdocs = yaml.load(open(SRC_MKDOCS).read(), yaml.UnsafeLoader)
-    except FileNotFoundError:
-        log.error(f"No {SRC_MKDOCS} file found, exiting.")
-        return
-    changed = False
-    for key in ("site_name", "site_url", "repo_url", "nav"):
-        if key in site_mkdocs:
-            del site_mkdocs[key]
-    for key in ("site_name", "site_url", "repo_url", "nav", "plugins"):
-        if key in nav:
-            site_mkdocs[key] = nav[key]
-            changed = True
-
-    open(SRC_MKDOCS, "w").write(yaml.dump(site_mkdocs))
-    click.echo(f"Wrote new {SRC_MKDOCS} file")
-
     try:
         mkdocs_cli(["build", "--site-dir", "site"], standalone_mode=False)
+    except Exception as e:
+        log.error(str(e))
+
+
+@click.option(
+    "-d",
+    "--dirname",
+    type=click.Path(exists=False),
+    help="Path to create for the new Shmarql site",
+)
+@click.command("init")
+def init_site(dirname: str = "shmarql_site"):
+    """
+    Initializes a new Shmarql site with the specified directory name.
+    """
+    try:
+        package_dir = os.path.dirname(__file__)
+        zip_path = os.path.join(package_dir, "sample_site.zip")
+        with zipfile.ZipFile(zip_path) as zf:
+            zf.extractall(dirname)
     except Exception as e:
         log.error(str(e))
 
@@ -59,6 +57,7 @@ def cli():
 
 cli.add_command(docs_build)
 cli.add_command(reset_admin)
+cli.add_command(init_site)
 
 if __name__ == "__main__":
     cli()
