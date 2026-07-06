@@ -23,3 +23,16 @@ WHERE {
 OFFSET 4242
 LIMIT 10
 ```
+
+If your knowledge graph is tiny (with less than 4242 triples) here is another try, with the first 10 triples.
+
+```shmarql
+SELECT ?resource ?label
+WHERE {
+  ?resource a ?type .
+  OPTIONAL {
+    ?resource rdfs:label ?label .
+  }
+}
+LIMIT 10
+```
