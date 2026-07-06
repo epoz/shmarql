@@ -3,6 +3,7 @@ from unittest import result
 
 import httpx, logging, random, hashlib, json, time, sqlite3, os, gzip
 import fizzysearch
+from . import config
 from .config import (
     ENDPOINT,
     ENDPOINTS,
@@ -11,7 +12,6 @@ from .config import (
     DATA_LOAD_PATHS,
     STORE_PATH,
     log,
-    redis_client,
 )
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, string_iterator
@@ -22,11 +22,13 @@ def hash_query(query: str, endpoint: str = "") -> str:
 
 
 async def cached_query(query: str, endpoint: str = ""):
-    if redis_client:
-        cached_q = await redis_client.get(hash_query(query, endpoint))
+    if config.redis_client:
+        log.debug(f"Checking cache for query {hash_query(query, endpoint)}")
+        cached_q = await config.redis_client.get(hash_query(query, endpoint))
         if cached_q:
             result = json.loads(cached_q)
             result["cached"] = True
+            log.debug(f"Cache hit for query {hash_query(query, endpoint)}")
             return result
 
 
@@ -146,10 +148,10 @@ async def do_query(query: str) -> dict:
         result["shmarql_settings"] = shmarql_settings
         result["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        if redis_client:
+        if config.redis_client:
             dumped = json.dumps(result)
 
-            await redis_client.set(
+            await config.redis_client.set(
                 hash_query(query, to_use),
                 dumped,
                 60 * 60 * 24 * 3,

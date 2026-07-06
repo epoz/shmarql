@@ -23,20 +23,27 @@ REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 log.debug("Trying Redis at " + REDIS_HOST)
 
 
-async def _init_redis():
-    try:
-        import redis.asyncio as redis
+redis_client = None
 
-        redis_client = redis.Redis(host=REDIS_HOST)
-        await redis_client.ping()
+
+async def init_redis():
+    """Test whether Redis is reachable and, if so, install it as the
+    module-level redis_client. Must be awaited from within a running
+    event loop (e.g. an app startup hook) since it can't run at import
+    time. Mutates the module global rather than returning the client so
+    that callers who did `from . import config` see the update."""
+    global redis_client
+    try:
+        import redis.asyncio as redis_lib
+
+        client = redis_lib.Redis(host=REDIS_HOST)
+        await client.ping()
         log.debug(f"Redis at {REDIS_HOST} available")
-        return redis_client
+        redis_client = client
     except:
         log.exception(f"Redis at {REDIS_HOST} not available")
-        return None
-
-
-redis_client = None
+        redis_client = None
+    return redis_client
 
 ENDPOINT = os.environ.get("ENDPOINT")
 

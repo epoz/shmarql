@@ -5,6 +5,7 @@ from fastapi.responses import Response, HTMLResponse, FileResponse, RedirectResp
 from fasthtml.common import Div, to_xml
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
+from . import config
 from .config import (
     MOUNT,
     SPARQL_QUERY_UI,
@@ -12,7 +13,6 @@ from .config import (
     SITE_URI,
     PROXY_HOST,
     log,
-    _init_redis,
 )
 from typing import List, Callable, Dict, Any
 
@@ -32,7 +32,7 @@ app.include_router(fragments_rt)
 @app.on_event("startup")
 async def startup_event():
     log.debug(f">>>> App started up")
-    redis_client = await _init_redis()
+    await config.init_redis()
 
 
 @app.get("/favicon.ico")
@@ -231,8 +231,11 @@ async def entity_check(iri: str):
 @app.get("/{fname:path}")
 async def getter(request: Request, fname: str):
     if PROXY_HOST:
-        log.debug(f"Proxying request for {fname} to {PROXY_HOST.rstrip('/')}")
-        return await proxy_request(request, PROXY_HOST.rstrip("/"))
+        try:
+            log.debug(f"Proxying request for {fname} to {PROXY_HOST.rstrip('/')}")
+            return await proxy_request(request, PROXY_HOST.rstrip("/"))
+        except Exception as e:
+            log.debug(f"Error proxying request for {fname}: {e}")
 
     log.debug(f"Getter on {repr(fname)}")
     new_name = fname
