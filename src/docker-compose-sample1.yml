@@ -1,0 +1,29 @@
+services:
+  shmarql:
+    image: shmarql
+    container_name: shmarql
+    restart: unless-stopped
+    environment:
+      - "DEBUG=1"
+      - "PROXY_HOST=http://mkdocs:8000"
+      - "REDIS_HOST=redis"
+      - "DATA_LOAD_PATHS=/data"
+    ports:
+      - "8008:8000"
+    volumes:
+      - ./data:/data
+  mkdocs:
+    image: shmarql
+    container_name: mkdocs
+    restart: unless-stopped    
+    entrypoint: uv run mkdocs serve -a 0.0.0.0:8000
+    volumes:
+      - ./docs:/app/src/docs
+      - ./mkdocs.yml:/app/src/mkdocs.yml
+      - ./site:/app/src/site
+    ports:
+      - "8000:8000"
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
