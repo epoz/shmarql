@@ -5,12 +5,21 @@ from fastapi.responses import Response, HTMLResponse, FileResponse, RedirectResp
 from fasthtml.common import Div, to_xml
 import pyoxigraph as px
 from .px_util import OxigraphSerialization, results_to_xml
-from .config import MOUNT, SPARQL_QUERY_UI, SITEDOCS_PATH, SITE_URI, log, _init_redis
+from .config import (
+    MOUNT,
+    SPARQL_QUERY_UI,
+    SITEDOCS_PATH,
+    SITE_URI,
+    PROXY_HOST,
+    log,
+    _init_redis,
+)
 from typing import List, Callable, Dict, Any
 
 from .qry import do_query, hash_query
 from .fragments import rt as fragments_rt
 from .fragments import build_sparql_ui
+from .services import proxy_request
 
 # from .am import ar as am_rt
 
@@ -221,6 +230,10 @@ async def entity_check(iri: str):
 @app.get(MOUNT + "{fname:path}")
 @app.get("/{fname:path}")
 async def getter(request: Request, fname: str):
+    if PROXY_HOST:
+        log.debug(f"Proxying request for {fname} to {PROXY_HOST.rstrip('/')}")
+        return await proxy_request(request, PROXY_HOST.rstrip("/"))
+
     log.debug(f"Getter on {repr(fname)}")
     new_name = fname
     if fname.startswith("/"):

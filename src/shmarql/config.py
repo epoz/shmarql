@@ -170,6 +170,8 @@ LOGINS = os.environ.get("LOGINS") == "1"
 
 SITE_TITLE = os.environ.get("SITE_TITLE", "SHMARQL")
 
+PROXY_HOST = os.environ.get("PROXY_HOST")
+
 ########## Config values that do not exist any more ##########
 
 removed_config_values = {
