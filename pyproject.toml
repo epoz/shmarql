@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
     "apsw==3.50.3.0",
     "bcrypt==3.2.0",
+    "click==8.2.1",
     "fastapi>=0.138.1",
     "fizzysearch==0.31",
     "markdown>=3.9",
@@ -22,7 +23,7 @@ dependencies = [
     "python-fasthtml>=0.12.29",
     "pyyaml>=6.0.3",
     "rdflib>=7.2.1",
-    "tree-sitter-sparql==0.1.0",    
+    "tree-sitter-sparql==0.1.0",
 ]
 
 [project.urls]
@@ -35,6 +36,13 @@ py3 = "shmarql:ShmarqlLexer"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["shmarql*"]
+
+[tool.setuptools.package-data]
+shmarql = ["sample_site.zip"]
 
 [dependency-groups]
 dev = [
