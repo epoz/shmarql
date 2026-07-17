@@ -18,7 +18,7 @@ from typing import List, Callable, Dict, Any
 
 from .qry import do_query, hash_query
 from .fragments import rt as fragments_rt
-from .fragments import build_sparql_ui
+from .fragments import fragments_sparql
 from .services import proxy_request
 
 # from .am import ar as am_rt
@@ -103,9 +103,13 @@ def accept_header_to_format(request: Request) -> str:
     for ah, _ in sorted(accept_headers.items(), reverse=True, key=lambda x: x[1]):
         if ah.startswith("application/sparql-results+json"):
             return "json"
+        if ah.startswith("application/json"):
+            return "json"
         if ah.startswith("text/turtle"):
             return "turtle"
         if ah.startswith("application/sparql-results+xml"):
+            return "xml"
+        if ah.startswith("application/xml"):
             return "xml"
 
     return "html"
@@ -215,7 +219,9 @@ async def shmarql_get(
             "<div>There is currently no SPARQL query form to be found here, call it from a command line via a POST request.</div>"
         )
 
-    return HTMLResponse(to_xml(Div(build_sparql_ui(query, results), cls="mt-4")))
+    sui = await fragments_sparql(query, results)
+
+    return HTMLResponse(to_xml(Div(sui, cls="mt-4")))
 
 
 from .biki import *
