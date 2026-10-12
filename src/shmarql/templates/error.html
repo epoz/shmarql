@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Error – {{ site_title }}{% endblock %}
+
+{% block content %}
+<h1>Error</h1>
+<div class="error-message">
+    {% if message_key %}{{ _(message_key, error=error) }}{% elif message %}{{ message }}{% else %}An unknown error occurred{% endif %}
+</div>
+{% if uri %}<p class="error-uri"><code>{{ uri }}</code></p>{% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+schemaVersion: 1
+locale: en
+namespace: renderer
+
+messages:
+  defaults:
+    previewTitle: "LODEON Preview"
+    storyTitle: "Untitled Data Story"
+  embed:
+    defaultTitle: "Embedded content"
+    itemTitle: "Embed {index}"
+    showItemAria: "Show embed {index}"
+  graphExplorer:
+    defaultTitle: "Graph Explorer"
+    loading: "Loading graph exploration..."
+    ready: "Graph exploration ready."
+    unavailable: "Graph explorer data is unavailable."
+    summary: "{nodes} nodes · {edges} edges"
+    zoomIn: "Zoom in"
+    zoomOut: "Zoom out"
+    resetZoom: "Reset zoom"
+    togglePredicateLabels: "Toggle predicate labels"
+    enterFullscreen: "Enter fullscreen"
+    exitFullscreen: "Exit fullscreen"
+    popupLabel: "Label"
+    popupResource: "Resource"
+    popupType: "Type"
+  leaflet:
+    defaultTitle: "Map"
+    ariaLabel: "Interactive map"
+    ready: "Map data ready: {count} features."
+    empty: "No map features are available."
+    unavailable: "The interactive map could not be initialized."
+    legend: "Legend"
+    feature: "Map feature"
+  verovio:
+    defaultTitle: "Music notation"
+    ariaLabel: "Interactive music notation"
+    loading: "Loading music notation..."
+    ready: "Music notation ready."
+    unavailable: "The music notation viewer could not be initialized."
+    empty: "No music notation items are available."
+    ungrouped: "Ungrouped"
+    previousItem: "Previous item"
+    nextItem: "Next item"
+    previousPage: "Previous page"
+    nextPage: "Next page"
+    itemPosition: "Item {current} of {total}"
+    pagePosition: "Page {current} of {total}"
+    showSource: "Show source data"
+    hideSource: "Hide source data"
+    play: "Play"
+    pause: "Pause"
+    resume: "Resume"
+    stop: "Stop"
+    restart: "Restart"
+    loop: "Loop"
+    progress: "Playback position"
+    originalView: "Original notation"
+    transposedView: "Transposed to {targetKey}; original data unchanged"
+    compareView: "Music notation comparison"
+  metadata:
+    comment: "<!-- LODEON metadata -->"

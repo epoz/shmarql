@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_title }}{% endblock %}</title>
+    <link rel="icon" href="/static/img/favicon.ico">
+    {% block head_first %}{% endblock %}
+    <link rel="stylesheet" href="/static/css/shmarql.css">
+    {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="/" class="site-title">{{ site_title }}</a>
+            <nav class="site-nav">
+                {% if has_docs %}<a href="/" class="nav-item">{{ _('menu.docs') }}</a>{% endif %}
+                <a href="/query" class="nav-item">{{ _('menu.query') }}</a>
+                <a href="/entity" class="nav-item">{{ _('menu.entity') }}</a>
+                {% if has_editor %}<a href="/lodeon/" class="nav-item">{{ _('menu.editor') }}</a>{% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="container{% block container_class %}{% endblock %}">
+        {% block content %}{% endblock %}
+        {% block formats %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            {{ site_title }} · powered by <a href="https://github.com/epoz/shmarql">shmarql</a> {{ version }}
+        </div>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

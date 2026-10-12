@@ -1,0 +1,132 @@
+# Default LODEON renderer configuration, copied from lodeon-core/config/config.yml
+# (the 'nodes' section). Override any key with LODEON_CONFIG_PATH.
+nodes:
+  mediaAsset:
+    enabled: true
+  embed:
+    enabled: true
+    defaultResultPageSize: 10
+    allowedOrigins: []
+    sandbox: []
+    allow: []
+    referrerPolicy: strict-origin-when-cross-origin
+    defaultAspectRatio: "16:9"
+    metadata:
+      timeoutSeconds: 5
+      maxResponseBytes: 262144
+  iiif:
+    enabled: true
+    defaultResultPageSize: 10
+    originPolicy:
+      mode: allowAllHttps
+      allowedOrigins: []
+      blockedOrigins: []
+    requireHttps: true
+    defaultViewMode: single
+    defaultGalleryReferenceStrip: horizontal
+    defaultHeight: 520
+  graphExplorer:
+    enabled: true
+    defaultResultPageSize: 10
+    profiles: {}
+  leaflet:
+    enabled: true
+    defaultResultPageSize: 10
+    defaultTileLayer: openStreetMap
+    tileLayers:
+      openStreetMap:
+        label: OpenStreetMap
+        urlTemplate: https://tile.openstreetmap.org/{z}/{x}/{y}.png
+        attribution: "© OpenStreetMap contributors"
+        minZoom: 0
+        maxZoom: 19
+    defaultHeight: 520
+    defaultInitialView: fitBounds
+    defaultCenter:
+      - 50.0
+      - 10.0
+    defaultZoom: 5
+    fitBoundsMaxZoom: 14
+    defaultPopupFields:
+      - label
+      - resource
+      - category
+    marker:
+      radius: 7
+      color: "#005A8D"
+      fillColor: "#0072B2"
+      fillOpacity: 0.8
+      weight: 2
+    clustering:
+      enabled: true
+      disableAtZoom: null
+      showCoverageOnHover: true
+      spiderfyOnMaxZoom: true
+      spiderfyDistanceMultiplier: 1.5
+    legend:
+      enabled: true
+      position: bottomRight
+  verovio:
+    enabled: true
+    defaultView: single
+    defaultDocumentLayout: responsive
+    initialZoom: 1.0
+    paginatedPageHeight: 1400
+    defaultResultPageSize: 10
+    defaultVisibleMetadataFields: []
+    playback:
+      tempoMultiplier: 1.0
+      loop: false
+      volume: 0.8
+    highlightColor: "#D55E00"
+    compare:
+      synchronizedZoom: true
+      playbackMode: a
+      loopSequence: false
+      tempoMultiplier: 1.0
+    viewerCacheSize: 3
+    validationConcurrency: 2
+    maxInputBytesPerItem: 2097152
+  sparql:
+    enabled: true
+    defaultResultPageSize: 10
+    visualQueryBuilder:
+      defaultDistinct: true
+      defaultLimit: null
+    profiles: {}
+  plotly:
+    enabled: true
+    defaultSourceMode: sparql
+    defaultChartType: table
+    defaultURLFormat: csv
+    defaults:
+      colorway:
+        - "#E69F00"
+        - "#56B4E9"
+        - "#009E73"
+        - "#F0E442"
+        - "#0072B2"
+        - "#D55E00"
+        - "#CC79A7"
+        - "#000000"
+      singleTraceColor: "#0072B2"
+      layout:
+        paper_bgcolor: "#ffffff"
+        plot_bgcolor: "#ffffff"
+        font:
+          family: "Inter, system-ui, sans-serif"
+          color: "#1f2328"
+        margin:
+          l: 56
+          r: 32
+          t: 48
+          b: 64
+      config:
+        responsive: true
+        displaylogo: false
+        scrollZoom: false
+  rawGraphs:
+    enabled: true
+  storyMetadata:
+    enabled: true
+

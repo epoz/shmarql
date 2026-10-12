@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ site_title }}</h1>
+<p>No documentation has been configured yet. Put Markdown files in the directory named by
+<code>DOCS_PATH</code> (an <code>index.md</code> becomes this page).</p>
+
+<h2>SPARQL profiles</h2>
+{% if profiles %}
+<table class="simple-table">
+    <thead><tr><th>Profile</th><th>Description</th><th>Endpoint</th></tr></thead>
+    <tbody>
+    {% for p in profiles %}
+        <tr>
+            <td><a href="/query?profile={{ p.key }}">{{ p.title }}</a>{% if p.default %} <span class="badge">default</span>{% endif %}</td>
+            <td>{{ p.description }}</td>
+            <td><code>{{ p.sparql }}</code>{% if p.default %}, <code>/sparql</code>{% endif %}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>{{ _('query.no_profiles') }}</p>
+{% endif %}
+{% endblock %}

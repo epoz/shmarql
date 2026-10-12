@@ -1,0 +1,3549 @@
+{
+  "format": "lodeon-project-package",
+  "version": 1,
+  "exportedAt": "2026-07-16T09:23:27.998Z",
+  "generator": {
+    "name": "LODEON"
+  },
+  "project": {
+    "id": "6fb338ea-bbe3-4660-b67c-31380b929a64",
+    "format": "lodeon-datastory",
+    "version": 1,
+    "title": "The Secret of Data Island",
+    "slug": "secret-of-data-island",
+    "metadata": {
+      "description": "A playful LODEON showcase story in which Long John SPARQL journeys through the Culture Knowledge Graph, using local media, SPARQL evidence, visualizations, embeds, IIIF images, metadata, and publication workflows.",
+      "keywords": [
+        "Culture Knowledge Graph",
+        "AI-assisted exploration",
+        "data story",
+        "SPARQL",
+        "IIIF"
+      ],
+      "language": "en",
+      "license": "CC BY 4.0",
+      "authors": [
+        {
+          "id": "ec92efbd-184f-440f-8d14-2089822f821e",
+          "name": "Torsten Schrade",
+          "role": "author",
+          "affiliation": "Academy of Sciences and Literature | Mainz",
+          "identifiers": [
+            {
+              "id": "5706985a-6989-4ec4-92c6-c4b344451422",
+              "type": "ORCID",
+              "value": "0000-0002-0953-2818",
+              "url": "https://orcid.org/0000-0002-0953-2818"
+            }
+          ]
+        }
+      ],
+      "persistentIdentifiers": []
+    },
+    "publishStoryZip": true,
+    "published": {
+      "url": "/story/secret-of-data-island/",
+      "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+      "publishedAt": "2026-07-16T08:14:44.210Z"
+    },
+    "createdAt": "2026-07-11T05:53:37.554Z",
+    "updatedAt": "2026-07-16T08:50:40.420Z",
+    "canonical": "prosemirror",
+    "assistant": {
+      "modelProfileId": "nebius-qwen35-397b-a17b",
+      "knowledgeGraphProfileId": "culture-kg",
+      "memoryEnabled": false,
+      "useToolsEnabled": true,
+      "useProposalsEnabled": true,
+      "useSuggestionsEnabled": false,
+      "includeStoryContentEnabled": false,
+      "memory": {
+        "summary": "",
+        "entities": [],
+        "queries": [],
+        "decisions": [],
+        "openQuestions": [],
+        "updatedAt": null
+      },
+      "toolTrace": [
+        {
+          "id": "chatcmpl-tool-b808104a148f0797",
+          "name": "search_entities",
+          "arguments": {
+            "text": "Beethoven",
+            "classId": "person"
+          },
+          "status": "success",
+          "summary": "success - 0 rows across 3 variables",
+          "createdAt": "2026-07-15T11:54:58.063Z"
+        },
+        {
+          "id": "followup-1784116492075",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX cto: <https://nfdi4culture.de/ontology/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT DISTINCT ?item ?itemLabel ?person ?personLabel ?description\nWHERE {\n  {\n    SELECT DISTINCT ?person\n    WHERE {\n      ?person a nfdicore:NFDI_0000004 .\n      OPTIONAL { ?person rdfs:label ?personRdfsLabel }\n      OPTIONAL { ?person schema:name ?personName }\n      BIND(COALESCE(?personRdfsLabel, ?personName, STR(?person)) AS ?personLabel)\n      FILTER(CONTAINS(LCASE(STR(?personLabel)), LCASE(\"Beethoven\")))\n    }\n    LIMIT 10\n  }\n  ?item cto:CTO_0001009 ?person .\n  OPTIONAL { ?person rdfs:label ?personRdfsLabel }\n  OPTIONAL { ?person schema:name ?personName }\n  OPTIONAL { ?item rdfs:label ?itemRdfsLabel }\n  OPTIONAL { ?item schema:name ?itemName }\n  OPTIONAL { ?item schema:description ?description }\n  BIND(COALESCE(?personRdfsLabel, ?personName, STR(?person)) AS ?personLabel)\n  BIND(COALESCE(?itemRdfsLabel, ?itemName, STR(?item)) AS ?itemLabel)\n}\nORDER BY LCASE(STR(?itemLabel))\nLIMIT 50\n"
+          },
+          "status": "success",
+          "summary": "success - 10 rows across 5 variables",
+          "query": "PREFIX cto: <https://nfdi4culture.de/ontology/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT DISTINCT ?item ?itemLabel ?person ?personLabel ?description\nWHERE {\n  {\n    SELECT DISTINCT ?person\n    WHERE {\n      ?person a nfdicore:NFDI_0000004 .\n      OPTIONAL { ?person rdfs:label ?personRdfsLabel }\n      OPTIONAL { ?person schema:name ?personName }\n      BIND(COALESCE(?personRdfsLabel, ?personName, STR(?person)) AS ?personLabel)\n      FILTER(CONTAINS(LCASE(STR(?personLabel)), LCASE(\"Beethoven\")))\n    }\n    LIMIT 10\n  }\n  ?item cto:CTO_0001009 ?person .\n  OPTIONAL { ?person rdfs:label ?personRdfsLabel }\n  OPTIONAL { ?person schema:name ?personName }\n  OPTIONAL { ?item rdfs:label ?itemRdfsLabel }\n  OPTIONAL { ?item schema:name ?itemName }\n  OPTIONAL { ?item schema:description ?description }\n  BIND(COALESCE(?personRdfsLabel, ?personName, STR(?person)) AS ?personLabel)\n  BIND(COALESCE(?itemRdfsLabel, ?itemName, STR(?item)) AS ?itemLabel)\n}\nORDER BY LCASE(STR(?itemLabel))\nLIMIT 50\n",
+          "sampleRows": [
+            {
+              "item": {
+                "type": "uri",
+                "value": "https://rism.online/sources/1001161102"
+              },
+              "itemLabel": {
+                "type": "literal",
+                "value": "Bußlied–a-Moll; Druck"
+              },
+              "person": {
+                "type": "bnode",
+                "value": "bn1954537"
+              },
+              "personLabel": {
+                "type": "literal",
+                "value": "Beethoven, Ludwig van (1770-1827)"
+              },
+              "description": null
+            },
+            {
+              "item": {
+                "type": "uri",
+                "value": "https://rism.online/sources/451026282"
+              },
+              "itemLabel": {
+                "type": "literal",
+                "value": "Der Kuss (Bearbeitung); Abschrift; LvBWV op.128, KinB 128; D-DT Mus - n 6380 (Nr. 1)"
+              },
+              "person": {
+                "type": "bnode",
+                "value": "bn1955411"
+              },
+              "personLabel": {
+                "type": "literal",
+                "value": "Beethoven, Ludwig van (1770-1827)"
+              },
+              "description": null
+            },
+            {
+              "item": {
+                "type": "uri",
+                "value": "https://rism.online/sources/452512394"
+              },
+              "itemLabel": {
+                "type": "literal",
+                "value": "Diese Wolken in den Höhen–As-Dur; Druck; LvBWV op.98/4, KinB 98/4; D-ALTbethmannhollweg Mus.pr. S 3 (3)"
+              },
+              "person": {
+                "type": "bnode",
+                "value": "bn1952450"
+              },
+              "personLabel": {
+                "type": "literal",
+                "value": "Beethoven, Ludwig van (1770-1827)"
+              },
+              "description": null
+            },
+            {
+              "item": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20541951"
+              },
+              "itemLabel": {
+                "type": "literal",
+                "value": "Ehemaliges Franziskanerkloster",
+                "language": "de"
+              },
+              "person": {
+                "type": "bnode",
+                "value": "bn425449"
+              },
+              "personLabel": {
+                "type": "literal",
+                "value": "Beethoven, Ludwig van",
+                "language": "de"
+              },
+              "description": null
+            },
+            {
+              "item": {
+                "type": "uri",
+                "value": "https://rism.online/sources/1001273146"
+              },
+              "itemLabel": {
+                "type": "literal",
+                "value": "Grande Sonate–As-Dur; Druck; LvBWV op.26"
+              },
+              "person": {
+                "type": "bnode",
+                "value": "bn1955056"
+              },
+              "personLabel": {
+                "type": "literal",
+                "value": "Beethoven, Ludwig van (1770-1827)"
+              },
+              "description": null
+            }
+          ],
+          "createdAt": "2026-07-15T11:54:58.063Z"
+        },
+        {
+          "id": "chatcmpl-tool-8f5ba2d9b636bd03",
+          "name": "get_classes",
+          "arguments": {
+            "limit": 50
+          },
+          "status": "success",
+          "summary": "success - 42 rows across 8 variables",
+          "sampleRows": [
+            {
+              "classId": {
+                "type": "literal",
+                "value": "sourceItem"
+              },
+              "class": {
+                "type": "literal",
+                "value": "cto:CTO_0001005"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001005"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Data Item"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Information object representing a cultural source in the research data index."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi4culture.de/ontology/CTO_0001005> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "person"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000004"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Person"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Person related to source items, organizations, publications, events, or data resources."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "organization"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000003"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Organization"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Organization, institution, committee, project partner, publisher, or holding organization."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "place"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000005"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000005"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Place"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Geographic place or location related to a source item or organization."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000005> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "event"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000131"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000131"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Event"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Event related to source items or research information resources."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000131> ."
+              }
+            }
+          ],
+          "createdAt": "2026-07-15T21:44:20.914Z"
+        },
+        {
+          "id": "followup-1784151855916",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectArea ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n    nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectArea ?subjectAreaLabel\nORDER BY DESC(?portalCount) LCASE(STR(?subjectAreaLabel))\n"
+          },
+          "status": "success",
+          "summary": "success - 28 rows across 3 variables",
+          "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectArea ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n    nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectArea ?subjectAreaLabel\nORDER BY DESC(?portalCount) LCASE(STR(?subjectAreaLabel))\n",
+          "sampleRows": [
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2313"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Art History",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "59",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2312"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Architecture",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "40",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2314"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Musicology",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "31",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2315"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Media Studies",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "16",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2317"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Theater Studies",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "16",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-15T21:44:20.914Z"
+        },
+        {
+          "id": "chatcmpl-tool-80ef11b9347a5c0f",
+          "name": "propose_plotly_node",
+          "arguments": {
+            "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n          nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectAreaLabel\nORDER BY DESC(?portalCount)",
+            "chartType": "bar",
+            "knowledgeGraphProfileId": "culture-kg"
+          },
+          "status": "success",
+          "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n          nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectAreaLabel\nORDER BY DESC(?portalCount)",
+          "createdAt": "2026-07-15T21:44:20.914Z"
+        },
+        {
+          "id": "chatcmpl-tool-8906de6379c8c37e",
+          "name": "suggest_query_paths",
+          "arguments": {
+            "sourceClassId": "organization",
+            "targetClassId": "classifier",
+            "text": "classification"
+          },
+          "status": "success",
+          "summary": "success - 0 items",
+          "createdAt": "2026-07-15T21:56:56.596Z"
+        },
+        {
+          "id": "chatcmpl-tool-bc22abecef02b773",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX org: <http://www.w3.org/ns/org#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?classificationLabel (COUNT(DISTINCT ?inst) AS ?count)\nWHERE {\n  ?inst a ?orgClass .\n  ?inst org:classification ?classification .\n  OPTIONAL { ?classification rdfs:label ?classificationLabel }\n  OPTIONAL { ?classification schema:name ?classificationName }\n  BIND(COALESCE(?classificationLabel, ?classificationName, STR(?classification)) AS ?classificationLabel)\n}\nGROUP BY ?classificationLabel\nORDER BY DESC(?count)"
+          },
+          "status": "success",
+          "summary": "error",
+          "query": "PREFIX org: <http://www.w3.org/ns/org#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?classificationLabel (COUNT(DISTINCT ?inst) AS ?count)\nWHERE {\n  ?inst a ?orgClass .\n  ?inst org:classification ?classification .\n  OPTIONAL { ?classification rdfs:label ?classificationLabel }\n  OPTIONAL { ?classification schema:name ?classificationName }\n  BIND(COALESCE(?classificationLabel, ?classificationName, STR(?classification)) AS ?classificationLabel)\n}\nGROUP BY ?classificationLabel\nORDER BY DESC(?count)",
+          "createdAt": "2026-07-15T21:56:56.596Z"
+        },
+        {
+          "id": "chatcmpl-tool-8d438e91094f80db",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX org: <http://www.w3.org/ns/org#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?classificationLabel (COUNT(DISTINCT ?inst) AS ?count)\nWHERE {\n  ?inst a ?orgClass .\n  ?inst org:classification ?classification .\n  OPTIONAL { ?classification rdfs:label ?rdfsLabel }\n  OPTIONAL { ?classification schema:name ?schemaName }\n  BIND(COALESCE(?rdfsLabel, ?schemaName, STR(?classification)) AS ?classificationLabel)\n}\nGROUP BY ?classificationLabel\nORDER BY DESC(?count)"
+          },
+          "status": "success",
+          "summary": "success - 22 rows across 2 variables",
+          "query": "PREFIX org: <http://www.w3.org/ns/org#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?classificationLabel (COUNT(DISTINCT ?inst) AS ?count)\nWHERE {\n  ?inst a ?orgClass .\n  ?inst org:classification ?classification .\n  OPTIONAL { ?classification rdfs:label ?rdfsLabel }\n  OPTIONAL { ?classification schema:name ?schemaName }\n  BIND(COALESCE(?rdfsLabel, ?schemaName, STR(?classification)) AS ?classificationLabel)\n}\nGROUP BY ?classificationLabel\nORDER BY DESC(?count)",
+          "sampleRows": [
+            {
+              "classificationLabel": {
+                "type": "literal",
+                "value": "University",
+                "language": "en"
+              },
+              "count": {
+                "type": "literal",
+                "value": "31",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "classificationLabel": {
+                "type": "literal",
+                "value": "Research Institute",
+                "language": "en"
+              },
+              "count": {
+                "type": "literal",
+                "value": "26",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "classificationLabel": {
+                "type": "literal",
+                "value": "Association",
+                "language": "en"
+              },
+              "count": {
+                "type": "literal",
+                "value": "24",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "classificationLabel": {
+                "type": "literal",
+                "value": "Library",
+                "language": "en"
+              },
+              "count": {
+                "type": "literal",
+                "value": "17",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "classificationLabel": {
+                "type": "literal",
+                "value": "Research Centre",
+                "language": "en"
+              },
+              "count": {
+                "type": "literal",
+                "value": "16",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-15T21:56:56.596Z"
+        },
+        {
+          "id": "call_27f57ee046b14d4bac267730",
+          "name": "get_graph_summary",
+          "arguments": {},
+          "status": "success",
+          "summary": "success - 40 rows across 3 variables",
+          "sampleRows": [
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003"
+              },
+              "count": {
+                "type": "literal",
+                "value": "3046282",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/ImageObject"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2792676",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2679638",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001005"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2423012",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/DataFeedItem"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2422708",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T07:11:42.985Z"
+        },
+        {
+          "id": "chatcmpl-tool-ba5fc355b6758e37",
+          "name": "get_graph_summary",
+          "arguments": {},
+          "status": "success",
+          "summary": "success - 40 rows across 3 variables",
+          "sampleRows": [
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003"
+              },
+              "count": {
+                "type": "literal",
+                "value": "3046282",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/ImageObject"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2792676",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2679638",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001005"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2423012",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/DataFeedItem"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2422708",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T07:13:35.187Z"
+        },
+        {
+          "id": "chatcmpl-tool-b05025f10f59a98a",
+          "name": "get_graph_summary",
+          "arguments": {},
+          "status": "success",
+          "summary": "success - 40 rows across 3 variables",
+          "sampleRows": [
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003"
+              },
+              "count": {
+                "type": "literal",
+                "value": "3046282",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/ImageObject"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2792676",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2679638",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001005"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2423012",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "section": {
+                "type": "literal",
+                "value": "class"
+              },
+              "item": {
+                "type": "uri",
+                "value": "http://schema.org/DataFeedItem"
+              },
+              "count": {
+                "type": "literal",
+                "value": "2422708",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T07:28:42.298Z"
+        },
+        {
+          "id": "chatcmpl-tool-8f262c0a954f7aff",
+          "name": "search_identifiers",
+          "arguments": {
+            "text": "25FF411",
+            "limit": 20
+          },
+          "status": "success",
+          "summary": "success - 20 rows across 4 variables",
+          "sampleRows": [
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20749572"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "1. Fenster rechts des Mittelrisalits, von einem Drachen? bekrönt",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20834732"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "2. nördliches Doppelkapitell mit Drachentötern",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411%28%2B764%29"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20118180"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "3. Pfeiler von Westen, Nordseite; Kämpfer und Rest der ornamentierten Arkadenrahmung: Sirenen, Löwe, Drachen-",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20026692"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "Abbildung eines Wasserspeiers des Rathauses in Frankfurt (Oder)",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20052803"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "Adam benennt die Tiere",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T08:42:17.902Z"
+        },
+        {
+          "id": "chatcmpl-tool-a452b6c605c15c8e",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?otherIconclass ?otherLabel\nWHERE {\n  # Find resources that have Iconclass 25FF411\n  ?resource cto:CTO_0001030 ?iconclass25FF411 .\n  FILTER(CONTAINS(LCASE(STR(?iconclass25FF411)), \"25ff411\"))\n  \n  # Find other Iconclass codes on the same resources\n  ?resource cto:CTO_0001030 ?otherIconclass .\n  FILTER(?otherIconclass != ?iconclass25FF411)\n  \n  OPTIONAL { ?otherIconclass rdfs:label ?otherLabel }\n}\nORDER BY STR(?otherIconclass)\nLIMIT 50"
+          },
+          "status": "success",
+          "summary": "success - 0 rows across 2 variables",
+          "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?otherIconclass ?otherLabel\nWHERE {\n  # Find resources that have Iconclass 25FF411\n  ?resource cto:CTO_0001030 ?iconclass25FF411 .\n  FILTER(CONTAINS(LCASE(STR(?iconclass25FF411)), \"25ff411\"))\n  \n  # Find other Iconclass codes on the same resources\n  ?resource cto:CTO_0001030 ?otherIconclass .\n  FILTER(?otherIconclass != ?iconclass25FF411)\n  \n  OPTIONAL { ?otherIconclass rdfs:label ?otherLabel }\n}\nORDER BY STR(?otherIconclass)\nLIMIT 50",
+          "createdAt": "2026-07-16T08:44:07.753Z"
+        },
+        {
+          "id": "chatcmpl-tool-84914cc8c54a7624",
+          "name": "search_identifiers",
+          "arguments": {
+            "text": "25FF411",
+            "limit": 10
+          },
+          "status": "success",
+          "summary": "success - 10 rows across 4 variables",
+          "sampleRows": [
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20749572"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "1. Fenster rechts des Mittelrisalits, von einem Drachen? bekrönt",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20834732"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "2. nördliches Doppelkapitell mit Drachentötern",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411%28%2B764%29"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20118180"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "3. Pfeiler von Westen, Nordseite; Kämpfer und Rest der ornamentierten Arkadenrahmung: Sirenen, Löwe, Drachen-",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20026692"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "Abbildung eines Wasserspeiers des Rathauses in Frankfurt (Oder)",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            },
+            {
+              "resource": {
+                "type": "uri",
+                "value": "http://www.bildindex.de/document/obj20052803"
+              },
+              "resourceLabel": {
+                "type": "literal",
+                "value": "Adam benennt die Tiere",
+                "language": "de"
+              },
+              "identifier": {
+                "type": "uri",
+                "value": "https://iconclass.org/25FF411"
+              },
+              "identifierType": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001030"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T08:44:07.753Z"
+        },
+        {
+          "id": "chatcmpl-tool-bae459459a77b194",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX cto: <https://nfdi4culture.de/ontology/> SELECT DISTINCT ?otherIconclass ?otherLabel WHERE { # Resources with 25FF411 (including variants) { ?resource cto:CTO_0001030 ?iconclass . FILTER(CONTAINS(LCASE(STR(?iconclass)), \"25ff411\")) } # All Iconclass codes on those resources ?resource cto:CTO_0001030 ?otherIconclass . # Exclude the 25FF411 variants FILTER(!CONTAINS(LCASE(STR(?otherIconclass)), \"25ff411\")) OPTIONAL { ?otherIconclass rdfs:label ?otherLabel . } } LIMIT 50"
+          },
+          "status": "success",
+          "summary": "error",
+          "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX cto: <https://nfdi4culture.de/ontology/> SELECT DISTINCT ?otherIconclass ?otherLabel WHERE { # Resources with 25FF411 (including variants) { ?resource cto:CTO_0001030 ?iconclass . FILTER(CONTAINS(LCASE(STR(?iconclass)), \"25ff411\")) } # All Iconclass codes on those resources ?resource cto:CTO_0001030 ?otherIconclass . # Exclude the 25FF411 variants FILTER(!CONTAINS(LCASE(STR(?otherIconclass)), \"25ff411\")) OPTIONAL { ?otherIconclass rdfs:label ?otherLabel . } } LIMIT 50",
+          "createdAt": "2026-07-16T08:44:07.753Z"
+        },
+        {
+          "id": "chatcmpl-tool-ba6e430ace3f49bb",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\nSELECT DISTINCT ?otherIconclass ?otherLabel WHERE {\n  # Find resources that have Iconclass 25FF411\n  ?resource cto:CTO_0001030 ?iconclass25FF411 .\n  FILTER(CONTAINS(LCASE(STR(?iconclass25FF411)), \"25ff411\"))\n  \n  # Find other Iconclass codes on the same resources\n  ?resource cto:CTO_0001030 ?otherIconclass .\n  \n  # Exclude 25FF411 variants\n  FILTER(!CONTAINS(LCASE(STR(?otherIconclass)), \"25ff411\"))\n  \n  # Get labels if available\n  OPTIONAL { ?otherIconclass rdfs:label ?otherLabel . }\n}"
+          },
+          "status": "success",
+          "summary": "success - 0 rows across 2 variables",
+          "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\nSELECT DISTINCT ?otherIconclass ?otherLabel WHERE {\n  # Find resources that have Iconclass 25FF411\n  ?resource cto:CTO_0001030 ?iconclass25FF411 .\n  FILTER(CONTAINS(LCASE(STR(?iconclass25FF411)), \"25ff411\"))\n  \n  # Find other Iconclass codes on the same resources\n  ?resource cto:CTO_0001030 ?otherIconclass .\n  \n  # Exclude 25FF411 variants\n  FILTER(!CONTAINS(LCASE(STR(?otherIconclass)), \"25ff411\"))\n  \n  # Get labels if available\n  OPTIONAL { ?otherIconclass rdfs:label ?otherLabel . }\n}",
+          "createdAt": "2026-07-16T08:44:07.753Z"
+        },
+        {
+          "id": "chatcmpl-tool-8747c871af39391a",
+          "name": "get_classes",
+          "arguments": {
+            "limit": 50
+          },
+          "status": "success",
+          "summary": "success - 42 rows across 8 variables",
+          "sampleRows": [
+            {
+              "classId": {
+                "type": "literal",
+                "value": "sourceItem"
+              },
+              "class": {
+                "type": "literal",
+                "value": "cto:CTO_0001005"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/ontology/CTO_0001005"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Data Item"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Information object representing a cultural source in the research data index."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi4culture.de/ontology/CTO_0001005> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "person"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000004"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Person"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Person related to source items, organizations, publications, events, or data resources."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000004> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "organization"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000003"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Organization"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Organization, institution, committee, project partner, publisher, or holding organization."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "place"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000005"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000005"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Place"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Geographic place or location related to a source item or organization."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000005> ."
+              }
+            },
+            {
+              "classId": {
+                "type": "literal",
+                "value": "event"
+              },
+              "class": {
+                "type": "literal",
+                "value": "nfdicore:NFDI_0000131"
+              },
+              "classIri": {
+                "type": "uri",
+                "value": "https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000131"
+              },
+              "label": {
+                "type": "literal",
+                "value": "Event"
+              },
+              "description": {
+                "type": "literal",
+                "value": "Event related to source items or research information resources."
+              },
+              "role": {
+                "type": "literal",
+                "value": "start"
+              },
+              "visible": {
+                "type": "literal",
+                "value": "true"
+              },
+              "instancePattern": {
+                "type": "literal",
+                "value": "?resource a <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000131> ."
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T08:49:43.284Z"
+        },
+        {
+          "id": "followup-1784191744364",
+          "name": "run_sparql",
+          "arguments": {
+            "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectArea ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n    nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectArea ?subjectAreaLabel\nORDER BY DESC(?portalCount) LCASE(STR(?subjectAreaLabel))\n"
+          },
+          "status": "success",
+          "summary": "success - 28 rows across 3 variables",
+          "query": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectArea ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n    nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectArea ?subjectAreaLabel\nORDER BY DESC(?portalCount) LCASE(STR(?subjectAreaLabel))\n",
+          "sampleRows": [
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2313"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Art History",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "59",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2312"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Architecture",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "40",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2314"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Musicology",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "31",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2315"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Media Studies",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "16",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            },
+            {
+              "subjectArea": {
+                "type": "uri",
+                "value": "https://nfdi4culture.de/id/E2317"
+              },
+              "subjectAreaLabel": {
+                "type": "literal",
+                "value": "Theater Studies",
+                "language": "en"
+              },
+              "portalCount": {
+                "type": "literal",
+                "value": "16",
+                "datatype": "http://www.w3.org/2001/XMLSchema#int"
+              }
+            }
+          ],
+          "createdAt": "2026-07-16T08:49:43.284Z"
+        }
+      ]
+    },
+    "assets": [
+      {
+        "assetId": "5c163a99-ee9d-48f2-95ac-48ddf1d00dcf",
+        "kind": "image",
+        "mimeType": "image/png",
+        "path": "assets/images/5c163a99-ee9d-48f2-95ac-48ddf1d00dcf.png",
+        "fileName": "5c163a99-ee9d-48f2-95ac-48ddf1d00dcf.png",
+        "originalName": "ChatGPT Image 16. Juli 2026, 00_48_32.png",
+        "size": 2784199,
+        "createdAt": "2026-07-15T22:49:01.187Z",
+        "title": "Long John SPARQL and the Secret of Data Island",
+        "alt": "An image displaying a pirate with his parrot and treasure chest",
+        "creator": "Torsten Schrade",
+        "source": "ChatGPT",
+        "license": "CC BY 4.0",
+        "width": 1122,
+        "height": 1402,
+        "metadataFields": {
+          "lodeon:license": "CC BY 4.0",
+          "lodeon:source": "ChatGPT",
+          "lodeon:creator": "Torsten Schrade",
+          "lodeon:title": "Long John SPARQL and the Secret of Data Island",
+          "lodeon:alt": "An image displaying a pirate with his parrot and treasure chest"
+        }
+      }
+    ],
+    "document": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 1
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Long John SPARQL and the Secret of Data Island 🏝️"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Long John SPARQL had no compass, no crew, and no patience for opaque query interfaces. What he had was an ontology, a browser full of questions, and LODEON."
+            }
+          ]
+        },
+        {
+          "type": "mediaAssetNode",
+          "attrs": {
+            "id": "174e8ad6-1c42-48e7-a98d-cb5fea9ffe4d",
+            "kind": "image",
+            "assetId": "5c163a99-ee9d-48f2-95ac-48ddf1d00dcf",
+            "title": "Long John SPARQL",
+            "collapsed": true,
+            "excludeFromRender": false,
+            "displayExtendedMetadata": false
+          }
+        },
+        {
+          "type": "storyMetadataNode",
+          "attrs": {
+            "id": "1fd6b378-d9f3-4fe6-9061-24743e96e3e3",
+            "kind": "storyMetadata",
+            "title": "Captain's Log",
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "To find the data treasure, Long John must solve seven tasks with the Culture Knowledge Graph and record every clue as inspectable evidence."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 1: The Tavern Song"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "At the harbour tavern, the first clue is sung rather than spoken: “Whisky for my Johnny–A-Dur”. The crew checks the RISM source in the Culture Knowledge Graph instead of trusting a sea shanty by ear."
+            }
+          ]
+        },
+        {
+          "type": "sparnaturalNode",
+          "attrs": {
+            "id": "5af12c55-61b0-440f-92a4-af66bd83ce2a",
+            "kind": "sparnatural",
+            "title": "Musicological Data Portals",
+            "source": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT DISTINCT ?DataPortal ?DataPortal_label WHERE {\n  ?DataPortal rdf:type <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000123>.\n  OPTIONAL { ?DataPortal rdfs:label ?DataPortal_label. }\n  ?DataPortal <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000211> <https://nfdi4culture.de/id/E2314>.\n}\nLIMIT 100",
+            "queryJson": {
+              "distinct": true,
+              "variables": [
+                {
+                  "termType": "Variable",
+                  "value": "DataPortal"
+                }
+              ],
+              "order": null,
+              "branches": [
+                {
+                  "line": {
+                    "s": "DataPortal",
+                    "p": "https://nfdi4culture.de/lodeon/sparnatural/DataPortal_hasSubjectArea",
+                    "o": "SubjectArea",
+                    "sType": "https://nfdi4culture.de/lodeon/sparnatural/DataPortal",
+                    "oType": "https://nfdi4culture.de/lodeon/sparnatural/SubjectArea",
+                    "criterias": [
+                      {
+                        "label": "Musicology",
+                        "criteria": {
+                          "rdfTerm": {
+                            "type": "uri",
+                            "value": "https://nfdi4culture.de/id/E2314"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "limit": 100
+            },
+            "configId": "cultureKgDefault",
+            "knowledgeGraphProfileId": "culture-kg",
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-16T08:37:47.531Z",
+              "durationMs": 369,
+              "variables": [
+                "DataPortal",
+                "DataPortal_label"
+              ],
+              "rows": [
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E2853"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "RADAR4Culture",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E2876"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "DARIAH-DE Repository",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E2884"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "TIB AV-Portal",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E2936"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Kompakkt",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E2939"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "TIB Preservation-as-a-Service",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3090"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "SLUBArchiv.digital",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3104"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "musiconn.publish",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3593"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "CORPUS MONODICUM digital",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3594"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Digital Catalogue Raisonné – Gluck-Gesamtausgabe",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3595"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "RIdIM Database on Music and Dance in Art",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E3752"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Semantic Kompakkt",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4115"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Wolfgang Laade Music of Man Archive",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4227"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "RISM Online",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4228"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "RISM Catalog",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4230"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Carl-Maria-von-Weber-Gesamtausgabe – Digital Edition",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4231"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Beethoven-Haus Bonn – Digital Archives",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4232"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "bavarikon",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4239"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "MIMO - Musical Instrument Museums Online",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4242"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "MUSICES – Project database",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4252"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Cultural Heritage Cologne",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4253"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "musiXplora",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4254"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "SLUB Media Library",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4255"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "musiconn.performance",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4256"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Sachsen.digital",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4258"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "museum-digital – Staatliche Museen zu Berlin",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4265"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Data portal Detmolder Hoftheater 1825–1875",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E4266"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Freischütz Digital",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E5863"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Ways to Telemann digital – Catalogue Raisonné",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E5874"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Dataportal of the German Digital Library",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E6081"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "APSearch",
+                    "language": "en"
+                  }
+                },
+                {
+                  "DataPortal": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E6163"
+                  },
+                  "DataPortal_label": {
+                    "type": "literal",
+                    "value": "Bach digital",
+                    "language": "en"
+                  }
+                }
+              ]
+            },
+            "resultPageSize": 100,
+            "viewConfig": {},
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "sparnaturalNode",
+          "attrs": {
+            "id": "696fbbdb-652d-41db-b38f-ade3a785d23a",
+            "kind": "sparnatural",
+            "title": "Task 1: The Tavern Song",
+            "source": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT DISTINCT ?source ?label ?description\nWHERE {\n  VALUES ?source { <https://rism.online/sources/1001344126> }\n  OPTIONAL { ?source rdfs:label ?rdfsLabel }\n  OPTIONAL { ?source schema:name ?schemaName }\n  OPTIONAL { ?source schema:description ?description }\n  BIND(COALESCE(?rdfsLabel, ?schemaName, STR(?source)) AS ?label)\n}",
+            "queryJson": {},
+            "configId": "cultureKgDefault",
+            "knowledgeGraphProfileId": "culture-kg",
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-16T07:40:45.548Z",
+              "durationMs": 268,
+              "variables": [
+                "source",
+                "label",
+                "description"
+              ],
+              "rows": [
+                {
+                  "source": {
+                    "type": "uri",
+                    "value": "https://rism.online/sources/1001344126"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "https://rism.online/sources/1001344126"
+                  },
+                  "description": null
+                }
+              ]
+            },
+            "resultPageSize": 10,
+            "viewConfig": {},
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          }
+        },
+        {
+          "type": "sparnaturalNode",
+          "attrs": {
+            "id": "0af460e4-6e80-4121-91f7-e92ba6bd9ea8",
+            "kind": "sparnatural",
+            "title": "Query",
+            "source": "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nSELECT DISTINCT ?Organization ?Organization_label WHERE {\n  ?Organization rdf:type <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000003>.\n  OPTIONAL { ?Organization rdfs:label ?Organization_label. }\n  ?Organization <https://nfdi.fiz-karlsruhe.de/ontology/NFDI_0000211> <https://nfdi4culture.de/id/E2313>.\n}\nLIMIT 100",
+            "queryJson": {
+              "distinct": true,
+              "variables": [
+                {
+                  "termType": "Variable",
+                  "value": "Organization"
+                }
+              ],
+              "order": null,
+              "branches": [
+                {
+                  "line": {
+                    "s": "Organization",
+                    "p": "https://nfdi4culture.de/lodeon/sparnatural/Organization_hasSubjectArea",
+                    "o": "SubjectArea",
+                    "sType": "https://nfdi4culture.de/lodeon/sparnatural/Organization",
+                    "oType": "https://nfdi4culture.de/lodeon/sparnatural/SubjectArea",
+                    "criterias": [
+                      {
+                        "label": "Art History",
+                        "criteria": {
+                          "rdfTerm": {
+                            "type": "uri",
+                            "value": "https://nfdi4culture.de/id/E2313"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "limit": 100
+            },
+            "configId": "cultureKgDefault",
+            "knowledgeGraphProfileId": "culture-kg",
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-16T08:38:48.098Z",
+              "durationMs": 209,
+              "variables": [
+                "Organization",
+                "Organization_label"
+              ],
+              "rows": [
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E1834"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "Academy of Sciences and Literature Mainz",
+                    "language": "en"
+                  }
+                },
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E1834"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "Akademie der Wissenschaften und der Literatur | Mainz",
+                    "language": "de"
+                  }
+                },
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E1868"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "Deutscher Verband für Kunstgeschichte e. V.",
+                    "language": "de"
+                  }
+                },
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E1895"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "arthistoricum.net – Fachinformationsdienst Kunst, Fotografie, Design",
+                    "language": "de"
+                  }
+                },
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E1895"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "Specialised Information Service Art, Design, Photography",
+                    "language": "en"
+                  }
+                },
+                {
+                  "Organization": {
+                    "type": "uri",
+                    "value": "https://nfdi4culture.de/id/E5367"
+                  },
+                  "Organization_label": {
+                    "type": "literal",
+                    "value": "Friedrich-Schiller-Universität Jena"
+                  }
+                }
+              ]
+            },
+            "resultPageSize": 10,
+            "viewConfig": {},
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 2: The Ports of Data"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "A pirate cannot sail without ports. Long John asks which subject areas have data portals and turns the result into a chart. The sea of cultural data suddenly has harbours."
+            }
+          ]
+        },
+        {
+          "type": "visualizationNode",
+          "attrs": {
+            "id": "visualization-9b884edefe35",
+            "kind": "visualization",
+            "title": "Task 2: The Ports of Knowledge",
+            "sourceMode": "sparql",
+            "source": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n          nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectAreaLabel\nORDER BY DESC(?portalCount)",
+            "knowledgeGraphProfileId": "culture-kg",
+            "url": "",
+            "urlFormat": "csv",
+            "chartType": "bar",
+            "mapping": {
+              "x": "subjectAreaLabel",
+              "y": "portalCount"
+            },
+            "plotlyDataJson": "[\n  {\n    \"type\": \"bar\",\n    \"x\": [\n      \"Art History\",\n      \"Architecture\",\n      \"Musicology\",\n      \"Theater Studies\",\n      \"Media Studies\",\n      \"Dance Studies\",\n      \"Digital Humanities\",\n      \"History\",\n      \"Archaelogy\",\n      \"Zoology\",\n      \"Sociocultural Anthropology\",\n      \"Computer Science\",\n      \"German Studies\",\n      \"Botany\",\n      \"Linguistics\",\n      \"Mineralogy\",\n      \"Film Studies\",\n      \"Book Studies\",\n      \"Sinology\",\n      \"Postcolonial Studies\",\n      \"Political Science\",\n      \"Cultural Studies\",\n      \"Literary Studies\",\n      \"Library Science\",\n      \"Jewish Studies\",\n      \"Islamic Studies\",\n      \"Geography\",\n      \"Graphic Design\"\n    ],\n    \"y\": [\n      59,\n      40,\n      31,\n      16,\n      16,\n      14,\n      12,\n      10,\n      4,\n      3,\n      3,\n      3,\n      3,\n      2,\n      2,\n      2,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1\n    ],\n    \"marker\": {\n      \"color\": \"#0072B2\"\n    }\n  }\n]\n",
+            "layoutJson": "{\n  \"autosize\": true,\n  \"paper_bgcolor\": \"#ffffff\",\n  \"plot_bgcolor\": \"#ffffff\",\n  \"font\": {\n    \"family\": \"Inter, system-ui, sans-serif\",\n    \"color\": \"#1f2328\"\n  },\n  \"colorway\": [\n    \"#000000\",\n    \"#E69F00\",\n    \"#56B4E9\",\n    \"#009E73\",\n    \"#F0E442\",\n    \"#0072B2\",\n    \"#D55E00\",\n    \"#CC79A7\"\n  ],\n  \"margin\": {\n    \"l\": 56,\n    \"r\": 32,\n    \"t\": 48,\n    \"b\": 64\n  },\n  \"showlegend\": false,\n  \"xaxis\": {\n    \"automargin\": true,\n    \"gridcolor\": \"#e6e6e6\",\n    \"zerolinecolor\": \"#d6d6d6\"\n  },\n  \"yaxis\": {\n    \"automargin\": true,\n    \"gridcolor\": \"#e6e6e6\",\n    \"zerolinecolor\": \"#d6d6d6\"\n  }\n}\n",
+            "configJson": "{\n  \"responsive\": true,\n  \"displaylogo\": false,\n  \"scrollZoom\": false\n}\n",
+            "figure": {
+              "data": [
+                {
+                  "type": "bar",
+                  "x": [
+                    "Art History",
+                    "Architecture",
+                    "Musicology",
+                    "Theater Studies",
+                    "Media Studies",
+                    "Dance Studies",
+                    "Digital Humanities",
+                    "History",
+                    "Archaelogy",
+                    "Zoology",
+                    "Sociocultural Anthropology",
+                    "Computer Science",
+                    "German Studies",
+                    "Botany",
+                    "Linguistics",
+                    "Mineralogy",
+                    "Film Studies",
+                    "Book Studies",
+                    "Sinology",
+                    "Postcolonial Studies",
+                    "Political Science",
+                    "Cultural Studies",
+                    "Literary Studies",
+                    "Library Science",
+                    "Jewish Studies",
+                    "Islamic Studies",
+                    "Geography",
+                    "Graphic Design"
+                  ],
+                  "y": [
+                    59,
+                    40,
+                    31,
+                    16,
+                    16,
+                    14,
+                    12,
+                    10,
+                    4,
+                    3,
+                    3,
+                    3,
+                    3,
+                    2,
+                    2,
+                    2,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                  ],
+                  "marker": {
+                    "color": "#0072B2"
+                  }
+                }
+              ],
+              "layout": {
+                "autosize": true,
+                "paper_bgcolor": "#ffffff",
+                "plot_bgcolor": "#ffffff",
+                "font": {
+                  "family": "Inter, system-ui, sans-serif",
+                  "color": "#1f2328"
+                },
+                "colorway": [
+                  "#000000",
+                  "#E69F00",
+                  "#56B4E9",
+                  "#009E73",
+                  "#F0E442",
+                  "#0072B2",
+                  "#D55E00",
+                  "#CC79A7"
+                ],
+                "margin": {
+                  "l": 56,
+                  "r": 32,
+                  "t": 48,
+                  "b": 64
+                },
+                "showlegend": false,
+                "xaxis": {
+                  "automargin": true,
+                  "gridcolor": "#e6e6e6",
+                  "zerolinecolor": "#d6d6d6"
+                },
+                "yaxis": {
+                  "automargin": true,
+                  "gridcolor": "#e6e6e6",
+                  "zerolinecolor": "#d6d6d6"
+                }
+              },
+              "config": {
+                "responsive": true,
+                "displaylogo": false,
+                "scrollZoom": false
+              }
+            },
+            "data": {
+              "columns": [
+                {
+                  "name": "subjectAreaLabel",
+                  "type": "string"
+                },
+                {
+                  "name": "portalCount",
+                  "type": "number"
+                }
+              ],
+              "rows": [
+                {
+                  "subjectAreaLabel": "Art History",
+                  "portalCount": 59
+                },
+                {
+                  "subjectAreaLabel": "Architecture",
+                  "portalCount": 40
+                },
+                {
+                  "subjectAreaLabel": "Musicology",
+                  "portalCount": 31
+                },
+                {
+                  "subjectAreaLabel": "Theater Studies",
+                  "portalCount": 16
+                },
+                {
+                  "subjectAreaLabel": "Media Studies",
+                  "portalCount": 16
+                },
+                {
+                  "subjectAreaLabel": "Dance Studies",
+                  "portalCount": 14
+                },
+                {
+                  "subjectAreaLabel": "Digital Humanities",
+                  "portalCount": 12
+                },
+                {
+                  "subjectAreaLabel": "History",
+                  "portalCount": 10
+                },
+                {
+                  "subjectAreaLabel": "Archaelogy",
+                  "portalCount": 4
+                },
+                {
+                  "subjectAreaLabel": "Zoology",
+                  "portalCount": 3
+                },
+                {
+                  "subjectAreaLabel": "Sociocultural Anthropology",
+                  "portalCount": 3
+                },
+                {
+                  "subjectAreaLabel": "Computer Science",
+                  "portalCount": 3
+                },
+                {
+                  "subjectAreaLabel": "German Studies",
+                  "portalCount": 3
+                },
+                {
+                  "subjectAreaLabel": "Botany",
+                  "portalCount": 2
+                },
+                {
+                  "subjectAreaLabel": "Linguistics",
+                  "portalCount": 2
+                },
+                {
+                  "subjectAreaLabel": "Mineralogy",
+                  "portalCount": 2
+                },
+                {
+                  "subjectAreaLabel": "Film Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Book Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Sinology",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Postcolonial Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Political Science",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Cultural Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Literary Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Library Science",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Jewish Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Islamic Studies",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Geography",
+                  "portalCount": 1
+                },
+                {
+                  "subjectAreaLabel": "Graphic Design",
+                  "portalCount": 1
+                }
+              ]
+            },
+            "result": null,
+            "message": "",
+            "viewConfig": {
+              "version": 2,
+              "renderer": "plotly",
+              "sourceMode": "sparql",
+              "source": "PREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?subjectAreaLabel (COUNT(DISTINCT ?portal) AS ?portalCount)\nWHERE {\n  ?portal a nfdicore:NFDI_0000123 ;\n          nfdicore:NFDI_0000211 ?subjectArea .\n  OPTIONAL { ?subjectArea rdfs:label ?subjectAreaRdfsLabel }\n  OPTIONAL { ?subjectArea schema:name ?subjectAreaName }\n  BIND(COALESCE(?subjectAreaRdfsLabel, ?subjectAreaName, STR(?subjectArea)) AS ?subjectAreaLabel)\n}\nGROUP BY ?subjectAreaLabel\nORDER BY DESC(?portalCount)",
+              "url": "",
+              "urlFormat": "csv",
+              "chartType": "bar",
+              "mapping": {
+                "x": "subjectAreaLabel",
+                "y": "portalCount"
+              },
+              "plotlyDataJson": "[\n  {\n    \"type\": \"bar\",\n    \"x\": [\n      \"Art History\",\n      \"Architecture\",\n      \"Musicology\",\n      \"Theater Studies\",\n      \"Media Studies\",\n      \"Dance Studies\",\n      \"Digital Humanities\",\n      \"History\",\n      \"Archaelogy\",\n      \"Zoology\",\n      \"Sociocultural Anthropology\",\n      \"Computer Science\",\n      \"German Studies\",\n      \"Botany\",\n      \"Linguistics\",\n      \"Mineralogy\",\n      \"Film Studies\",\n      \"Book Studies\",\n      \"Sinology\",\n      \"Postcolonial Studies\",\n      \"Political Science\",\n      \"Cultural Studies\",\n      \"Literary Studies\",\n      \"Library Science\",\n      \"Jewish Studies\",\n      \"Islamic Studies\",\n      \"Geography\",\n      \"Graphic Design\"\n    ],\n    \"y\": [\n      59,\n      40,\n      31,\n      16,\n      16,\n      14,\n      12,\n      10,\n      4,\n      3,\n      3,\n      3,\n      3,\n      2,\n      2,\n      2,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1,\n      1\n    ],\n    \"marker\": {\n      \"color\": \"#0072B2\"\n    }\n  }\n]\n",
+              "layoutJson": "{\n  \"autosize\": true,\n  \"paper_bgcolor\": \"#ffffff\",\n  \"plot_bgcolor\": \"#ffffff\",\n  \"font\": {\n    \"family\": \"Inter, system-ui, sans-serif\",\n    \"color\": \"#1f2328\"\n  },\n  \"colorway\": [\n    \"#000000\",\n    \"#E69F00\",\n    \"#56B4E9\",\n    \"#009E73\",\n    \"#F0E442\",\n    \"#0072B2\",\n    \"#D55E00\",\n    \"#CC79A7\"\n  ],\n  \"margin\": {\n    \"l\": 56,\n    \"r\": 32,\n    \"t\": 48,\n    \"b\": 64\n  },\n  \"showlegend\": false,\n  \"xaxis\": {\n    \"automargin\": true,\n    \"gridcolor\": \"#e6e6e6\",\n    \"zerolinecolor\": \"#d6d6d6\"\n  },\n  \"yaxis\": {\n    \"automargin\": true,\n    \"gridcolor\": \"#e6e6e6\",\n    \"zerolinecolor\": \"#d6d6d6\"\n  }\n}\n",
+              "configJson": "{\n  \"responsive\": true,\n  \"displaylogo\": false,\n  \"scrollZoom\": false\n}\n",
+              "data": {
+                "columns": [
+                  {
+                    "name": "subjectAreaLabel",
+                    "type": "string"
+                  },
+                  {
+                    "name": "portalCount",
+                    "type": "number"
+                  }
+                ],
+                "rows": [
+                  {
+                    "subjectAreaLabel": "Art History",
+                    "portalCount": 59
+                  },
+                  {
+                    "subjectAreaLabel": "Architecture",
+                    "portalCount": 40
+                  },
+                  {
+                    "subjectAreaLabel": "Musicology",
+                    "portalCount": 31
+                  },
+                  {
+                    "subjectAreaLabel": "Theater Studies",
+                    "portalCount": 16
+                  },
+                  {
+                    "subjectAreaLabel": "Media Studies",
+                    "portalCount": 16
+                  },
+                  {
+                    "subjectAreaLabel": "Dance Studies",
+                    "portalCount": 14
+                  },
+                  {
+                    "subjectAreaLabel": "Digital Humanities",
+                    "portalCount": 12
+                  },
+                  {
+                    "subjectAreaLabel": "History",
+                    "portalCount": 10
+                  },
+                  {
+                    "subjectAreaLabel": "Archaelogy",
+                    "portalCount": 4
+                  },
+                  {
+                    "subjectAreaLabel": "Zoology",
+                    "portalCount": 3
+                  },
+                  {
+                    "subjectAreaLabel": "Sociocultural Anthropology",
+                    "portalCount": 3
+                  },
+                  {
+                    "subjectAreaLabel": "Computer Science",
+                    "portalCount": 3
+                  },
+                  {
+                    "subjectAreaLabel": "German Studies",
+                    "portalCount": 3
+                  },
+                  {
+                    "subjectAreaLabel": "Botany",
+                    "portalCount": 2
+                  },
+                  {
+                    "subjectAreaLabel": "Linguistics",
+                    "portalCount": 2
+                  },
+                  {
+                    "subjectAreaLabel": "Mineralogy",
+                    "portalCount": 2
+                  },
+                  {
+                    "subjectAreaLabel": "Film Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Book Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Sinology",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Postcolonial Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Political Science",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Cultural Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Literary Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Library Science",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Jewish Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Islamic Studies",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Geography",
+                    "portalCount": 1
+                  },
+                  {
+                    "subjectAreaLabel": "Graphic Design",
+                    "portalCount": 1
+                  }
+                ]
+              },
+              "figure": {
+                "data": [
+                  {
+                    "type": "bar",
+                    "x": [
+                      "Art History",
+                      "Architecture",
+                      "Musicology",
+                      "Theater Studies",
+                      "Media Studies",
+                      "Dance Studies",
+                      "Digital Humanities",
+                      "History",
+                      "Archaelogy",
+                      "Zoology",
+                      "Sociocultural Anthropology",
+                      "Computer Science",
+                      "German Studies",
+                      "Botany",
+                      "Linguistics",
+                      "Mineralogy",
+                      "Film Studies",
+                      "Book Studies",
+                      "Sinology",
+                      "Postcolonial Studies",
+                      "Political Science",
+                      "Cultural Studies",
+                      "Literary Studies",
+                      "Library Science",
+                      "Jewish Studies",
+                      "Islamic Studies",
+                      "Geography",
+                      "Graphic Design"
+                    ],
+                    "y": [
+                      59,
+                      40,
+                      31,
+                      16,
+                      16,
+                      14,
+                      12,
+                      10,
+                      4,
+                      3,
+                      3,
+                      3,
+                      3,
+                      2,
+                      2,
+                      2,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1,
+                      1
+                    ],
+                    "marker": {
+                      "color": "#0072B2"
+                    }
+                  }
+                ],
+                "layout": {
+                  "autosize": true,
+                  "paper_bgcolor": "#ffffff",
+                  "plot_bgcolor": "#ffffff",
+                  "font": {
+                    "family": "Inter, system-ui, sans-serif",
+                    "color": "#1f2328"
+                  },
+                  "colorway": [
+                    "#000000",
+                    "#E69F00",
+                    "#56B4E9",
+                    "#009E73",
+                    "#F0E442",
+                    "#0072B2",
+                    "#D55E00",
+                    "#CC79A7"
+                  ],
+                  "margin": {
+                    "l": 56,
+                    "r": 32,
+                    "t": 48,
+                    "b": 64
+                  },
+                  "showlegend": false,
+                  "xaxis": {
+                    "automargin": true,
+                    "gridcolor": "#e6e6e6",
+                    "zerolinecolor": "#d6d6d6"
+                  },
+                  "yaxis": {
+                    "automargin": true,
+                    "gridcolor": "#e6e6e6",
+                    "zerolinecolor": "#d6d6d6"
+                  }
+                },
+                "config": {
+                  "responsive": true,
+                  "displaylogo": false,
+                  "scrollZoom": false
+                }
+              }
+            },
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 3: The Crew"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "The map is useless without a crew. This visualization counts the kinds of institutions behind the data and shows who is helping to keep the treasure afloat."
+            }
+          ]
+        },
+        {
+          "type": "sparnaturalNode",
+          "attrs": {
+            "id": "cea3d2ac-ec26-4f72-bbf9-d9b172859be9",
+            "kind": "sparnatural",
+            "title": "Query",
+            "source": "PREFIX org: <http://www.w3.org/ns/org#>\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\n\nSELECT ?classificationLabel (COUNT(DISTINCT ?inst) AS ?count)\nWHERE {\n  ?inst a ?orgClass .\n  ?inst org:classification ?classification .\n  OPTIONAL { ?classification rdfs:label ?rdfsLabel }\n  OPTIONAL { ?classification schema:name ?schemaName }\n  BIND(COALESCE(?rdfsLabel, ?schemaName, STR(?classification)) AS ?classificationLabel)\n}\nGROUP BY ?classificationLabel\nORDER BY DESC(?count)",
+            "queryJson": null,
+            "configId": "cultureKgDefault",
+            "knowledgeGraphProfileId": "culture-kg",
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-16T07:41:19.068Z",
+              "durationMs": 158,
+              "variables": [
+                "classificationLabel",
+                "count"
+              ],
+              "rows": [
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "University",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "31",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Research Institute",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "26",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Association",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "24",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Library",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "17",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Research Centre",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "16",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Academic Association",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "15",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Prussian Cultural Heritage Foundation",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "10",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Museum",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "10",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Working Group",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "8",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Archive",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "8",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Leibniz Association",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "7",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Specialised Information Service",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "7",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "University of Applied Sciences",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "5",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Collection",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "4",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Research Laboratory",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "4",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Academy of Science",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "4",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Max Planck Institute",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "3",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Max Weber Foundation",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "3",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Public Institution",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "3",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Fraunhofer Institute",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "2",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Klassik Stiftung Weimar",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "1",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                },
+                {
+                  "classificationLabel": {
+                    "type": "literal",
+                    "value": "Registered Corporate Society",
+                    "language": "en"
+                  },
+                  "count": {
+                    "type": "literal",
+                    "value": "1",
+                    "datatype": "http://www.w3.org/2001/XMLSchema#int"
+                  }
+                }
+              ]
+            },
+            "resultPageSize": 10,
+            "viewConfig": {},
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "rawgraphsNode",
+          "attrs": {
+            "id": "db57360c-015e-4fdd-80e0-0abd5ce665ff",
+            "kind": "rawgraphsVisualization",
+            "title": "Task 3: The Crew Registry",
+            "projectJson": "{\"version\":\"1.2\",\"userInput\":[{\"classificationLabel\":\"University\",\"count\":\"31\"},{\"classificationLabel\":\"Research Institute\",\"count\":\"26\"},{\"classificationLabel\":\"Association\",\"count\":\"24\"},{\"classificationLabel\":\"Library\",\"count\":\"17\"},{\"classificationLabel\":\"Research Centre\",\"count\":\"16\"},{\"classificationLabel\":\"Academic Association\",\"count\":\"15\"},{\"classificationLabel\":\"Prussian Cultural Heritage Foundation\",\"count\":\"10\"},{\"classificationLabel\":\"Museum\",\"count\":\"10\"},{\"classificationLabel\":\"Working Group\",\"count\":\"8\"},{\"classificationLabel\":\"Archive\",\"count\":\"8\"},{\"classificationLabel\":\"Leibniz Association\",\"count\":\"7\"},{\"classificationLabel\":\"Specialised Information Service\",\"count\":\"7\"},{\"classificationLabel\":\"University of Applied Sciences\",\"count\":\"5\"},{\"classificationLabel\":\"Collection\",\"count\":\"4\"},{\"classificationLabel\":\"Research Laboratory\",\"count\":\"4\"},{\"classificationLabel\":\"Academy of Science\",\"count\":\"4\"},{\"classificationLabel\":\"Max Planck Institute\",\"count\":\"3\"},{\"classificationLabel\":\"Max Weber Foundation\",\"count\":\"3\"},{\"classificationLabel\":\"Public Institution\",\"count\":\"3\"},{\"classificationLabel\":\"Fraunhofer Institute\",\"count\":\"2\"},{\"classificationLabel\":\"Klassik Stiftung Weimar\",\"count\":\"1\"},{\"classificationLabel\":\"Registered Corporate Society\",\"count\":\"1\"}],\"userInputFormat\":\"sparql\",\"dataSource\":{\"type\":\"sparql\",\"url\":\"https://nfdi4culture.de/qlever\",\"query\":{\"queryType\":\"SELECT\",\"variables\":[{\"termType\":\"Variable\",\"value\":\"classificationLabel\"},{\"expression\":{\"expression\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"type\":\"aggregate\",\"aggregation\":\"count\",\"distinct\":true},\"variable\":{\"termType\":\"Variable\",\"value\":\"count\"}}],\"where\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"},\"object\":{\"termType\":\"Variable\",\"value\":\"orgClass\"}},{\"subject\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/ns/org#classification\"},\"object\":{\"termType\":\"Variable\",\"value\":\"classification\"}}]},{\"type\":\"optional\",\"patterns\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"classification\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/2000/01/rdf-schema#label\"},\"object\":{\"termType\":\"Variable\",\"value\":\"rdfsLabel\"}}]}]},{\"type\":\"optional\",\"patterns\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"classification\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://schema.org/name\"},\"object\":{\"termType\":\"Variable\",\"value\":\"schemaName\"}}]}]},{\"type\":\"bind\",\"variable\":{\"termType\":\"Variable\",\"value\":\"classificationLabel\"},\"expression\":{\"type\":\"operation\",\"operator\":\"coalesce\",\"args\":[{\"termType\":\"Variable\",\"value\":\"rdfsLabel\"},{\"termType\":\"Variable\",\"value\":\"schemaName\"},{\"type\":\"operation\",\"operator\":\"str\",\"args\":[{\"termType\":\"Variable\",\"value\":\"classification\"}]}]}}],\"group\":[{\"expression\":{\"termType\":\"Variable\",\"value\":\"classificationLabel\"}}],\"order\":[{\"expression\":{\"termType\":\"Variable\",\"value\":\"count\"},\"descending\":true}],\"type\":\"query\",\"prefixes\":{\"org\":\"http://www.w3.org/ns/org#\",\"rdfs\":\"http://www.w3.org/2000/01/rdf-schema#\",\"schema\":\"http://schema.org/\"}}},\"rawData\":[[\"University\",\"31\"],[\"Research Institute\",\"26\"],[\"Association\",\"24\"],[\"Library\",\"17\"],[\"Research Centre\",\"16\"],[\"Academic Association\",\"15\"],[\"Prussian Cultural Heritage Foundation\",\"10\"],[\"Museum\",\"10\"],[\"Working Group\",\"8\"],[\"Archive\",\"8\"],[\"Leibniz Association\",\"7\"],[\"Specialised Information Service\",\"7\"],[\"University of Applied Sciences\",\"5\"],[\"Collection\",\"4\"],[\"Research Laboratory\",\"4\"],[\"Academy of Science\",\"4\"],[\"Max Planck Institute\",\"3\"],[\"Max Weber Foundation\",\"3\"],[\"Public Institution\",\"3\"],[\"Fraunhofer Institute\",\"2\"],[\"Klassik Stiftung Weimar\",\"1\"],[\"Registered Corporate Society\",\"1\"]],\"parseError\":null,\"parseOptions\":{\"separator\":\",\",\"thousandsSeparator\":\",\",\"decimalsSeparator\":\".\",\"locale\":\"de\",\"unstackedData\":null,\"unstackedColumns\":null},\"dataTypes\":{\"classificationLabel\":\"string\",\"count\":{\"type\":\"number\",\"locale\":\"de\",\"decimal\":\".\",\"group\":\",\",\"numerals\":[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"]}},\"chart\":\"rawgraphs.voronoitreemap\",\"mapping\":{\"size\":{\"ids\":[\"4\"],\"value\":[\"count\"],\"isValid\":true,\"mappedType\":\"number\",\"config\":{\"aggregation\":[\"sum\"]}},\"hierarchy\":{\"ids\":[\"5\"],\"value\":[\"classificationLabel\"],\"isValid\":true,\"mappedType\":\"string\"},\"label\":{\"ids\":[\"6\",\"7\"],\"value\":[\"classificationLabel\",\"count\"],\"isValid\":true,\"mappedType\":\"number\",\"config\":{\"aggregation\":[\"csvDistinct\",\"csvDistinct\"]}},\"color\":{\"ids\":[\"8\"],\"value\":[\"classificationLabel\"],\"isValid\":true,\"mappedType\":\"string\",\"config\":{\"aggregation\":[\"csvDistinct\"]}}},\"visualOptions\":{\"width\":805,\"height\":600,\"background\":\"#FFFFFF\",\"marginTop\":10,\"marginRight\":10,\"marginBottom\":10,\"marginLeft\":10,\"showLegend\":false,\"legendWidth\":200,\"seed\":0,\"padding\":2,\"clipToPolygon\":true,\"edges\":6,\"rotation\":0,\"isRegular\":true,\"colorScale\":{\"scaleType\":\"ordinal\",\"interpolator\":\"interpolateSpectral\",\"userScaleValues\":[{\"range\":\"#9e0142\",\"domain\":\"Academic Association\"},{\"range\":\"#b81e48\",\"domain\":\"Academy of Science\"},{\"range\":\"#cf394b\",\"domain\":\"Archive\"},{\"range\":\"#e1524a\",\"domain\":\"Association\"},{\"range\":\"#ee6b49\",\"domain\":\"Collection\"},{\"range\":\"#f68650\",\"domain\":\"Fraunhofer Institute\"},{\"range\":\"#fba35e\",\"domain\":\"Klassik Stiftung Weimar\"},{\"range\":\"#fdbe70\",\"domain\":\"Leibniz Association\"},{\"range\":\"#fed584\",\"domain\":\"Library\"},{\"range\":\"#fee89a\",\"domain\":\"Max Planck Institute\"},{\"range\":\"#fdf5ac\",\"domain\":\"Max Weber Foundation\"},{\"range\":\"#f7faaf\",\"domain\":\"Museum\"},{\"range\":\"#ebf7a6\",\"domain\":\"Prussian Cultural Heritage Foundation\"},{\"range\":\"#d8ef9f\",\"domain\":\"Public Institution\"},{\"range\":\"#bee5a0\",\"domain\":\"Registered Corporate Society\"},{\"range\":\"#a0d9a3\",\"domain\":\"Research Centre\"},{\"range\":\"#81cba5\",\"domain\":\"Research Institute\"},{\"range\":\"#63b9aa\",\"domain\":\"Research Laboratory\"},{\"range\":\"#4ba0b1\",\"domain\":\"Specialised Information Service\"},{\"range\":\"#4285b4\",\"domain\":\"University\"},{\"range\":\"#4b6aae\",\"domain\":\"University of Applied Sciences\"},{\"range\":\"#5e4fa2\",\"domain\":\"Working Group\"}],\"defaultColor\":\"#cccccc\"},\"labelStyles\":[],\"showLabelsOutline\":false},\"customChart\":null}",
+            "svg": "<svg width=\"805\" height=\"600\"><rect width=\"805\" height=\"600\" x=\"0\" y=\"0\" fill=\"#FFFFFF\" id=\"background\"></rect><g id=\"viz\" transform=\"translate(402.5,300)\"><g id=\"cells\"><path d=\"M86.156,290L167.432,290L245.977,153.956L222.697,94.435L211.192,81.847L134.662,49.784L73.716,53.009L52.648,61.194L-2.974,173.853L18.46,231.713z\" fill=\"rgb(66, 133, 180)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"University\"></path><path d=\"M-65.74,-102.079L-66.295,-20.373L-30.974,34.176L52.648,61.194L73.716,53.009L131.906,1.426L132.435,0.542L139.84,-88.203L67.943,-160.313L-3.502,-166.12L-50.43,-133.611z\" fill=\"rgb(129, 203, 165)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Institute\"></path><path d=\"M-71.52,67.863L-143.974,10.881L-244.243,46.524L-278.255,98.048L-199.886,233.787L-125.014,226.764L-58.174,159.161z\" fill=\"rgb(225, 82, 74)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Association\"></path><path d=\"M-157.434,-115.324L-252.569,-142.537L-324.703,-17.598L-244.243,46.524L-143.974,10.881L-139.866,2.305L-148.603,-102.019z\" fill=\"rgb(254, 213, 132)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Library\"></path><path d=\"M167.432,-290L132.023,-290L67.943,-160.313L139.84,-88.203L191.345,-92.31L253.236,-141.382z\" fill=\"rgb(160, 217, 163)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Centre\"></path><path d=\"M-167.432,-290L-177.505,-272.553L-129.391,-153.774L-50.43,-133.611L-3.502,-166.12L-15.823,-290z\" fill=\"rgb(158, 1, 66)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Academic Association\"></path><path d=\"M132.023,-290L-15.823,-290L-3.502,-166.12L67.943,-160.313z\" fill=\"rgb(235, 247, 166)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Prussian Cultural Heritage Foundation\"></path><path d=\"M-107.729,290L-8.749,290L18.46,231.713L-2.974,173.853L-58.174,159.161L-125.014,226.764z\" fill=\"rgb(247, 250, 175)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Museum\"></path><path d=\"M-71.52,67.863L-58.174,159.161L-2.974,173.853L52.648,61.194L-30.974,34.176z\" fill=\"rgb(94, 79, 162)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Working Group\"></path><path d=\"M214.58,-8.435L211.192,81.847L222.697,94.435L273.852,105.675L334.863,0L319.011,-27.457L215.044,-9.011z\" fill=\"rgb(207, 57, 75)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Archive\"></path><path d=\"M-252.569,-142.537L-157.434,-115.324L-129.391,-153.774L-177.505,-272.553z\" fill=\"rgb(253, 190, 112)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Leibniz Association\"></path><path d=\"M319.011,-27.457L253.236,-141.382L191.345,-92.31L215.044,-9.011z\" fill=\"rgb(75, 160, 177)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Specialised Information Service\"></path><path d=\"M-65.74,-102.079L-148.603,-102.019L-139.866,2.305L-66.295,-20.373z\" fill=\"rgb(75, 106, 174)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"University of Applied Sciences\"></path><path d=\"M214.58,-8.435L132.435,0.542L131.906,1.426L134.662,49.784L211.192,81.847z\" fill=\"rgb(238, 107, 73)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Collection\"></path><path d=\"M214.58,-8.435L215.044,-9.011L191.345,-92.31L139.84,-88.203L132.435,0.542z\" fill=\"rgb(99, 185, 170)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Laboratory\"></path><path d=\"M-71.52,67.863L-30.974,34.176L-66.295,-20.373L-139.866,2.305L-143.974,10.881z\" fill=\"rgb(184, 30, 72)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Academy of Science\"></path><path d=\"M-324.703,-17.598L-334.863,0L-278.255,98.048L-244.243,46.524z\" fill=\"rgb(254, 232, 154)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Max Planck Institute\"></path><path d=\"M-167.432,290L-107.729,290L-125.014,226.764L-199.886,233.787z\" fill=\"rgb(253, 245, 172)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Max Weber Foundation\"></path><path d=\"M-157.434,-115.324L-148.603,-102.019L-65.74,-102.079L-50.43,-133.611L-129.391,-153.774z\" fill=\"rgb(216, 239, 159)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Public Institution\"></path><path d=\"M86.156,290L18.46,231.713L-8.749,290z\" fill=\"rgb(246, 134, 80)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Fraunhofer Institute\"></path><path d=\"M134.662,49.784L131.906,1.426L73.716,53.009z\" fill=\"rgb(251, 163, 94)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Klassik Stiftung Weimar\"></path><path d=\"M245.977,153.956L273.852,105.675L222.697,94.435z\" fill=\"rgb(190, 229, 160)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Registered Corporate Society\"></path><path d=\"M167.432,-290L-167.432,-290L-334.863,0L-167.432,290L167.432,290L334.863,0z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"4\"></path></g><g id=\"labels\"><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(119.39355230887652,156.46064136336804)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">University</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">31</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(32.79609192915812,-66.42780719771298)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">26</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-163.36406465231096,110.2606201394626)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">24</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-223.06584850105165,-57.687079742129775)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Library</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">17</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(157.70790258272098,-190.9706735106717)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Centre</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">16</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-82.3164020731641,-232.6030698956348)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Academic Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">15</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(47.35059046162577,-245.49957664696657)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Prussian Cultural Heritage Foundation</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">10</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-52.304550441305686,220.0653791349351)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Museum</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">10</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-17.39949239659787,88.92371015334615)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Working Group</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">8</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(265.44344956733835,22.977572689968653)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Archive</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">8</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-184.91975103325373,-191.04202884578348)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Leibniz Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">7</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(247.60005171444982,-77.59377470089326)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Specialised Information Service</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">7</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-107.32219731268742,-67.38028975207352)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">University of Applied Sciences</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">5</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(176.71207667350185,19.647316079535035)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Collection</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(168.54299900237618,-55.101732478001466)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Laboratory</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-83.76358205719765,9.047795340261246)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Academy of Science</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-290.18906550805485,26.539877230536526)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Max Planck Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-150.5454494759336,246.91770980138278)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Max Weber Foundation</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-107.37115186659484,-134.48183888290353)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Public Institution</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(31.105052952291253,259.00196841615866)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Fraunhofer Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">2</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(112.34903459610004,23.315711831059005)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Klassik Stiftung Weimar</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">1</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(247.0891238704784,106.5161016145732)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Registered Corporate Society</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">1</tspan></text></g></g></svg>",
+            "summary": {
+              "version": "1.2",
+              "chartId": "rawgraphs.voronoitreemap",
+              "chartName": "Treemap (Voronoi)",
+              "rowCount": 22,
+              "columnCount": 2
+            },
+            "message": "RAWGraphs visualization rendered",
+            "viewConfig": {
+              "version": 1,
+              "renderer": "rawgraphs",
+              "project": "{\"version\":\"1.2\",\"userInput\":[{\"classificationLabel\":\"University\",\"count\":\"31\"},{\"classificationLabel\":\"Research Institute\",\"count\":\"26\"},{\"classificationLabel\":\"Association\",\"count\":\"24\"},{\"classificationLabel\":\"Library\",\"count\":\"17\"},{\"classificationLabel\":\"Research Centre\",\"count\":\"16\"},{\"classificationLabel\":\"Academic Association\",\"count\":\"15\"},{\"classificationLabel\":\"Prussian Cultural Heritage Foundation\",\"count\":\"10\"},{\"classificationLabel\":\"Museum\",\"count\":\"10\"},{\"classificationLabel\":\"Working Group\",\"count\":\"8\"},{\"classificationLabel\":\"Archive\",\"count\":\"8\"},{\"classificationLabel\":\"Leibniz Association\",\"count\":\"7\"},{\"classificationLabel\":\"Specialised Information Service\",\"count\":\"7\"},{\"classificationLabel\":\"University of Applied Sciences\",\"count\":\"5\"},{\"classificationLabel\":\"Collection\",\"count\":\"4\"},{\"classificationLabel\":\"Research Laboratory\",\"count\":\"4\"},{\"classificationLabel\":\"Academy of Science\",\"count\":\"4\"},{\"classificationLabel\":\"Max Planck Institute\",\"count\":\"3\"},{\"classificationLabel\":\"Max Weber Foundation\",\"count\":\"3\"},{\"classificationLabel\":\"Public Institution\",\"count\":\"3\"},{\"classificationLabel\":\"Fraunhofer Institute\",\"count\":\"2\"},{\"classificationLabel\":\"Klassik Stiftung Weimar\",\"count\":\"1\"},{\"classificationLabel\":\"Registered Corporate Society\",\"count\":\"1\"}],\"userInputFormat\":\"sparql\",\"dataSource\":{\"type\":\"sparql\",\"url\":\"https://nfdi4culture.de/qlever\",\"query\":{\"queryType\":\"SELECT\",\"variables\":[{\"termType\":\"Variable\",\"value\":\"classificationLabel\"},{\"expression\":{\"expression\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"type\":\"aggregate\",\"aggregation\":\"count\",\"distinct\":true},\"variable\":{\"termType\":\"Variable\",\"value\":\"count\"}}],\"where\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\"},\"object\":{\"termType\":\"Variable\",\"value\":\"orgClass\"}},{\"subject\":{\"termType\":\"Variable\",\"value\":\"inst\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/ns/org#classification\"},\"object\":{\"termType\":\"Variable\",\"value\":\"classification\"}}]},{\"type\":\"optional\",\"patterns\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"classification\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://www.w3.org/2000/01/rdf-schema#label\"},\"object\":{\"termType\":\"Variable\",\"value\":\"rdfsLabel\"}}]}]},{\"type\":\"optional\",\"patterns\":[{\"type\":\"bgp\",\"triples\":[{\"subject\":{\"termType\":\"Variable\",\"value\":\"classification\"},\"predicate\":{\"termType\":\"NamedNode\",\"value\":\"http://schema.org/name\"},\"object\":{\"termType\":\"Variable\",\"value\":\"schemaName\"}}]}]},{\"type\":\"bind\",\"variable\":{\"termType\":\"Variable\",\"value\":\"classificationLabel\"},\"expression\":{\"type\":\"operation\",\"operator\":\"coalesce\",\"args\":[{\"termType\":\"Variable\",\"value\":\"rdfsLabel\"},{\"termType\":\"Variable\",\"value\":\"schemaName\"},{\"type\":\"operation\",\"operator\":\"str\",\"args\":[{\"termType\":\"Variable\",\"value\":\"classification\"}]}]}}],\"group\":[{\"expression\":{\"termType\":\"Variable\",\"value\":\"classificationLabel\"}}],\"order\":[{\"expression\":{\"termType\":\"Variable\",\"value\":\"count\"},\"descending\":true}],\"type\":\"query\",\"prefixes\":{\"org\":\"http://www.w3.org/ns/org#\",\"rdfs\":\"http://www.w3.org/2000/01/rdf-schema#\",\"schema\":\"http://schema.org/\"}}},\"rawData\":[[\"University\",\"31\"],[\"Research Institute\",\"26\"],[\"Association\",\"24\"],[\"Library\",\"17\"],[\"Research Centre\",\"16\"],[\"Academic Association\",\"15\"],[\"Prussian Cultural Heritage Foundation\",\"10\"],[\"Museum\",\"10\"],[\"Working Group\",\"8\"],[\"Archive\",\"8\"],[\"Leibniz Association\",\"7\"],[\"Specialised Information Service\",\"7\"],[\"University of Applied Sciences\",\"5\"],[\"Collection\",\"4\"],[\"Research Laboratory\",\"4\"],[\"Academy of Science\",\"4\"],[\"Max Planck Institute\",\"3\"],[\"Max Weber Foundation\",\"3\"],[\"Public Institution\",\"3\"],[\"Fraunhofer Institute\",\"2\"],[\"Klassik Stiftung Weimar\",\"1\"],[\"Registered Corporate Society\",\"1\"]],\"parseError\":null,\"parseOptions\":{\"separator\":\",\",\"thousandsSeparator\":\",\",\"decimalsSeparator\":\".\",\"locale\":\"de\",\"unstackedData\":null,\"unstackedColumns\":null},\"dataTypes\":{\"classificationLabel\":\"string\",\"count\":{\"type\":\"number\",\"locale\":\"de\",\"decimal\":\".\",\"group\":\",\",\"numerals\":[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\"]}},\"chart\":\"rawgraphs.voronoitreemap\",\"mapping\":{\"size\":{\"ids\":[\"4\"],\"value\":[\"count\"],\"isValid\":true,\"mappedType\":\"number\",\"config\":{\"aggregation\":[\"sum\"]}},\"hierarchy\":{\"ids\":[\"5\"],\"value\":[\"classificationLabel\"],\"isValid\":true,\"mappedType\":\"string\"},\"label\":{\"ids\":[\"6\",\"7\"],\"value\":[\"classificationLabel\",\"count\"],\"isValid\":true,\"mappedType\":\"number\",\"config\":{\"aggregation\":[\"csvDistinct\",\"csvDistinct\"]}},\"color\":{\"ids\":[\"8\"],\"value\":[\"classificationLabel\"],\"isValid\":true,\"mappedType\":\"string\",\"config\":{\"aggregation\":[\"csvDistinct\"]}}},\"visualOptions\":{\"width\":805,\"height\":600,\"background\":\"#FFFFFF\",\"marginTop\":10,\"marginRight\":10,\"marginBottom\":10,\"marginLeft\":10,\"showLegend\":false,\"legendWidth\":200,\"seed\":0,\"padding\":2,\"clipToPolygon\":true,\"edges\":6,\"rotation\":0,\"isRegular\":true,\"colorScale\":{\"scaleType\":\"ordinal\",\"interpolator\":\"interpolateSpectral\",\"userScaleValues\":[{\"range\":\"#9e0142\",\"domain\":\"Academic Association\"},{\"range\":\"#b81e48\",\"domain\":\"Academy of Science\"},{\"range\":\"#cf394b\",\"domain\":\"Archive\"},{\"range\":\"#e1524a\",\"domain\":\"Association\"},{\"range\":\"#ee6b49\",\"domain\":\"Collection\"},{\"range\":\"#f68650\",\"domain\":\"Fraunhofer Institute\"},{\"range\":\"#fba35e\",\"domain\":\"Klassik Stiftung Weimar\"},{\"range\":\"#fdbe70\",\"domain\":\"Leibniz Association\"},{\"range\":\"#fed584\",\"domain\":\"Library\"},{\"range\":\"#fee89a\",\"domain\":\"Max Planck Institute\"},{\"range\":\"#fdf5ac\",\"domain\":\"Max Weber Foundation\"},{\"range\":\"#f7faaf\",\"domain\":\"Museum\"},{\"range\":\"#ebf7a6\",\"domain\":\"Prussian Cultural Heritage Foundation\"},{\"range\":\"#d8ef9f\",\"domain\":\"Public Institution\"},{\"range\":\"#bee5a0\",\"domain\":\"Registered Corporate Society\"},{\"range\":\"#a0d9a3\",\"domain\":\"Research Centre\"},{\"range\":\"#81cba5\",\"domain\":\"Research Institute\"},{\"range\":\"#63b9aa\",\"domain\":\"Research Laboratory\"},{\"range\":\"#4ba0b1\",\"domain\":\"Specialised Information Service\"},{\"range\":\"#4285b4\",\"domain\":\"University\"},{\"range\":\"#4b6aae\",\"domain\":\"University of Applied Sciences\"},{\"range\":\"#5e4fa2\",\"domain\":\"Working Group\"}],\"defaultColor\":\"#cccccc\"},\"labelStyles\":[],\"showLabelsOutline\":false},\"customChart\":null}",
+              "svg": "<svg width=\"805\" height=\"600\"><rect width=\"805\" height=\"600\" x=\"0\" y=\"0\" fill=\"#FFFFFF\" id=\"background\"></rect><g id=\"viz\" transform=\"translate(402.5,300)\"><g id=\"cells\"><path d=\"M86.156,290L167.432,290L245.977,153.956L222.697,94.435L211.192,81.847L134.662,49.784L73.716,53.009L52.648,61.194L-2.974,173.853L18.46,231.713z\" fill=\"rgb(66, 133, 180)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"University\"></path><path d=\"M-65.74,-102.079L-66.295,-20.373L-30.974,34.176L52.648,61.194L73.716,53.009L131.906,1.426L132.435,0.542L139.84,-88.203L67.943,-160.313L-3.502,-166.12L-50.43,-133.611z\" fill=\"rgb(129, 203, 165)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Institute\"></path><path d=\"M-71.52,67.863L-143.974,10.881L-244.243,46.524L-278.255,98.048L-199.886,233.787L-125.014,226.764L-58.174,159.161z\" fill=\"rgb(225, 82, 74)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Association\"></path><path d=\"M-157.434,-115.324L-252.569,-142.537L-324.703,-17.598L-244.243,46.524L-143.974,10.881L-139.866,2.305L-148.603,-102.019z\" fill=\"rgb(254, 213, 132)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Library\"></path><path d=\"M167.432,-290L132.023,-290L67.943,-160.313L139.84,-88.203L191.345,-92.31L253.236,-141.382z\" fill=\"rgb(160, 217, 163)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Centre\"></path><path d=\"M-167.432,-290L-177.505,-272.553L-129.391,-153.774L-50.43,-133.611L-3.502,-166.12L-15.823,-290z\" fill=\"rgb(158, 1, 66)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Academic Association\"></path><path d=\"M132.023,-290L-15.823,-290L-3.502,-166.12L67.943,-160.313z\" fill=\"rgb(235, 247, 166)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Prussian Cultural Heritage Foundation\"></path><path d=\"M-107.729,290L-8.749,290L18.46,231.713L-2.974,173.853L-58.174,159.161L-125.014,226.764z\" fill=\"rgb(247, 250, 175)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Museum\"></path><path d=\"M-71.52,67.863L-58.174,159.161L-2.974,173.853L52.648,61.194L-30.974,34.176z\" fill=\"rgb(94, 79, 162)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Working Group\"></path><path d=\"M214.58,-8.435L211.192,81.847L222.697,94.435L273.852,105.675L334.863,0L319.011,-27.457L215.044,-9.011z\" fill=\"rgb(207, 57, 75)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Archive\"></path><path d=\"M-252.569,-142.537L-157.434,-115.324L-129.391,-153.774L-177.505,-272.553z\" fill=\"rgb(253, 190, 112)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Leibniz Association\"></path><path d=\"M319.011,-27.457L253.236,-141.382L191.345,-92.31L215.044,-9.011z\" fill=\"rgb(75, 160, 177)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Specialised Information Service\"></path><path d=\"M-65.74,-102.079L-148.603,-102.019L-139.866,2.305L-66.295,-20.373z\" fill=\"rgb(75, 106, 174)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"University of Applied Sciences\"></path><path d=\"M214.58,-8.435L132.435,0.542L131.906,1.426L134.662,49.784L211.192,81.847z\" fill=\"rgb(238, 107, 73)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Collection\"></path><path d=\"M214.58,-8.435L215.044,-9.011L191.345,-92.31L139.84,-88.203L132.435,0.542z\" fill=\"rgb(99, 185, 170)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Research Laboratory\"></path><path d=\"M-71.52,67.863L-30.974,34.176L-66.295,-20.373L-139.866,2.305L-143.974,10.881z\" fill=\"rgb(184, 30, 72)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Academy of Science\"></path><path d=\"M-324.703,-17.598L-334.863,0L-278.255,98.048L-244.243,46.524z\" fill=\"rgb(254, 232, 154)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Max Planck Institute\"></path><path d=\"M-167.432,290L-107.729,290L-125.014,226.764L-199.886,233.787z\" fill=\"rgb(253, 245, 172)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Max Weber Foundation\"></path><path d=\"M-157.434,-115.324L-148.603,-102.019L-65.74,-102.079L-50.43,-133.611L-129.391,-153.774z\" fill=\"rgb(216, 239, 159)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Public Institution\"></path><path d=\"M86.156,290L18.46,231.713L-8.749,290z\" fill=\"rgb(246, 134, 80)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Fraunhofer Institute\"></path><path d=\"M134.662,49.784L131.906,1.426L73.716,53.009z\" fill=\"rgb(251, 163, 94)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Klassik Stiftung Weimar\"></path><path d=\"M245.977,153.956L273.852,105.675L222.697,94.435z\" fill=\"rgb(190, 229, 160)\" stroke=\"#FFFFFF\" stroke-width=\"2\" id=\"Registered Corporate Society\"></path><path d=\"M167.432,-290L-167.432,-290L-334.863,0L-167.432,290L167.432,290L334.863,0z\" fill=\"none\" stroke=\"#FFFFFF\" stroke-width=\"4\"></path></g><g id=\"labels\"><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(119.39355230887652,156.46064136336804)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">University</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">31</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(32.79609192915812,-66.42780719771298)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">26</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-163.36406465231096,110.2606201394626)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">24</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-223.06584850105165,-57.687079742129775)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Library</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">17</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(157.70790258272098,-190.9706735106717)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Centre</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">16</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-82.3164020731641,-232.6030698956348)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Academic Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">15</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(47.35059046162577,-245.49957664696657)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Prussian Cultural Heritage Foundation</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">10</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-52.304550441305686,220.0653791349351)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Museum</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">10</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-17.39949239659787,88.92371015334615)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Working Group</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">8</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(265.44344956733835,22.977572689968653)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Archive</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">8</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-184.91975103325373,-191.04202884578348)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Leibniz Association</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">7</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(247.60005171444982,-77.59377470089326)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Specialised Information Service</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">7</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-107.32219731268742,-67.38028975207352)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">University of Applied Sciences</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">5</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(176.71207667350185,19.647316079535035)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Collection</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(168.54299900237618,-55.101732478001466)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Research Laboratory</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-83.76358205719765,9.047795340261246)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Academy of Science</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">4</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-290.18906550805485,26.539877230536526)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Max Planck Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-150.5454494759336,246.91770980138278)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Max Weber Foundation</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(-107.37115186659484,-134.48183888290353)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Public Institution</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">3</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(31.105052952291253,259.00196841615866)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Fraunhofer Institute</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">2</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(112.34903459610004,23.315711831059005)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Klassik Stiftung Weimar</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">1</tspan></text><text text-anchor=\"middle\" dominant-baseline=\"text-before-edge\" transform=\"translate(247.0891238704784,106.5161016145732)\"><tspan x=\"3\" y=\"0.2em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: bold;\">Registered Corporate Society</tspan><tspan x=\"3\" y=\"1.3em\" style=\"font-family: Arial, sans-serif; font-size: 10px; fill: black; font-weight: normal;\">1</tspan></text></g></g></svg>",
+              "summary": {
+                "version": "1.2",
+                "chartId": "rawgraphs.voronoitreemap",
+                "chartName": "Treemap (Voronoi)",
+                "rowCount": 22,
+                "columnCount": 2
+              }
+            },
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 4: The Disguise Chest"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Before entering the island archive, Long John needs a disguise. The graph points to costume objects, and LODEON turns the results into a remote embed gallery."
+            }
+          ]
+        },
+        {
+          "type": "embedNode",
+          "attrs": {
+            "id": "8a17c48a-abc9-4189-b7ea-7e8f3966f3c9",
+            "kind": "embed",
+            "title": "Task 4: The Disguise Chest",
+            "sourceMode": "sparql",
+            "url": "https://semantic-kompakkt.de/viewer/index.html?entity=66c44ea1939b1b28ef179310&mode=open\nhttps://semantic-kompakkt.de/viewer/index.html?entity=66c457089823dcef2adc56df&mode=open\nhttps://semantic-kompakkt.de/viewer/index.html?entity=66d56c0543e91560f7466421&mode=open",
+            "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?item ?label ?kompakktId ?embedUrl\nWHERE {\n  <https://nfdi4culture.de/id/E6078> <http://schema.org/dataFeedElement> ?element .\n  ?element schema:item ?item .\n  ?item rdfs:label ?label . FILTER regex(?label, \"Wams|Weste\", \"i\")\n  BIND(REPLACE(STR(?item), \"^.*/\", \"\") AS ?kompakktId)\n  BIND(IRI(CONCAT(\"https://semantic-kompakkt.de/viewer/index.html?entity=\", ?kompakktId, \"&mode=open\")) AS ?embedUrl)\n}",
+            "knowledgeGraphProfileId": "culture-kg",
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-15T15:23:57.578Z",
+              "durationMs": 117,
+              "variables": [
+                "item",
+                "label",
+                "kompakktId",
+                "embedUrl"
+              ],
+              "rows": [
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/entity/673db4423c1250c11a3303d4"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Wams mit Schlitzen, um 1630 (mit späteren Änderungen)"
+                  },
+                  "kompakktId": {
+                    "type": "literal",
+                    "value": "673db4423c1250c11a3303d4"
+                  },
+                  "embedUrl": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/viewer/index.html?entity=673db4423c1250c11a3303d4&mode=open"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/entity/673db4e43c1250c11a3303d7"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Wams mit Schlitzmuster, um 1600/1610"
+                  },
+                  "kompakktId": {
+                    "type": "literal",
+                    "value": "673db4e43c1250c11a3303d7"
+                  },
+                  "embedUrl": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/viewer/index.html?entity=673db4e43c1250c11a3303d7&mode=open"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/entity/673dbabf3c1250c11a3303ea"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Weste (blau), um 1695"
+                  },
+                  "kompakktId": {
+                    "type": "literal",
+                    "value": "673dbabf3c1250c11a3303ea"
+                  },
+                  "embedUrl": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/viewer/index.html?entity=673dbabf3c1250c11a3303ea&mode=open"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/entity/673dbcbb3c1250c11a3303f9"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Weste (weiß), um 1780"
+                  },
+                  "kompakktId": {
+                    "type": "literal",
+                    "value": "673dbcbb3c1250c11a3303f9"
+                  },
+                  "embedUrl": {
+                    "type": "uri",
+                    "value": "https://semantic-kompakkt.de/viewer/index.html?entity=673dbcbb3c1250c11a3303f9&mode=open"
+                  }
+                }
+              ]
+            },
+            "resultPageSize": 10,
+            "caption": "Restaging Fashion: a gallery of objects fit for a pirate disguise.",
+            "aspectRatio": "16:9",
+            "height": 420,
+            "viewMode": "gallery",
+            "galleryReferenceStrip": "horizontal",
+            "selectedIndex": 0,
+            "sandbox": [
+              "allow-scripts",
+              "allow-same-origin",
+              "allow-popups",
+              "allow-popups-to-escape-sandbox"
+            ],
+            "allow": [
+              "fullscreen"
+            ],
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "loading": "lazy",
+            "viewConfig": {
+              "version": 1,
+              "renderer": "iframe",
+              "url": "https://semantic-kompakkt.de/viewer/index.html?entity=673db4423c1250c11a3303d4&mode=open",
+              "urls": [
+                "https://semantic-kompakkt.de/viewer/index.html?entity=673db4423c1250c11a3303d4&mode=open",
+                "https://semantic-kompakkt.de/viewer/index.html?entity=673db4e43c1250c11a3303d7&mode=open",
+                "https://semantic-kompakkt.de/viewer/index.html?entity=673dbabf3c1250c11a3303ea&mode=open",
+                "https://semantic-kompakkt.de/viewer/index.html?entity=673dbcbb3c1250c11a3303f9&mode=open"
+              ],
+              "items": [
+                {
+                  "url": "https://semantic-kompakkt.de/viewer/index.html?entity=673db4423c1250c11a3303d4&mode=open",
+                  "label": "Wams mit Schlitzen, um 1630 (mit späteren Änderungen)",
+                  "resource": "https://semantic-kompakkt.de/entity/673db4423c1250c11a3303d4"
+                },
+                {
+                  "url": "https://semantic-kompakkt.de/viewer/index.html?entity=673db4e43c1250c11a3303d7&mode=open",
+                  "label": "Wams mit Schlitzmuster, um 1600/1610",
+                  "resource": "https://semantic-kompakkt.de/entity/673db4e43c1250c11a3303d7"
+                },
+                {
+                  "url": "https://semantic-kompakkt.de/viewer/index.html?entity=673dbabf3c1250c11a3303ea&mode=open",
+                  "label": "Weste (blau), um 1695",
+                  "resource": "https://semantic-kompakkt.de/entity/673dbabf3c1250c11a3303ea"
+                },
+                {
+                  "url": "https://semantic-kompakkt.de/viewer/index.html?entity=673dbcbb3c1250c11a3303f9&mode=open",
+                  "label": "Weste (weiß), um 1780",
+                  "resource": "https://semantic-kompakkt.de/entity/673dbcbb3c1250c11a3303f9"
+                }
+              ],
+              "caption": "Restaging Fashion: a gallery of objects fit for a pirate disguise.",
+              "aspectRatio": "16:9",
+              "height": 420,
+              "sourceMode": "sparql",
+              "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?item ?label ?kompakktId ?embedUrl\nWHERE {\n  <https://nfdi4culture.de/id/E6078> <http://schema.org/dataFeedElement> ?element .\n  ?element schema:item ?item .\n  ?item rdfs:label ?label . FILTER regex(?label, \"Wams|Weste\", \"i\")\n  BIND(REPLACE(STR(?item), \"^.*/\", \"\") AS ?kompakktId)\n  BIND(IRI(CONCAT(\"https://semantic-kompakkt.de/viewer/index.html?entity=\", ?kompakktId, \"&mode=open\")) AS ?embedUrl)\n}",
+              "knowledgeGraphProfileId": "culture-kg",
+              "resultPageSize": 10,
+              "viewMode": "gallery",
+              "galleryReferenceStrip": "horizontal",
+              "selectedIndex": 0,
+              "sandbox": [
+                "allow-scripts",
+                "allow-same-origin",
+                "allow-popups",
+                "allow-popups-to-escape-sandbox"
+              ],
+              "allow": [
+                "fullscreen"
+              ],
+              "referrerPolicy": "strict-origin-when-cross-origin",
+              "loading": "lazy"
+            },
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 5: The Island Lookout"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "From the lookout, the crew inspects visual evidence. A SPARQL query returns image resources, and the IIIF node opens them as a zoomable gallery."
+            }
+          ]
+        },
+        {
+          "type": "iiifNode",
+          "attrs": {
+            "id": "83b9ca3a-1fdc-4056-bb01-77596522b7cd",
+            "kind": "iiif",
+            "title": "Task 5: The Island Lookout",
+            "sourceMode": "sparql",
+            "url": "https://fotothek.biblhertz.it/iiif/3/499421\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_003490_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_010616_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_015913_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_020293_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_023634_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_023651_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_025346_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_027759_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_028364_post",
+            "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?item ?label ?hertzianaId ?imageInfoUrl\nWHERE {\n  <https://nfdi4culture.de/id/E6064> <http://schema.org/dataFeedElement> ?element .\n  ?element schema:item ?item .\n  ?item cto:CTO_0001026 <https://iconclass.org/25FF411> .\n  ?item nfdicore:NFDI_0000207 <https://nfdi4culture.de/id/E4461> .\n  OPTIONAL { ?item rdfs:label ?label }\n  BIND(REPLACE(STR(?item), \"^.*/\", \"\") AS ?hertzianaId)\n  BIND(IRI(CONCAT(\"https://fotothek.biblhertz.it/iiif/3/\", ?hertzianaId, \"/info.json\")) AS ?imageInfoUrl)\n}\nLIMIT 10",
+            "knowledgeGraphProfileId": "culture-kg",
+            "resultMapping": {
+              "manifest": "manifestUrl",
+              "imageInfo": "imageInfoUrl",
+              "label": "label",
+              "resource": "resource"
+            },
+            "selectedItem": null,
+            "result": {
+              "status": "success",
+              "endpointUrl": "/api/sparql/culture-kg",
+              "executedAt": "2026-07-15T15:23:19.665Z",
+              "durationMs": 106,
+              "variables": [
+                "item",
+                "label",
+                "hertzianaId",
+                "imageInfoUrl"
+              ],
+              "rows": [
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/499421"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "499421"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/499421/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032083"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032083"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032083/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032084"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Löwen als Tragfiguren und Atlanten",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032084"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032084/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032085"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Löwen als Tragfiguren und Atlanten",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032085"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032085/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032086"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Löwen als Tragfiguren und Atlanten",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032086"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032086/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032087"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Löwen als Tragfiguren und Atlanten",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032087"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032087/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032088"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Archivolten mit Tieren und fantastischen Kreaturen",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032088"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032088/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032089"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Archivolten mit Tieren und fantastischen Kreaturen",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032089"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032089/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032090"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Archivolten mit Tieren und fantastischen Kreaturen",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032090"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032090/info.json"
+                  }
+                },
+                {
+                  "item": {
+                    "type": "uri",
+                    "value": "https://foto.biblhertz.it/media/obj/08007999/bh032091"
+                  },
+                  "label": {
+                    "type": "literal",
+                    "value": "Hauptportal, Archivolten mit Tieren und fantastischen Kreaturen",
+                    "language": "de"
+                  },
+                  "hertzianaId": {
+                    "type": "literal",
+                    "value": "bh032091"
+                  },
+                  "imageInfoUrl": {
+                    "type": "uri",
+                    "value": "https://fotothek.biblhertz.it/iiif/3/bh032091/info.json"
+                  }
+                }
+              ]
+            },
+            "resultPageSize": 10,
+            "label": "",
+            "caption": "Hertziana image evidence opened from Culture KG results.",
+            "height": 520,
+            "viewMode": "gallery",
+            "galleryReferenceStrip": "horizontal",
+            "viewConfig": {
+              "version": 1,
+              "renderer": "iiif",
+              "sourceMode": "sparql",
+              "url": "https://fotothek.biblhertz.it/iiif/3/499421\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_003490_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_010616_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_015913_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_020293_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_023634_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_023651_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_025346_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_027759_post\nhttps://fotothek.biblhertz.it/iiif/3/bh_gern_028364_post",
+              "query": "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\nPREFIX schema: <http://schema.org/>\nPREFIX nfdicore: <https://nfdi.fiz-karlsruhe.de/ontology/>\nPREFIX cto: <https://nfdi4culture.de/ontology/>\n\nSELECT DISTINCT ?item ?label ?hertzianaId ?imageInfoUrl\nWHERE {\n  <https://nfdi4culture.de/id/E6064> <http://schema.org/dataFeedElement> ?element .\n  ?element schema:item ?item .\n  ?item cto:CTO_0001026 <https://iconclass.org/25FF411> .\n  ?item nfdicore:NFDI_0000207 <https://nfdi4culture.de/id/E4461> .\n  OPTIONAL { ?item rdfs:label ?label }\n  BIND(REPLACE(STR(?item), \"^.*/\", \"\") AS ?hertzianaId)\n  BIND(IRI(CONCAT(\"https://fotothek.biblhertz.it/iiif/3/\", ?hertzianaId, \"/info.json\")) AS ?imageInfoUrl)\n}\nLIMIT 10",
+              "knowledgeGraphProfileId": "culture-kg",
+              "resultMapping": {
+                "manifest": "manifestUrl",
+                "imageInfo": "imageInfoUrl",
+                "label": "label",
+                "resource": "resource"
+              },
+              "selectedItem": null,
+              "label": "",
+              "caption": "Hertziana image evidence opened from Culture KG results.",
+              "height": 520,
+              "viewMode": "gallery",
+              "galleryReferenceStrip": "horizontal"
+            },
+            "collapsed": true,
+            "excludeFromRender": false
+          }
+        },
+        {
+          "type": "heading",
+          "attrs": {
+            "semanticFormat": null,
+            "level": 2
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Task 6: The Captain's Log"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "A real treasure is useless if nobody can cite, inspect, export, or reuse the expedition. The final task is to insert a tracer report into the story."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "semanticFormat": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "See: "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "link",
+                  "attrs": {
+                    "href": "https://drive.google.com/file/d/1j83QlUQWMB6z4vjtnXtjPuiQj3NxcVVz/view?usp=drive_link",
+                    "target": "_blank",
+                    "rel": "noopener noreferrer nofollow",
+                    "class": null
+                  }
+                }
+              ],
+              "text": "https://drive.google.com/file/d/1j83QlUQWMB6z4vjtnXtjPuiQj3NxcVVz/view?usp=drive_link"
+            }
+          ]
+        }
+      ]
+    },
+    "author": "",
+    "description": "",
+    "keywords": [],
+    "language": "en",
+    "license": "",
+    "publicationHistory": [
+      {
+        "url": "/story/special-nodes-examples/",
+        "publishedAt": "2026-07-15T10:06:55.323Z"
+      },
+      {
+        "url": "/story/special-nodes-examples/",
+        "packageUrl": "/story/special-nodes-examples/special-nodes-examples.lodeon.zip",
+        "publishedAt": "2026-07-15T10:07:38.956Z"
+      },
+      {
+        "url": "/story/special-nodes-examples/",
+        "packageUrl": "/story/special-nodes-examples/special-nodes-examples.lodeon.zip",
+        "publishedAt": "2026-07-15T10:11:18.416Z"
+      },
+      {
+        "url": "/story/special-nodes-examples/",
+        "packageUrl": "/story/special-nodes-examples/special-nodes-examples.lodeon.zip",
+        "publishedAt": "2026-07-15T22:02:02.780Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T05:02:43.148Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T05:04:38.685Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T05:05:10.171Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T07:43:17.388Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T07:55:58.039Z"
+      },
+      {
+        "url": "/story/secret-of-data-island/",
+        "packageUrl": "/story/secret-of-data-island/secret-of-data-island.lodeon.zip",
+        "publishedAt": "2026-07-16T08:14:44.210Z"
+      }
+    ]
+  }
+}

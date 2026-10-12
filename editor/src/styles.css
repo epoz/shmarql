@@ -1,0 +1,2038 @@
+@import "../node_modules/sparnatural/dist/browser/sparnatural.css";
+@import "./nodes/verovio/presentation";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --lodeon-ink: #000000;
+  --lodeon-white: #ffffff;
+  --lodeon-coral: #e25a5a;
+  --lodeon-amber-gold: #d4a246;
+  --lodeon-cloud: #fafafa;
+  --lodeon-stone: #767676;
+  --lodeon-slate: #1f2328;
+  --lodeon-graphite: #2e3238;
+  --lodeon-radius-sm: 6px;
+  --lodeon-radius-md: 10px;
+  --lodeon-radius-lg: 16px;
+  /* The shmarql palette and font (see src/shmarql/static/css/shmarql.css). */
+  --lodeon-font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --lodeon-bg: var(--lodeon-white);
+  --lodeon-panel: var(--lodeon-white);
+  --lodeon-surface: #f5f6f8;
+  --lodeon-canvas: var(--lodeon-white);
+  --lodeon-control: var(--lodeon-white);
+  --lodeon-text: #24292f;
+  --lodeon-muted: #667085;
+  --lodeon-border: #dde2ea;
+  --lodeon-accent: #2f54b2;
+  --lodeon-accent-secondary: #233f86;
+  --lodeon-danger: #b42318;
+  --lodeon-success: #137333;
+  --lodeon-focus: rgb(47 84 178 / 35%);
+  font-family: var(--lodeon-font-ui);
+  color: var(--lodeon-text);
+  background: var(--lodeon-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html[data-theme="night"] {
+  color-scheme: dark;
+  --lodeon-bg: var(--lodeon-ink);
+  --lodeon-panel: #080808;
+  --lodeon-surface: var(--lodeon-slate);
+  --lodeon-canvas: #050505;
+  --lodeon-control: #101318;
+  --lodeon-text: var(--lodeon-white);
+  --lodeon-muted: #a7a7a7;
+  --lodeon-border: var(--lodeon-graphite);
+  --lodeon-accent: var(--lodeon-coral);
+  --lodeon-accent-secondary: var(--lodeon-amber-gold);
+  --lodeon-danger: #ff9b90;
+  --lodeon-success: #7bd88f;
+  --lodeon-focus: rgb(212 162 70 / 40%);
+}
+
+html[data-theme="day"] {
+  color-scheme: light;
+}
+
+@keyframes lodeon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@layer components {
+  .ld-app-shell {
+    @apply flex h-full flex-col overflow-hidden bg-lodeon-bg text-lodeon-text;
+    --lodeon-sidebar-width: 300px;
+  }
+
+  .ld-topbar {
+    @apply relative z-50 flex min-h-14 shrink-0 flex-wrap items-center gap-4 border-b border-lodeon-border bg-lodeon-surface px-4 py-2;
+  }
+
+  .ld-brand {
+    @apply flex items-center no-underline;
+  }
+
+  .ld-brand-wordmark {
+    @apply h-8 w-auto max-w-36;
+  }
+
+  html[data-theme="day"] .ld-brand-wordmark-dark,
+  html[data-theme="night"] .ld-brand-wordmark-light {
+    @apply hidden;
+  }
+
+  html[data-theme="night"] .ld-brand-wordmark-dark {
+    @apply block;
+  }
+
+  .ld-project-title {
+    @apply hidden min-w-0 flex-col text-sm text-lodeon-muted md:flex;
+  }
+
+  .ld-project-title label {
+    @apply text-xs text-lodeon-muted;
+  }
+
+  .ld-project-title-input {
+    @apply min-w-48 max-w-96 border-0 bg-transparent p-0 text-sm font-semibold text-lodeon-text outline-none;
+  }
+
+  .ld-project-switcher {
+    @apply hidden min-w-0 items-center gap-2 text-xs font-semibold text-lodeon-muted xl:flex;
+  }
+
+  .ld-project-switcher label {
+    @apply whitespace-nowrap;
+  }
+
+  .ld-project-switcher select {
+    @apply min-h-9 max-w-40 border border-lodeon-border bg-lodeon-control px-2 text-sm font-semibold text-lodeon-text outline-none;
+  }
+
+  .ld-kg-switcher select {
+    @apply min-w-48 max-w-56;
+  }
+
+  .ld-icon-button {
+    @apply flex min-h-9 min-w-9 items-center justify-center border border-lodeon-border bg-lodeon-control px-2 text-xs font-semibold text-lodeon-muted hover:border-lodeon-accent hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-actions {
+    @apply ml-auto flex min-w-0 items-center gap-6;
+  }
+
+  .ld-action-group {
+    @apply flex items-center gap-2;
+  }
+
+  .ld-project-actions {
+    @apply gap-2;
+  }
+
+  .ld-project-select-group {
+    @apply flex items-center gap-2;
+  }
+
+  .ld-utility-actions {
+    @apply gap-2;
+  }
+
+  .ld-button {
+    @apply inline-flex items-center gap-2 border border-lodeon-border bg-lodeon-control px-3 py-2 text-sm font-semibold text-lodeon-text hover:border-lodeon-accent hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-button[hidden],
+  .ld-icon-button[hidden] {
+    @apply hidden;
+  }
+
+  .ld-lucide-icon {
+    @apply shrink-0;
+  }
+
+  .ld-autosave-status {
+    @apply flex shrink-0 items-center gap-2 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-autosave-status[data-state="saving"]::before {
+    content: "";
+    @apply h-3 w-3 rounded-full border-2 border-lodeon-border border-t-lodeon-accent;
+    animation: lodeon-spin 0.8s linear infinite;
+  }
+
+  .ld-autosave-status[data-state="error"] {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-workbench {
+    @apply grid min-h-0 flex-1 grid-cols-1 overflow-hidden lg:grid-cols-[var(--lodeon-sidebar-width)_1fr];
+  }
+
+  .ld-workbench:has(.ld-sidebar[data-collapsed="true"]) {
+    @apply lg:grid-cols-[56px_1fr];
+  }
+
+  .ld-sidebar {
+    @apply relative z-40 hidden h-full min-h-0 flex-col overflow-hidden border-r border-lodeon-border bg-lodeon-panel lg:flex;
+  }
+
+  .ld-sidebar[data-collapsed="true"] {
+    @apply w-14 overflow-hidden;
+  }
+
+  .ld-panel-resize-handle {
+    @apply absolute z-50 hidden w-2 cursor-col-resize bg-transparent lg:block;
+    top: 0;
+    bottom: 0;
+    touch-action: none;
+  }
+
+  .ld-panel-resize-handle::after {
+    content: "";
+    @apply absolute top-0 bottom-0 w-px bg-transparent;
+  }
+
+  .ld-panel-resize-handle:hover::after,
+  .ld-panel-resize-handle[data-active="true"]::after {
+    @apply bg-lodeon-accent;
+  }
+
+  .ld-panel-resize-handle-left {
+    @apply right-0;
+  }
+
+  .ld-panel-resize-handle-left::after {
+    @apply right-0;
+  }
+
+  .ld-panel-resize-handle-right {
+    @apply left-0;
+  }
+
+  .ld-panel-resize-handle-right::after {
+    @apply left-0;
+  }
+
+  .ld-sidebar[data-collapsed="true"] .ld-panel-resize-handle {
+    @apply hidden;
+  }
+
+  .ld-sidebar[data-collapsed="true"] .ld-sidebar-content,
+  .ld-sidebar[data-collapsed="true"] .ld-sidebar-header strong {
+    @apply hidden;
+  }
+
+  .ld-sidebar-header {
+    @apply flex min-h-12 items-center justify-between gap-3 border-b border-lodeon-border bg-lodeon-panel px-4 py-3 text-sm;
+  }
+
+  .ld-sidebar[data-collapsed="true"] .ld-sidebar-header {
+    @apply justify-center px-2;
+  }
+
+  .ld-sidebar-toggle {
+    @apply flex h-8 w-8 items-center justify-center border border-lodeon-border bg-lodeon-control text-lodeon-muted hover:border-lodeon-accent hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-sidebar-content {
+    @apply min-h-0 flex-1 overflow-auto px-5 pt-5;
+  }
+
+  .ld-metadata-panel {
+    @apply flex flex-col gap-5;
+  }
+
+  .ld-metadata-section {
+    @apply gap-2;
+  }
+
+  .ld-metadata-section-header,
+  .ld-contributor-card-header,
+  .ld-contributor-identifiers-header,
+  .ld-author-card-header,
+  .ld-author-identifiers-header {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  .ld-metadata-section-header > span {
+    @apply text-lodeon-text;
+  }
+
+  .ld-metadata-add-button {
+    @apply min-h-8 px-2 py-1 text-xs;
+  }
+
+  .ld-metadata-remove-button {
+    @apply min-h-8 min-w-8 px-1;
+  }
+
+  .ld-contributor-list,
+  .ld-author-list,
+  .ld-identifier-list,
+  .ld-pid-list {
+    @apply flex flex-col gap-2;
+  }
+
+  .ld-contributor-card,
+  .ld-author-card {
+    @apply flex flex-col gap-3 border border-lodeon-border bg-lodeon-surface p-3;
+  }
+
+  .ld-contributor-card[data-collapsed="true"],
+  .ld-author-card[data-collapsed="true"] {
+    @apply gap-0;
+  }
+
+  .ld-contributor-card-header strong,
+  .ld-contributor-identifiers-header span,
+  .ld-author-card-header strong,
+  .ld-author-identifiers-header span {
+    @apply text-xs font-semibold text-lodeon-text;
+  }
+
+  .ld-metadata-card-toggle {
+    @apply flex min-h-7 min-w-7 items-center justify-center border border-lodeon-border bg-lodeon-control text-lodeon-muted hover:border-lodeon-accent hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-metadata-card-toggle-collapsed {
+    @apply hidden;
+  }
+
+  .ld-contributor-card[data-collapsed="true"] .ld-metadata-card-toggle-expanded,
+  .ld-author-card[data-collapsed="true"] .ld-metadata-card-toggle-expanded {
+    @apply hidden;
+  }
+
+  .ld-contributor-card[data-collapsed="true"] .ld-metadata-card-toggle-collapsed,
+  .ld-author-card[data-collapsed="true"] .ld-metadata-card-toggle-collapsed {
+    @apply inline-flex;
+  }
+
+  .ld-metadata-card-title {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+
+  .ld-metadata-card-title span {
+    @apply truncate text-xs font-normal text-lodeon-muted;
+  }
+
+  .ld-metadata-card-body {
+    @apply flex flex-col gap-3;
+  }
+
+  .ld-contributor-card[data-collapsed="true"] .ld-metadata-card-body,
+  .ld-author-card[data-collapsed="true"] .ld-metadata-card-body {
+    @apply hidden;
+  }
+
+  .ld-contributor-grid,
+  .ld-author-grid {
+    @apply grid grid-cols-2 gap-2;
+  }
+
+  .ld-contributor-affiliation-field,
+  .ld-author-affiliation-field {
+    @apply col-span-2;
+  }
+
+  .ld-contributor-identifiers,
+  .ld-author-identifiers {
+    @apply flex flex-col gap-2 border-t border-lodeon-border pt-3;
+  }
+
+  .ld-identifier-row {
+    @apply grid items-end gap-2;
+    grid-template-columns:
+      minmax(4.5rem, 0.7fr) minmax(0, 1fr) minmax(0, 1.4fr)
+      max-content;
+  }
+
+  .ld-pid-grid {
+    @apply grid grid-cols-1 gap-2;
+  }
+
+  .ld-metadata-empty {
+    @apply border border-dashed border-lodeon-border bg-lodeon-surface px-3 py-2 text-xs font-normal text-lodeon-muted;
+  }
+
+  .ld-field {
+    @apply flex flex-col gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-field > span {
+    @apply text-lodeon-text;
+  }
+
+  .ld-metadata-input {
+    @apply min-h-9 border border-lodeon-border bg-lodeon-control px-2 font-mono text-sm font-semibold text-lodeon-text outline-none invalid:border-red-500;
+  }
+
+  .ld-metadata-textarea {
+    @apply min-h-24 resize-y py-2 leading-5;
+  }
+
+  .ld-checkbox-field {
+    @apply flex-row items-center gap-2 border border-lodeon-border bg-lodeon-surface px-3 py-2 text-lodeon-text;
+  }
+
+  .ld-checkbox-field input[type="checkbox"] {
+    @apply h-4 w-4 accent-[var(--lodeon-accent)];
+  }
+
+  .ld-field small {
+    @apply text-xs font-normal leading-5 text-lodeon-muted;
+  }
+
+  [data-project-slug-status][data-state="error"] {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-published-story {
+    @apply flex flex-col gap-1 border border-lodeon-border bg-lodeon-surface px-3 py-2 text-sm font-semibold;
+  }
+
+  .ld-published-story a {
+    @apply break-all text-lodeon-accent underline underline-offset-2;
+  }
+
+  .ld-published-story-label {
+    @apply text-[0.65rem] font-semibold uppercase tracking-normal text-lodeon-muted;
+  }
+
+  .ld-published-empty {
+    @apply text-lodeon-muted;
+  }
+
+  .ld-project-assets {
+    @apply flex flex-col gap-2 border border-lodeon-border bg-lodeon-surface px-3 py-2 text-sm font-semibold;
+  }
+
+  .ld-assets-empty {
+    @apply text-lodeon-muted;
+  }
+
+  .ld-assets-summary {
+    @apply m-0 grid grid-cols-2 gap-2 text-xs;
+  }
+
+  .ld-assets-summary div {
+    @apply grid gap-1;
+    grid-template-columns: minmax(0, 1fr) max-content;
+  }
+
+  .ld-assets-summary dt {
+    @apply text-lodeon-muted;
+  }
+
+  .ld-assets-summary dd {
+    @apply m-0 text-lodeon-text;
+  }
+
+  .ld-assets-summary [data-state="warning"] dd,
+  .ld-assets-warning {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-assets-cleanup {
+    @apply mt-1 w-full justify-center text-xs;
+  }
+
+  .ld-sidebar-footer {
+    @apply mt-auto flex items-center gap-2 border-t border-lodeon-border px-5 pb-5 pt-4;
+  }
+
+  .ld-sidebar[data-collapsed="true"] .ld-sidebar-footer {
+    @apply justify-center border-t-0 px-2 pb-2 pt-2;
+  }
+
+  .ld-editor-workspace {
+    @apply grid h-full min-w-0 grid-cols-1 overflow-hidden;
+  }
+
+  .ld-editor-header {
+    @apply mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between;
+  }
+
+  .ld-eyebrow {
+    @apply m-0 text-xs font-bold uppercase tracking-normal text-lodeon-accent;
+  }
+
+  .ld-editor-header h1 {
+    @apply m-0 text-3xl font-bold leading-tight md:text-4xl;
+  }
+
+  .ld-status-pill {
+    @apply w-fit border border-lodeon-border bg-lodeon-panel px-3 py-2 text-sm font-semibold text-lodeon-muted;
+  }
+
+  .ld-editor-panel {
+    @apply isolate mx-4 mt-4 min-h-0 overflow-auto border border-b-0 border-lodeon-border bg-lodeon-panel md:mx-6 md:mt-6;
+  }
+
+  .ld-leaflet-viewer-shell {
+    @apply relative min-h-40 w-full overflow-hidden border border-lodeon-border bg-lodeon-panel;
+  }
+
+  .ld-leaflet-viewer-map {
+    @apply min-h-40 w-full;
+  }
+
+  .ld-leaflet-viewer-empty {
+    @apply pointer-events-none absolute inset-x-4 top-1/2 z-[500] -translate-y-1/2 bg-lodeon-panel px-3 py-2 text-center text-sm text-lodeon-muted;
+  }
+
+  .ld-leaflet-marker-icon {
+    @apply bg-transparent;
+  }
+
+  .ld-leaflet-marker-shape {
+    @apply block rounded-full box-border;
+  }
+
+  .ld-leaflet-viewer-popup {
+    @apply m-0 grid min-w-0 gap-y-1 text-xs leading-5;
+    width: min(24rem, calc(100vw - 5rem));
+  }
+
+  .ld-leaflet-viewer-popup-row {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-y-0;
+  }
+
+  .ld-leaflet-viewer-popup dt {
+    @apply m-0 self-start font-bold leading-5;
+  }
+
+  .ld-leaflet-viewer-popup dd {
+    @apply m-0 min-w-0 break-words leading-5;
+  }
+
+  .ld-leaflet-popup-shell .leaflet-popup-content {
+    @apply m-3 overflow-auto;
+    max-width: calc(100vw - 4rem);
+  }
+
+  .ld-leaflet-viewer-legend {
+    @apply max-h-48 overflow-auto border border-lodeon-border bg-white/95 p-2 text-xs text-lodeon-text shadow;
+  }
+
+  .ld-leaflet-viewer-legend ul {
+    @apply m-0 mt-1 list-none space-y-1 p-0;
+  }
+
+  .ld-leaflet-viewer-legend li {
+    @apply flex items-center gap-2;
+  }
+
+  .ld-leaflet-viewer-legend-swatch {
+    @apply inline-block h-3 w-3 shrink-0 rounded-full border border-black/30;
+  }
+
+  .ld-editor-toolbar {
+    @apply sticky top-0 z-50 isolate flex min-h-12 flex-wrap items-center gap-3 border-b border-lodeon-border bg-lodeon-panel px-4 py-2 text-sm text-lodeon-muted shadow-sm;
+  }
+
+  .ld-editor-toolbar::before {
+    content: "";
+    @apply absolute inset-0 -z-10 bg-lodeon-panel;
+  }
+
+  .ld-editor-toolbar .button-group {
+    @apply flex items-center gap-1 border-r border-lodeon-border pr-3 last:border-r-0 last:pr-0;
+  }
+
+  .ld-editor-toolbar button,
+  .ld-editor-toolbar select {
+    @apply min-h-8 border border-transparent bg-transparent px-2 text-xs font-semibold text-lodeon-text outline-none hover:border-lodeon-border hover:bg-lodeon-surface focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-editor-toolbar select {
+    @apply border-lodeon-border bg-lodeon-control;
+  }
+
+  .ld-editor-toolbar button[data-format-command] {
+    @apply inline-flex h-8 w-8 items-center justify-center p-0;
+  }
+
+  .ld-editor-toolbar button[data-manual-save] {
+    @apply inline-flex h-8 items-center justify-center gap-2 px-2;
+  }
+
+  .ld-editor-toolbar button[data-manual-save][data-state="error"] {
+    border-color: var(--lodeon-danger);
+    color: var(--lodeon-danger);
+  }
+
+  .ld-editor-toolbar button[data-format-command][data-active="true"] {
+    @apply border-lodeon-accent bg-lodeon-surface text-lodeon-accent;
+  }
+
+  .ld-editor-toolbar button:disabled {
+    @apply cursor-not-allowed opacity-40 hover:border-transparent hover:bg-transparent hover:text-lodeon-text;
+  }
+
+  .ld-toolbar-select-label {
+    @apply flex items-center gap-1 text-lodeon-muted;
+  }
+
+  .ld-toolbar-text-icon {
+    @apply inline-flex min-w-5 justify-center text-xs font-black text-lodeon-muted;
+  }
+
+  .ld-link-popover {
+    @apply absolute right-4 top-12 z-40 flex items-end gap-2 border border-lodeon-border bg-lodeon-panel p-3 shadow-xl;
+  }
+
+  .ld-link-popover[hidden] {
+    @apply hidden;
+  }
+
+  .ld-link-popover label {
+    @apply flex min-w-72 flex-col gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-link-popover input {
+    @apply min-h-9 border border-lodeon-border bg-lodeon-control px-2 text-sm font-semibold text-lodeon-text outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-node-tools {
+    @apply border-r-0 pr-0;
+  }
+
+  .ld-editor-host {
+    @apply relative z-0 min-h-[calc(100vh-9rem)] bg-lodeon-panel;
+    --lodeon-editor-zoom: 1;
+  }
+
+  .story-editor {
+    @apply prose max-w-none min-h-[calc(100vh-9rem)] scroll-mt-14 p-5 leading-7 outline-none prose-headings:text-lodeon-text prose-p:text-lodeon-text prose-a:text-lodeon-accent prose-strong:text-lodeon-text prose-code:text-lodeon-text prose-blockquote:border-lodeon-accent-secondary prose-blockquote:text-lodeon-muted prose-li:text-lodeon-text;
+    font-size: calc(1rem * var(--lodeon-editor-zoom));
+    --tw-prose-body: var(--lodeon-text);
+    --tw-prose-headings: var(--lodeon-text);
+    --tw-prose-links: var(--lodeon-accent);
+    --tw-prose-bold: var(--lodeon-text);
+    --tw-prose-counters: var(--lodeon-muted);
+    --tw-prose-bullets: var(--lodeon-muted);
+    --tw-prose-hr: var(--lodeon-border);
+    --tw-prose-quotes: var(--lodeon-muted);
+    --tw-prose-quote-borders: var(--lodeon-accent-secondary);
+    --tw-prose-captions: var(--lodeon-muted);
+    --tw-prose-code: var(--lodeon-text);
+    --tw-prose-pre-code: var(--lodeon-text);
+    --tw-prose-pre-bg: var(--lodeon-surface);
+    --tw-prose-th-borders: var(--lodeon-border);
+    --tw-prose-td-borders: var(--lodeon-border);
+  }
+
+  .story-editor h1 {
+    @apply mb-3 mt-8 text-3xl font-bold;
+  }
+
+  .story-editor h2 {
+    @apply mb-3 mt-7;
+  }
+
+  .story-editor h3,
+  .story-editor h4,
+  .story-editor h5,
+  .story-editor h6 {
+    @apply mb-2 mt-6;
+  }
+
+  .story-editor > :where(h1, h2, h3, h4, h5, h6):first-child {
+    @apply mt-0;
+  }
+
+  .story-editor :where(h1, h2, h3, h4, h5, h6) + :where(h1, h2, h3, h4, h5, h6) {
+    @apply mt-3;
+  }
+
+  .story-editor p {
+    @apply mb-4;
+  }
+
+  .story-editor ul {
+    @apply my-3 list-disc;
+  }
+
+  .story-editor ol {
+    @apply my-3 list-decimal;
+  }
+
+  .story-editor li {
+    @apply my-0.5;
+  }
+
+  .story-editor li > :first-child {
+    @apply mt-0;
+  }
+
+  .story-editor li > :last-child {
+    @apply mb-0;
+  }
+
+  .story-editor li > :where(ul, ol) {
+    @apply my-1;
+  }
+
+  .story-editor a {
+    @apply underline decoration-lodeon-accent underline-offset-2;
+  }
+
+  .story-editor blockquote {
+    @apply border-l-4 pl-4 not-italic;
+  }
+
+  .story-editor [data-lodeon-semantic-format] {
+    @apply relative mt-5;
+  }
+
+  .story-editor [data-lodeon-semantic-format]::before {
+    content: attr(data-lodeon-format-label);
+    @apply mb-2 block w-fit border border-lodeon-border bg-lodeon-panel px-2 py-1 text-[10px] font-bold uppercase leading-none tracking-normal text-lodeon-accent;
+  }
+
+  .story-editor [data-lodeon-semantic-format]::after {
+    content: none;
+  }
+
+  .story-editor [data-lodeon-semantic-container] {
+    @apply my-5;
+  }
+
+  .story-editor [data-lodeon-semantic-container]::before {
+    content: none;
+  }
+
+  .ld-semantic-container .ld-node-body {
+    @apply bg-lodeon-panel;
+  }
+
+  .ld-semantic-container-settings {
+    @apply flex flex-wrap items-center gap-2 border-b border-lodeon-border bg-lodeon-panel px-4 py-3;
+  }
+
+  .ld-semantic-container-settings[hidden] {
+    @apply hidden;
+  }
+
+  .ld-semantic-container-field {
+    @apply flex items-center gap-1 text-[10px] font-bold uppercase tracking-normal text-lodeon-muted;
+  }
+
+  .ld-semantic-container-field input[type="text"] {
+    @apply h-7 min-w-36 border border-lodeon-border bg-lodeon-control px-2 text-xs font-semibold normal-case text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-semantic-container-field input[type="checkbox"] {
+    @apply h-4 w-4 border border-lodeon-border accent-[var(--lodeon-accent)];
+  }
+
+  .ld-semantic-container-content > :last-child {
+    @apply mb-0;
+  }
+
+  .ld-semantic-container-content {
+    @apply bg-lodeon-panel px-4 pb-3 pt-1;
+  }
+
+  .ld-semantic-container-content strong {
+    @apply font-bold;
+  }
+
+  .ld-semantic-container-content em {
+    @apply italic;
+  }
+
+  .ld-semantic-container-content a {
+    @apply text-lodeon-accent underline decoration-lodeon-accent underline-offset-2;
+  }
+
+  .story-editor
+    .ld-semantic-container-content
+    :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0.25em;
+  }
+
+  .ld-semantic-container.ProseMirror-selectednode,
+  .ld-semantic-container:focus,
+  .ld-semantic-container:focus-visible,
+  .ld-semantic-container-content:focus,
+  .ld-semantic-container-content:focus-visible {
+    @apply outline-none ring-0;
+    box-shadow: none;
+  }
+
+  .story-editor [data-lodeon-semantic-inline-format] {
+    @apply relative inline underline decoration-lodeon-accent underline-offset-2;
+  }
+
+  .story-editor [data-lodeon-semantic-inline-format]::after {
+    content: attr(data-lodeon-format-label);
+    @apply ml-1 inline-block border border-lodeon-border bg-lodeon-panel px-2 py-1 align-baseline text-[10px] font-bold uppercase leading-none tracking-normal text-lodeon-accent;
+  }
+
+  .story-editor img {
+    @apply my-5 max-h-[70vh] max-w-full border border-lodeon-border object-contain;
+  }
+
+  .story-editor table {
+    @apply my-5 w-full border-collapse text-sm;
+  }
+
+  .story-editor th,
+  .story-editor td {
+    @apply border border-lodeon-border px-3 py-2 align-top;
+  }
+
+  .story-editor th {
+    @apply bg-lodeon-surface font-bold;
+  }
+
+  .story-editor :where(th, td) > :first-child {
+    @apply mt-0;
+  }
+
+  .story-editor :where(th, td) > :last-child {
+    @apply mb-0;
+  }
+
+  .story-editor :where(th, td) > :where(p, ul, ol) {
+    @apply my-1;
+  }
+
+  .ld-node {
+    @apply my-5 border border-lodeon-border bg-lodeon-surface;
+  }
+
+  .ld-node[data-excluded-from-render="true"] {
+    @apply border-dashed opacity-75;
+  }
+
+  .ld-node-header {
+    @apply flex items-center gap-3 bg-lodeon-surface px-4 py-3;
+    box-shadow: none;
+  }
+
+  .ld-node[data-excluded-from-render="true"] .ld-node-header {
+    @apply bg-lodeon-surface;
+  }
+
+  .ld-node-move-buttons {
+    @apply inline-flex shrink-0 items-center gap-1;
+  }
+
+  .ld-node-drag-handle {
+    @apply inline-flex h-8 w-6 shrink-0 cursor-grab items-center justify-center text-lodeon-muted hover:text-lodeon-accent;
+  }
+
+  .ld-node-drag-handle:active {
+    @apply cursor-grabbing;
+  }
+
+  .ld-node-drag-handle svg {
+    @apply h-4 w-4;
+  }
+
+  .ld-node-eyebrow {
+    @apply text-xs font-bold uppercase tracking-normal text-lodeon-accent;
+  }
+
+  .ld-node-title-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent p-0 text-sm font-bold text-lodeon-text outline-none;
+  }
+
+  .ld-node-icon-button {
+    @apply inline-flex h-8 w-8 shrink-0 items-center justify-center border border-lodeon-border bg-lodeon-control text-lodeon-muted hover:border-lodeon-accent hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-node-icon-button:disabled {
+    @apply cursor-not-allowed opacity-35 hover:border-lodeon-border hover:text-lodeon-muted;
+  }
+
+  .ld-node-icon-button[data-excluded-from-render="true"] {
+    @apply border-lodeon-accent text-lodeon-accent;
+  }
+
+  .ld-node-run-button {
+    @apply inline-flex h-8 shrink-0 items-center gap-1.5 border border-lodeon-accent bg-lodeon-accent px-3 text-xs font-bold text-white hover:bg-lodeon-control hover:text-lodeon-accent disabled:cursor-wait disabled:opacity-60;
+  }
+
+  .ld-node-run-button svg {
+    @apply h-3.5 w-3.5;
+  }
+
+  @media (max-width: 760px) {
+    .ld-node-header {
+      @apply flex-wrap;
+    }
+
+    .ld-node-run-button span {
+      @apply sr-only;
+    }
+
+    .ld-node-run-button {
+      @apply w-8 justify-center px-0;
+    }
+  }
+
+  .ld-node-body[hidden] {
+    @apply hidden;
+  }
+
+  .ld-story-metadata-node .ld-node-body {
+    @apply border-t border-lodeon-border bg-white px-4 py-3;
+  }
+
+  .ld-story-metadata-node .ld-node-help {
+    @apply m-0 text-sm text-lodeon-muted;
+  }
+
+  .ld-sparql-source-editor {
+    @apply h-44 min-h-36 overflow-hidden border-t border-lodeon-border bg-lodeon-panel;
+    resize: vertical;
+  }
+
+  .ld-sparql-field {
+    @apply grid gap-0 bg-lodeon-panel text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-sparql-field > .ld-special-node-field-heading {
+    @apply px-4 pb-2 pt-3 leading-none;
+  }
+
+  .ld-special-node-field-heading {
+    @apply flex min-w-0 items-baseline justify-between gap-3;
+  }
+
+  .ld-special-node-field-label {
+    @apply min-w-0;
+  }
+
+  .ld-special-node-field-profile {
+    @apply min-w-0 shrink truncate text-right font-normal normal-case tracking-normal text-lodeon-muted;
+  }
+
+  .ld-visualization-source-editor {
+    @apply border-x-0 border-b border-t-0 border-lodeon-border;
+  }
+
+  .ld-sparql-source-editor .cm-editor {
+    @apply h-full bg-lodeon-panel font-mono text-sm leading-6 text-lodeon-text;
+  }
+
+  .ld-sparql-source-editor .cm-focused {
+    @apply outline-none;
+  }
+
+  .ld-sparql-source-editor .cm-scroller {
+    @apply bg-lodeon-panel font-mono leading-6;
+  }
+
+  .ld-sparql-source-editor .cm-content {
+    @apply min-h-full bg-lodeon-panel px-4 py-2 caret-lodeon-text;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .ld-sparql-source-editor .cm-line {
+    @apply px-0;
+  }
+
+  .ld-sparql-source-editor .cm-gutters {
+    @apply border-r border-lodeon-border bg-lodeon-panel text-lodeon-muted;
+  }
+
+  .ld-sparql-source-editor .cm-lineNumbers .cm-gutterElement {
+    @apply min-w-10 px-2 text-right font-mono text-sm leading-6;
+  }
+
+  .ld-sparql-source-editor .cm-activeLine {
+    @apply bg-transparent;
+  }
+
+  .ld-sparql-source-editor .cm-activeLineGutter {
+    @apply bg-lodeon-panel;
+  }
+
+  .ld-sparql-source-editor .cm-selectionBackground,
+  .ld-sparql-source-editor .cm-content ::selection {
+    background: color-mix(in srgb, var(--lodeon-accent) 28%, transparent);
+  }
+
+  .ld-sparql-source-editor .cm-placeholder {
+    @apply text-lodeon-muted;
+  }
+
+  .ld-sparql-source-editor .cm-content[contenteditable="true"]:empty::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none text-lodeon-muted;
+  }
+
+  .ld-cm-keyword {
+    @apply font-bold text-lodeon-accent;
+  }
+
+  .ld-cm-variable {
+    color: #0072b2;
+  }
+
+  .ld-cm-string {
+    color: #009e73;
+  }
+
+  .ld-cm-number {
+    color: #d55e00;
+  }
+
+  .ld-cm-url,
+  .ld-cm-prefix {
+    color: #cc79a7;
+  }
+
+  .ld-cm-atom,
+  .ld-cm-function {
+    color: #6b7280;
+  }
+
+  .ld-cm-comment {
+    @apply italic text-lodeon-muted;
+  }
+
+  .ld-visualization-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .ld-visualization-plotly {
+    @apply flex flex-col gap-0 border-b border-lodeon-border bg-lodeon-panel p-4;
+  }
+
+  .ld-visualization-field {
+    @apply flex min-w-0 flex-col gap-1 text-xs font-bold uppercase tracking-normal text-lodeon-muted;
+  }
+
+  .ld-visualization-field select,
+  .ld-visualization-field input,
+  .ld-visualization-field textarea,
+  .ld-visualization-url {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-control px-3 text-sm normal-case text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-visualization-field input[type="checkbox"] {
+    @apply h-5 min-h-0 w-5 accent-[var(--lodeon-accent)];
+  }
+
+  .ld-visualization-field-wide {
+    @apply md:col-span-2;
+  }
+
+  .ld-visualization-json {
+    @apply h-48 resize-y py-2 font-mono text-xs leading-5;
+  }
+
+  .ld-visualization-settings {
+    @apply border-t border-lodeon-border bg-lodeon-panel;
+  }
+
+  .ld-visualization-settings-summary {
+    @apply cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-normal text-lodeon-muted hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-visualization-settings[open] .ld-visualization-settings-summary {
+    @apply border-b border-lodeon-border text-lodeon-accent;
+  }
+
+  .ld-jsoneditor-tabs {
+    @apply flex gap-2 border-b border-lodeon-border bg-lodeon-panel;
+  }
+
+  .ld-jsoneditor-tab {
+    @apply border border-b-0 border-lodeon-border bg-lodeon-control px-3 py-2 text-xs font-bold text-lodeon-muted hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-jsoneditor-tab[data-active="true"] {
+    @apply bg-lodeon-surface text-lodeon-accent;
+  }
+
+  .ld-jsoneditor-tab[data-invalid="true"] {
+    @apply border-[var(--lodeon-danger)] text-[var(--lodeon-danger)];
+  }
+
+  .ld-jsoneditor-host {
+    @apply h-96 min-h-96 w-full overflow-hidden border border-lodeon-border bg-lodeon-surface;
+    --jse-theme-color: var(--lodeon-accent);
+    --jse-theme-color-highlight: var(--lodeon-accent-hover);
+    --jse-menu-color: #ffffff;
+    --jse-button-primary-background: var(--lodeon-accent);
+    --jse-button-primary-background-highlight: var(--lodeon-accent-hover);
+  }
+
+  .ld-jsoneditor-host .jse-menu,
+  .ld-jsoneditor-host .jse-navigation-bar {
+    background: var(--lodeon-accent);
+    color: #ffffff;
+  }
+
+  .ld-jsoneditor-host textarea.ld-visualization-json {
+    @apply h-full border-0;
+  }
+
+  .ld-jsoneditor-error {
+    @apply border border-[var(--lodeon-danger)] bg-lodeon-surface px-3 py-2 text-sm font-bold text-[var(--lodeon-danger)];
+  }
+
+  .ld-visualization-url {
+    @apply block border-x-0 border-t-0 bg-lodeon-surface font-mono;
+  }
+
+  .ld-visualization-url[hidden] {
+    @apply hidden;
+  }
+
+  .ld-node-footer {
+    @apply border-t border-lodeon-border bg-lodeon-panel px-4 py-2 text-xs text-lodeon-muted;
+  }
+
+  .ld-sparql-result {
+    @apply overflow-auto bg-lodeon-panel text-lodeon-text;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .ld-sparql-table-toolbar,
+  .ld-sparql-table-pager {
+    @apply flex flex-wrap items-center gap-2 border-t border-lodeon-border bg-lodeon-panel px-4 py-2 text-xs text-lodeon-muted;
+  }
+
+  .ld-sparql-table-toolbar {
+    @apply justify-between;
+  }
+
+  .ld-sparql-table-control {
+    @apply inline-flex min-h-8 items-center gap-2 font-bold uppercase tracking-normal;
+  }
+
+  .ld-sparql-table-control select,
+  .ld-sparql-table-control input {
+    @apply min-h-8 border border-lodeon-border bg-lodeon-surface px-2 py-1 font-normal normal-case text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-sparql-table-search {
+    @apply flex-1 justify-end;
+  }
+
+  .ld-sparql-table-search input {
+    @apply w-full max-w-72;
+  }
+
+  .ld-sparql-table-download,
+  .ld-sparql-table-page-button {
+    @apply inline-flex min-h-8 items-center border border-lodeon-border bg-lodeon-control px-3 py-1 font-bold text-lodeon-muted hover:border-lodeon-accent hover:text-lodeon-accent disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-lodeon-border disabled:hover:text-lodeon-muted;
+  }
+
+  .ld-sparql-table-page-text {
+    @apply text-lodeon-muted;
+  }
+
+  .ld-sparql-table,
+  .ld-sparql-table * {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .ld-media-asset-preview {
+    @apply border-b border-lodeon-border bg-lodeon-panel p-4 text-sm text-lodeon-muted;
+  }
+
+  .ld-media-asset-preview img,
+  .ld-media-asset-preview video,
+  .ld-media-asset-preview audio {
+    @apply block max-h-[32rem] max-w-full border border-lodeon-border bg-white;
+  }
+
+  .ld-media-asset-metadata {
+    @apply m-0 grid gap-1 bg-lodeon-panel px-4 py-3 text-xs;
+  }
+
+  .ld-media-asset-metadata div {
+    @apply grid min-h-6 items-baseline gap-3;
+    grid-template-columns: 5rem minmax(0, 1fr);
+  }
+
+  .ld-media-asset-metadata dt {
+    @apply font-bold uppercase tracking-normal text-lodeon-muted;
+  }
+
+  .ld-media-asset-metadata dd {
+    @apply m-0 min-w-0 break-words text-lodeon-text;
+  }
+
+  .ld-media-asset-editor {
+    @apply border-t border-lodeon-border bg-lodeon-panel;
+  }
+
+  .ld-media-asset-tabs {
+    @apply flex flex-wrap gap-1 border-b border-lodeon-border px-4 pt-3;
+  }
+
+  .ld-media-asset-tab {
+    @apply border border-b-0 border-lodeon-border bg-lodeon-control px-3 py-2 text-xs font-bold text-lodeon-muted hover:text-lodeon-accent focus:outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-media-asset-tab[data-active="true"] {
+    @apply bg-lodeon-surface text-lodeon-accent;
+  }
+
+  .ld-media-asset-tab-panel {
+    @apply grid items-start gap-3 p-4;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  .ld-media-asset-tab-panel[hidden] {
+    @apply hidden;
+  }
+
+  .ld-media-asset-field {
+    @apply flex min-h-[5.75rem] min-w-0 flex-col gap-1 text-xs font-bold uppercase tracking-normal text-lodeon-muted;
+  }
+
+  .ld-media-asset-field input {
+    @apply h-11 w-full border border-lodeon-border bg-lodeon-control px-3 py-2 text-sm normal-case text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-media-asset-field-checkbox {
+    @apply min-h-[5.75rem] border-0 bg-transparent p-0;
+  }
+
+  .ld-media-asset-checkbox-control {
+    @apply flex h-11 w-full items-center border border-lodeon-border bg-lodeon-control px-3;
+  }
+
+  .ld-media-asset-checkbox-control input {
+    @apply h-5 w-5 accent-[var(--lodeon-accent)];
+  }
+
+  .ld-visualization-result {
+    @apply min-h-96 p-4;
+  }
+
+  .ld-plotly-host {
+    @apply h-96 min-h-96 w-full bg-lodeon-surface;
+  }
+
+  .ld-plotly-host.js-plotly-plot {
+    @apply block;
+  }
+
+  .ld-visualization-result .plot-container,
+  .ld-visualization-result .svg-container,
+  .ld-visualization-result .main-svg {
+    min-height: 24rem;
+  }
+
+  .ld-rawgraphs-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+  }
+
+  .ld-rawgraphs-file {
+    @apply min-h-10 py-1.5;
+  }
+
+  .ld-rawgraphs-project-field {
+    @apply flex-row items-center gap-3;
+  }
+
+  .ld-rawgraphs-project-field span {
+    @apply shrink-0 leading-10;
+  }
+
+  .ld-rawgraphs-source {
+    @apply min-h-56 w-full resize-y border border-lodeon-border bg-lodeon-surface p-3 font-mono text-xs leading-5 text-lodeon-text;
+  }
+
+  .ld-rawgraphs-jsoneditor-host {
+    @apply border-x-0 border-b-0;
+  }
+
+  .ld-rawgraphs-summary {
+    @apply border-t border-lodeon-border bg-lodeon-panel px-4 py-2 text-xs text-lodeon-muted;
+  }
+
+  .ld-rawgraphs-preview {
+    @apply min-h-96 overflow-auto bg-white p-4;
+  }
+
+  .ld-rawgraphs-preview svg {
+    @apply h-auto max-w-full;
+  }
+
+  .ld-embed-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns:
+      minmax(10rem, 1fr) minmax(14rem, 2fr) minmax(8rem, 0.75fr)
+      minmax(8rem, 0.75fr) minmax(7rem, 0.6fr);
+  }
+
+  .ld-embed-source-controls {
+    @apply border-b border-lodeon-border bg-lodeon-panel px-4 pb-4 pt-4;
+  }
+
+  .ld-embed-node[data-source-mode="sparql"] .ld-embed-source-controls {
+    @apply px-0 pb-0 pt-2;
+  }
+
+  .ld-embed-field {
+    @apply grid gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-embed-field[data-embed-field-mode="sparql"],
+  .ld-iiif-field[data-iiif-field-mode="sparql"] {
+    @apply gap-0;
+  }
+
+  .ld-embed-field[data-embed-field-mode="sparql"] > .ld-special-node-field-heading,
+  .ld-iiif-field[data-iiif-field-mode="sparql"] > .ld-special-node-field-heading {
+    @apply px-4 pb-2 pt-0 leading-none;
+  }
+
+  .ld-embed-field input,
+  .ld-embed-field select,
+  .ld-embed-field textarea {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-surface px-2 py-1.5 text-sm font-normal text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-embed-field textarea {
+    @apply resize-y select-text font-mono text-xs leading-5;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .ld-embed-node[data-source-mode="url"] [data-embed-field-mode="sparql"],
+  .ld-embed-node[data-source-mode="sparql"] [data-embed-field-mode="url"] {
+    @apply hidden;
+  }
+
+  .ld-embed-origins {
+    @apply flex items-start gap-2 border-b border-lodeon-border bg-lodeon-surface px-4 py-2 text-xs text-lodeon-muted;
+  }
+
+  .ld-embed-origins strong {
+    @apply shrink-0 py-1 text-lodeon-text;
+  }
+
+  .ld-embed-origin-list {
+    @apply flex min-w-0 flex-wrap gap-1.5;
+  }
+
+  .ld-embed-origin-chip {
+    @apply max-w-full overflow-hidden text-ellipsis whitespace-nowrap border border-lodeon-border bg-lodeon-panel px-2 py-1 font-mono text-[0.72rem] text-lodeon-text;
+  }
+
+  .ld-embed-preview {
+    @apply overflow-hidden bg-lodeon-panel;
+  }
+
+  .ld-embed-preview-row {
+    @apply flex min-w-0 items-stretch bg-lodeon-surface;
+  }
+
+  .ld-embed-selector {
+    @apply flex gap-2 overflow-x-auto border-t border-lodeon-border bg-lodeon-surface p-3;
+  }
+
+  .ld-embed-selector-vertical {
+    @apply max-h-none w-64 shrink-0 flex-col overflow-y-auto overflow-x-hidden border-r border-t-0;
+  }
+
+  .ld-embed-selector-item {
+    @apply grid min-w-52 max-w-72 gap-1 border border-lodeon-border bg-lodeon-panel px-3 py-2 text-left text-xs text-lodeon-text transition hover:border-lodeon-accent;
+  }
+
+  .ld-embed-selector-item[data-active="true"] {
+    @apply border-lodeon-accent bg-lodeon-surface shadow-sm;
+  }
+
+  .ld-embed-selector-title {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap font-semibold;
+  }
+
+  .ld-embed-selector-meta {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.72rem] text-lodeon-muted;
+  }
+
+  .ld-embed-iframe {
+    @apply block min-h-56 min-w-0 flex-1 bg-lodeon-surface align-bottom;
+  }
+
+  .ld-iiif-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns:
+      minmax(10rem, 1fr) minmax(14rem, 2fr) minmax(8rem, 0.75fr)
+      minmax(8rem, 0.75fr) minmax(7rem, 0.6fr) minmax(15rem, 1.25fr);
+  }
+
+  .ld-graph-explorer-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  }
+
+  .ld-leaflet-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  }
+
+  .ld-leaflet-source-controls {
+    @apply border-b border-lodeon-border bg-lodeon-panel px-4 pb-4 pt-4;
+  }
+
+  .ld-leaflet-node[data-source-mode="sparql"] .ld-leaflet-source-controls {
+    @apply px-0 pb-0 pt-2;
+  }
+
+  .ld-leaflet-field {
+    @apply grid min-w-0 gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-leaflet-field input,
+  .ld-leaflet-field select,
+  .ld-leaflet-field textarea {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-surface px-2 py-1.5 text-sm font-normal text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-leaflet-field input[type="checkbox"] {
+    @apply h-4 min-h-4 w-4;
+  }
+
+  .ld-leaflet-field textarea {
+    @apply resize-y select-text font-mono text-xs leading-5;
+  }
+
+  .ld-verovio-controls {
+    @apply grid gap-3 border-b border-lodeon-border bg-lodeon-panel p-4;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+
+  .ld-verovio-source-controls {
+    @apply min-w-0 border-b border-lodeon-border bg-lodeon-panel px-4 pb-4 pt-4;
+  }
+
+  .ld-verovio-node[data-source-mode="sparql"] .ld-verovio-source-controls {
+    @apply px-0 pb-0 pt-2;
+  }
+
+  .ld-verovio-field {
+    @apply grid min-w-0 gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-verovio-field input,
+  .ld-verovio-field select,
+  .ld-verovio-field textarea {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-surface px-2 py-1.5 text-sm font-normal text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-verovio-field[data-verovio-source="sparql"] {
+    @apply gap-0;
+  }
+
+  .ld-verovio-field[data-verovio-source="sparql"] > .ld-special-node-field-heading {
+    @apply px-4 pb-2 leading-none;
+  }
+
+  .ld-verovio-field input[type="checkbox"] {
+    @apply h-4 min-h-4 w-4;
+  }
+
+  .ld-verovio-field textarea {
+    @apply resize-y select-text font-mono text-xs leading-5;
+  }
+
+  .ld-verovio-node[data-source-mode="direct"] [data-verovio-source="file"],
+  .ld-verovio-node[data-source-mode="direct"] [data-verovio-source="sparql"],
+  .ld-verovio-node[data-source-mode="file"] [data-verovio-source="direct"],
+  .ld-verovio-node[data-source-mode="file"] [data-verovio-source="sparql"],
+  .ld-verovio-node[data-source-mode="sparql"] [data-verovio-source="direct"],
+  .ld-verovio-node[data-source-mode="sparql"] [data-verovio-source="file"],
+  .ld-verovio-node[data-source-mode="sparql"] [data-verovio-source="input"] {
+    @apply hidden;
+  }
+
+  .ld-verovio-sparql-source-editor {
+    @apply min-h-52 border border-lodeon-border bg-lodeon-surface text-sm font-normal text-lodeon-text;
+  }
+
+  .ld-verovio-status {
+    @apply border-b border-lodeon-border px-4 py-3 text-sm;
+  }
+
+  .ld-verovio-status:empty {
+    @apply hidden;
+  }
+
+  .ld-verovio-status[data-state="error"] {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-verovio-preview {
+    @apply min-w-0 bg-lodeon-panel p-4;
+  }
+
+  .ld-leaflet-field[data-leaflet-field-mode="sparql"] {
+    @apply gap-0;
+  }
+
+  .ld-leaflet-field[data-leaflet-field-mode="sparql"] > .ld-special-node-field-heading {
+    @apply px-4 pb-2 pt-0 leading-none;
+  }
+
+  .ld-leaflet-node[data-source-mode="sparql"] [data-leaflet-field-mode="geojson"],
+  .ld-leaflet-node[data-source-mode="sparql"] [data-leaflet-field-mode="points"],
+  .ld-leaflet-node[data-source-mode="geojson"] [data-leaflet-field-mode="sparql"],
+  .ld-leaflet-node[data-source-mode="geojson"] [data-leaflet-field-mode="points"],
+  .ld-leaflet-node[data-source-mode="points"] [data-leaflet-field-mode="sparql"],
+  .ld-leaflet-node[data-source-mode="points"] [data-leaflet-field-mode="geojson"] {
+    @apply hidden;
+  }
+
+  .ld-leaflet-field .ld-sparql-source-editor {
+    @apply min-h-36 w-full rounded-none border-x-0 border-b-0;
+  }
+
+  .ld-leaflet-points {
+    @apply grid gap-3;
+    grid-column: 1 / -1;
+  }
+
+  .ld-leaflet-point {
+    @apply grid items-end gap-2 border border-lodeon-border bg-lodeon-surface p-3;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  }
+
+  .ld-leaflet-preview {
+    @apply border-b border-lodeon-border bg-lodeon-panel p-4;
+  }
+
+  .ld-leaflet-error:not(:empty) {
+    @apply border-b border-[var(--lodeon-danger)] p-4 text-sm text-[var(--lodeon-danger)];
+    background: color-mix(in srgb, var(--lodeon-danger) 8%, var(--lodeon-panel));
+  }
+
+  .ld-iiif-source-controls {
+    @apply border-b border-lodeon-border bg-lodeon-panel px-4 pb-4 pt-4;
+  }
+
+  .ld-graph-explorer-source-controls {
+    @apply border-b border-lodeon-border bg-lodeon-panel px-4 pb-4 pt-4;
+  }
+
+  .ld-iiif-node[data-source-mode="sparql"] .ld-iiif-source-controls,
+  .ld-graph-explorer-node[data-source-mode="sparql"] .ld-graph-explorer-source-controls {
+    @apply px-0 pb-0 pt-2;
+  }
+
+  .ld-iiif-field {
+    @apply grid gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-graph-explorer-field {
+    @apply grid gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-iiif-field input,
+  .ld-iiif-field select,
+  .ld-iiif-field textarea,
+  .ld-graph-explorer-field input,
+  .ld-graph-explorer-field select,
+  .ld-graph-explorer-field textarea {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-surface px-2 py-1.5 text-sm font-normal text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-iiif-field textarea,
+  .ld-graph-explorer-field textarea {
+    @apply resize-y select-text font-mono text-xs leading-5;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .ld-graph-explorer-field input[type="checkbox"] {
+    @apply h-4 min-h-4 w-4;
+  }
+
+  .ld-iiif-node[data-source-mode="url"] [data-iiif-field-mode="sparql"],
+  .ld-iiif-node[data-source-mode="sparql"] [data-iiif-field-mode="url"] {
+    @apply hidden;
+  }
+
+  .ld-graph-explorer-node[data-source-mode="iri"] [data-graph-explorer-field-mode="sparql"],
+  .ld-graph-explorer-node[data-source-mode="sparql"] [data-graph-explorer-field-mode="iri"] {
+    @apply hidden;
+  }
+
+  .ld-embed-field .ld-sparql-source-editor,
+  .ld-iiif-field .ld-sparql-source-editor,
+  .ld-graph-explorer-field .ld-sparql-source-editor {
+    @apply min-h-36 w-full rounded-none border-x-0 border-b-0;
+  }
+
+  .ld-iiif-preview {
+    @apply border-b border-lodeon-border bg-lodeon-panel p-4;
+  }
+
+  .ld-graph-explorer-preview {
+    @apply border-b border-lodeon-border bg-lodeon-panel p-4;
+  }
+
+  .ld-graph-viewer-shell {
+    @apply relative overflow-hidden border border-lodeon-border bg-lodeon-surface;
+  }
+
+  .ld-graph-viewer-toolbar {
+    @apply absolute right-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap justify-end gap-1 border border-lodeon-border bg-lodeon-panel p-1;
+  }
+
+  .ld-graph-viewer-control {
+    @apply grid h-8 w-8 shrink-0 place-items-center border border-lodeon-border bg-lodeon-surface text-lodeon-text transition hover:border-lodeon-accent hover:text-lodeon-accent;
+  }
+
+  .ld-graph-viewer-control svg {
+    @apply h-4 w-4;
+  }
+
+  .ld-graph-viewer-svg {
+    @apply block w-full cursor-grab bg-lodeon-surface;
+    background-image:
+      linear-gradient(var(--lodeon-panel) 1px, transparent 1px),
+      linear-gradient(90deg, var(--lodeon-panel) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .ld-graph-viewer-svg:active {
+    @apply cursor-grabbing;
+  }
+
+  .ld-graph-viewer-link {
+    @apply text-lodeon-muted;
+    stroke: currentColor;
+    stroke-opacity: 0.75;
+    stroke-width: 1.5px;
+  }
+
+  .ld-graph-viewer-link-label {
+    @apply pointer-events-none fill-lodeon-text text-[0.68rem] font-medium;
+    paint-order: stroke;
+    stroke: var(--lodeon-surface);
+    stroke-width: 4px;
+  }
+
+  .ld-graph-viewer-node {
+    @apply cursor-pointer;
+  }
+
+  .ld-graph-viewer-node circle {
+    @apply stroke-lodeon-surface transition;
+    stroke-width: 2px;
+  }
+
+  .ld-graph-viewer-node:hover circle {
+    @apply stroke-lodeon-accent;
+    stroke-width: 3px;
+  }
+
+  .ld-graph-viewer-node-start circle {
+    @apply stroke-lodeon-text;
+    stroke-width: 2.5px;
+  }
+
+  .ld-graph-viewer-node-fixed circle {
+    @apply stroke-lodeon-accent;
+    stroke-width: 2.5px;
+  }
+
+  .ld-graph-viewer-node-loading {
+    @apply cursor-wait opacity-75;
+  }
+
+  .ld-graph-viewer-node-loading circle {
+    @apply stroke-lodeon-accent;
+    stroke-dasharray: 6 3;
+    stroke-width: 3px;
+  }
+
+  .ld-graph-viewer-node-literal circle {
+    @apply fill-lodeon-panel stroke-lodeon-border;
+  }
+
+  .ld-graph-viewer-node-blank circle {
+    stroke-dasharray: 4 3;
+  }
+
+  .ld-graph-viewer-node-label {
+    @apply pointer-events-none fill-lodeon-text text-[0.72rem] font-semibold;
+    paint-order: stroke;
+    stroke: var(--lodeon-surface);
+    stroke-width: 5px;
+  }
+
+  .ld-graph-node-popover {
+    @apply absolute z-20 max-w-sm border border-lodeon-border bg-lodeon-surface p-3 text-xs text-lodeon-text shadow-sm;
+  }
+
+  .ld-graph-node-popover[hidden] {
+    @apply hidden;
+  }
+
+  .ld-graph-node-popover-list {
+    @apply m-0 grid grid-cols-[5rem_minmax(0,1fr)] gap-x-3 gap-y-1.5;
+  }
+
+  .ld-graph-node-popover-list dt {
+    @apply m-0 font-semibold text-lodeon-text;
+  }
+
+  .ld-graph-node-popover-list dd {
+    @apply m-0 min-w-0 break-words text-lodeon-text;
+  }
+
+  .ld-graph-node-popover-list a {
+    @apply text-lodeon-accent underline underline-offset-2;
+  }
+
+  .ld-graph-viewer-shell[data-fullscreen="true"],
+  .ld-graph-viewer-shell:fullscreen {
+    @apply h-screen w-screen border-0 bg-lodeon-surface;
+  }
+
+  .ld-graph-viewer-shell[data-fullscreen="true"] .ld-graph-viewer-svg,
+  .ld-graph-viewer-shell:fullscreen .ld-graph-viewer-svg {
+    @apply h-screen;
+    min-height: 100vh !important;
+  }
+
+  .ld-graph-explorer-message {
+    @apply min-h-40 border-solid bg-lodeon-surface px-4 py-8 text-lodeon-text;
+  }
+
+  .ld-graph-explorer-message.ld-visualization-error {
+    @apply bg-lodeon-surface;
+  }
+
+  .ld-iiif-result-selector {
+    @apply mb-3 grid gap-1 text-xs font-semibold text-lodeon-muted;
+  }
+
+  .ld-iiif-result-selector select {
+    @apply min-h-10 w-full border border-lodeon-border bg-lodeon-surface px-2 py-1.5 text-sm font-normal text-lodeon-text outline-none focus:border-lodeon-accent focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-iiif-viewer {
+    @apply min-h-80 w-full overflow-hidden border border-lodeon-border bg-black;
+  }
+
+  .ld-visualization-empty {
+    @apply border border-dashed border-lodeon-border bg-lodeon-surface px-4 py-6 text-center text-sm text-lodeon-muted;
+  }
+
+  .ld-visualization-empty.ld-visualization-error {
+    @apply border-[var(--lodeon-danger)] text-[var(--lodeon-danger)];
+  }
+
+  .ld-visualization-svg {
+    @apply block h-auto w-full border border-lodeon-border bg-lodeon-surface;
+  }
+
+  .ld-chart-axis,
+  .ld-chart-line {
+    fill: none;
+    stroke: var(--lodeon-muted);
+    stroke-width: 2;
+  }
+
+  .ld-chart-line {
+    stroke: var(--lodeon-accent);
+    stroke-width: 3;
+  }
+
+  .ld-chart-mark,
+  .ld-chart-slice {
+    fill: var(--lodeon-accent);
+  }
+
+  .ld-chart-slice:nth-of-type(2n) {
+    fill: var(--lodeon-text);
+  }
+
+  .ld-chart-slice:nth-of-type(3n) {
+    fill: var(--lodeon-muted);
+  }
+
+  .ld-chart-label {
+    fill: var(--lodeon-muted);
+    font-size: 12px;
+    text-anchor: middle;
+  }
+
+  .ld-chart-value-label {
+    text-anchor: end;
+  }
+
+  .ld-sparql-table {
+    @apply w-full border-collapse text-left text-xs text-lodeon-text;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .ld-sparql-table th {
+    @apply border-x-0 border-b border-lodeon-border bg-lodeon-surface px-3 py-2 font-bold text-lodeon-text;
+  }
+
+  .ld-sparql-table td {
+    @apply max-w-80 border-x-0 border-b border-lodeon-border px-3 py-2 align-top text-lodeon-text;
+  }
+
+  .ld-sparql-table a {
+    @apply text-lodeon-accent underline;
+  }
+
+  .ld-sparql-error {
+    @apply border-t border-lodeon-border px-4 py-3 text-sm;
+    background: color-mix(in srgb, var(--lodeon-danger) 8%, var(--lodeon-panel));
+    color: var(--lodeon-danger);
+  }
+
+  .ld-sparql-boolean,
+  .ld-sparql-empty,
+  .ld-sparql-more {
+    @apply border-t border-lodeon-border px-4 py-3 text-sm text-lodeon-muted;
+  }
+
+  .ld-status-modal-backdrop {
+    @apply fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4;
+  }
+
+  .ld-status-modal-backdrop[hidden] {
+    @apply hidden;
+  }
+
+  .ld-status-modal {
+    @apply flex w-full max-w-lg flex-col overflow-hidden border border-lodeon-border bg-lodeon-panel shadow-2xl;
+  }
+
+  .ld-status-modal-header {
+    @apply flex min-h-12 shrink-0 items-center justify-between gap-4 border-b border-lodeon-border px-5 text-sm;
+  }
+
+  .ld-status-modal-header strong {
+    @apply text-lodeon-text;
+  }
+
+  .ld-status-modal-body {
+    @apply flex flex-col gap-3 px-5 py-5 text-sm font-semibold text-lodeon-muted;
+  }
+
+  .ld-status-modal-body p {
+    @apply m-0;
+  }
+
+  .ld-status-modal-body a {
+    @apply break-all text-lodeon-accent underline;
+  }
+
+  .ld-status-modal-backdrop[data-state="success"] .ld-status-modal-body {
+    @apply text-lodeon-accent;
+  }
+
+  .ld-status-modal-backdrop[data-state="error"] .ld-status-modal-body {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-status-modal .ld-icon-button {
+    @apply min-h-8 min-w-8 px-2;
+  }
+
+  .ld-preview-panel {
+    @apply fixed inset-4 z-50 flex flex-col overflow-hidden border border-lodeon-border bg-lodeon-panel shadow-2xl;
+  }
+
+  .ld-preview-panel[hidden] {
+    @apply hidden;
+  }
+
+  .ld-preview-header {
+    @apply flex min-h-12 shrink-0 items-center gap-3 border-b border-lodeon-border px-5 text-sm text-lodeon-muted;
+  }
+
+  .ld-preview-header strong {
+    @apply text-lodeon-text;
+  }
+
+  .ld-preview-header span {
+    @apply mr-auto;
+  }
+
+  .ld-preview-panel[data-state="error"] .ld-preview-header span {
+    color: var(--lodeon-danger);
+  }
+
+  .ld-preview-frame {
+    @apply min-h-0 flex-1 border-0 bg-lodeon-canvas;
+  }
+
+  .ld-modal-backdrop {
+    @apply fixed inset-0 z-[80] flex items-center justify-center bg-black/45 p-4;
+  }
+
+  .ld-modal-backdrop[hidden] {
+    @apply hidden;
+  }
+
+  .ld-modal {
+    @apply flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden border border-lodeon-border bg-lodeon-panel shadow-2xl;
+  }
+
+  .ld-sparnatural-modal {
+    @apply max-h-[90vh] max-w-6xl;
+  }
+
+  .ld-modal-header {
+    @apply flex min-h-12 shrink-0 items-center justify-between gap-4 border-b border-lodeon-border px-5 text-sm;
+  }
+
+  .ld-modal-header strong {
+    @apply text-lodeon-text;
+  }
+
+  .ld-modal-header span {
+    @apply mr-auto text-lodeon-muted;
+  }
+
+  .ld-modal-body {
+    @apply prose max-w-none overflow-auto p-5 prose-headings:text-lodeon-text prose-p:text-lodeon-text prose-li:text-lodeon-text prose-strong:text-lodeon-text;
+    --tw-prose-body: var(--lodeon-text);
+    --tw-prose-headings: var(--lodeon-text);
+    --tw-prose-links: var(--lodeon-accent);
+    --tw-prose-bold: var(--lodeon-text);
+    --tw-prose-bullets: var(--lodeon-muted);
+  }
+
+  .ld-sparnatural-modal-body {
+    @apply flex min-h-[72vh] flex-col gap-4 overflow-auto p-5;
+  }
+
+  .ld-sparnatural-builder-host {
+    @apply min-h-[28rem] overflow-auto border border-lodeon-border bg-lodeon-surface p-4 text-lodeon-text;
+  }
+
+  .ld-sparnatural-builder-host spar-natural {
+    @apply block min-h-[26rem];
+  }
+
+  .ld-sparnatural-generated-query {
+    @apply border border-lodeon-border bg-lodeon-surface;
+  }
+
+  .ld-sparnatural-generated-query strong {
+    @apply block border-b border-lodeon-border px-4 py-2 text-xs uppercase text-lodeon-muted;
+  }
+
+  .ld-sparnatural-query-preview-editor {
+    @apply h-48 border-t-0;
+  }
+
+  .ld-sparnatural-modal-actions {
+    @apply flex justify-end gap-2;
+  }
+
+  .ld-modal-badge {
+    @apply mb-5 block w-full max-w-xs;
+  }
+
+  .ld-auth-modal {
+    @apply max-w-md;
+  }
+
+  .ld-auth-form {
+    @apply flex flex-col gap-4;
+  }
+
+  .ld-auth-content,
+  .ld-auth-providers {
+    @apply flex flex-col gap-4;
+  }
+
+  .ld-auth-form[hidden],
+  .ld-auth-divider[hidden],
+  .ld-auth-providers[hidden] {
+    display: none;
+  }
+
+  .ld-auth-form label {
+    @apply flex flex-col gap-1 text-sm font-semibold text-lodeon-muted;
+  }
+
+  .ld-auth-form input {
+    @apply min-h-10 border border-lodeon-border bg-lodeon-control px-3 text-sm font-semibold text-lodeon-text outline-none focus:ring-2 focus:ring-[var(--lodeon-focus)];
+  }
+
+  .ld-auth-error {
+    @apply m-0 text-sm font-semibold;
+    color: var(--lodeon-danger);
+  }
+
+  .ld-auth-actions {
+    @apply flex justify-end;
+  }
+
+  .ld-auth-divider {
+    @apply flex items-center gap-3 text-xs font-semibold uppercase text-lodeon-muted;
+  }
+
+  .ld-auth-divider::before,
+  .ld-auth-divider::after {
+    @apply h-px flex-1 bg-lodeon-border;
+    content: "";
+  }
+
+  .ld-auth-provider {
+    @apply h-9 w-full justify-center gap-2 py-0 no-underline;
+  }
+
+  .ld-auth-provider-accent {
+    @apply border-lodeon-accent bg-lodeon-accent text-white hover:bg-lodeon-control hover:text-lodeon-accent;
+  }
+
+  .ld-auth-provider img {
+    @apply h-5 w-5 object-contain;
+  }
+}
+
+/* shmarql look: slightly rounded controls, accent-coloured primary actions. */
+@layer components {
+  .ld-button,
+  .ld-icon-button,
+  .ld-project-switcher select,
+  .ld-node-run-button,
+  .ld-editor-toolbar button,
+  .ld-editor-toolbar select {
+    border-radius: 4px;
+  }
+
+  .ld-topbar [data-action="render.html"],
+  .ld-topbar [data-action="render.html"]:hover {
+    border-color: var(--lodeon-accent);
+    background: var(--lodeon-accent);
+    color: #fff;
+  }
+
+  .ld-topbar [data-action="render.html"]:hover {
+    background: var(--lodeon-accent-secondary);
+  }
+}

@@ -1,0 +1,639 @@
+/* Entity view styles, ported from ldview (https://codeberg.org/renevoorburg/ldview, MIT)
+   and scoped under .ldview so they do not leak into the rest of the site. */
+
+.ldview .main-subject,
+.ldview .blank-node {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+.ldview .main-subject {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.ldview h1 {
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-size: 1.8em;
+}
+
+/* .types {
+    margin: 1rem 0;
+} */
+
+
+.ldview .labels {
+    margin: 1rem 0;
+}
+
+.ldview .label {
+    font-size: 1.4em;
+    color: #2c3e50;
+    margin: 0.5rem 0;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.ldview .descriptions {
+    margin: 1rem 0;
+}
+
+.ldview .description {
+    color: #666;
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    font-size: 1.1em;
+}
+
+.ldview .main-description {
+    margin: 0.2em 0 1em;
+    font-size: 1.1em;
+    line-height: 1.4;
+    color: #666;
+}
+
+.ldview .subject-group {
+    margin-bottom: 2rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.ldview .subject-header {
+    color: #2c3e50;
+    font-size: 1.2em;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+    display: flex;
+    align-items: center;
+}
+
+.ldview .subject-header::before {
+    content: "►";
+    margin-right: 0.5rem;
+    color: #3498db;
+    font-size: 0.8em;
+}
+
+.ldview table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.ldview td {
+    max-width: 600px;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+    padding: 4px;
+    border-top: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.ldview td:empty {
+    border-top: none;
+}
+
+.ldview td:first-child {
+    width: 30%;
+    color: #2980b9;
+    font-weight: 500;
+}
+
+.ldview td:first-child:empty {
+    border-left: 2px solid transparent;
+}
+
+.ldview td:last-child {
+    width: 70%;
+    color: #2980b9;
+}
+
+.ldview td:nth-child(2) {
+    color: #27ae60;
+}
+
+/* enable wrapping of long URLs: prefer break between prefix and local */
+.ldview .predicate-link {
+    white-space: normal;
+}
+
+.ldview .predicate-link .prefix {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.ldview .predicate-link .local {
+    display: inline-block;
+}
+
+/* Inverse relations */
+.ldview .inverse-relations-heading {
+    color: #666;
+    font-size: 1.4em;
+    margin-top: 2rem;
+    margin-bottom: 0.5em;
+}
+
+.ldview .blank-node.inverse-relation-box h3 {
+    font-size: 1.1em;
+    margin-bottom: 1em;
+}
+
+.ldview .blank-node.inverse-relation-box h3 .predicate-chain-context {
+    font-size: inherit;
+    color: inherit;
+}
+
+.ldview .blank-node.inverse-relation-box h3 .predicate-chain-context a {
+    color: inherit;
+}
+
+.ldview .inverse-subjects-flow {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.ldview .inverse-subject-wrapper {
+    display: block;
+    white-space: normal;
+    word-break: break-word;
+    padding: 4px;
+    border-top: 1px solid #dee2e6;
+}
+
+.ldview .nearby-distance {
+    font-size: 0.85em;
+    color: #999;
+    margin-left: 0.5em;
+}
+
+.ldview .inverse-subjects-flow .more-results {
+    display: block;
+    padding: 4px;
+    border-top: 1px solid #dee2e6;
+}
+
+.ldview .inverse-subjects-flow .type-badge {
+    padding: 1px 4px;
+    font-size: 0.85em;
+    margin-left: 0.3em;
+    margin-bottom: 0;
+    vertical-align: baseline;
+    position: relative;
+    top: 0;
+}
+
+
+.ldview .formats {
+    margin-top: 2rem;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ldview .formats-row {
+    display: flex;
+    align-items: baseline;
+}
+
+.ldview .formats-label {
+    flex: 0 0 var(--pred-col-width, 30%);
+    font-weight: normal;
+    color: #555;
+    padding-right: 1em;
+    box-sizing: border-box;
+}
+
+.ldview .formats-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.ldview .formats a {
+    color: #3498db;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+}
+
+.ldview .formats a:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+.ldview .formats .data-source {
+    flex-basis: 100%;
+    margin-top: 0.5rem;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.ldview .formats .data-source a {
+    color: #666;
+    text-decoration: none;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.ldview .formats .data-source a:hover {
+    background-color: transparent;
+    color: #3498db;
+    text-decoration: underline;
+}
+
+.ldview a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.ldview a:hover {
+    text-decoration: underline;
+}
+
+.ldview .header-section {
+    margin-bottom: 2em;
+}
+
+.ldview .header-section h1 {
+    font-size: 1.6em;
+    margin: 0 0 0 0;
+    color: #333;
+}
+
+.ldview .uri-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2em;
+}
+
+.ldview .uri-line h2,
+.ldview .uri-line h3 {
+    font-size: 1.1em;
+    color: #666;
+    margin: 0;
+    flex: 1;
+    padding-right: 1em;
+}
+
+.ldview .types {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+@media (max-width: 480px) {
+    .ldview .uri-line {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ldview .types {
+        text-align: left;
+        margin-top: 0.4em;
+    }
+}
+
+.ldview .type-badge {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 0.3em 0.6em;
+    margin: 0.2em;
+    border-radius: 3px;
+    border: 1px solid #dee2e6;
+    font-size: 0.9em;
+    text-decoration: none;
+}
+
+.ldview .type-badge:hover {
+    text-decoration: none;
+}
+
+.ldview .type-badge .prefix {
+    color: #2980b9;
+}
+
+.ldview .type-badge .local {
+    color: #333;
+    font-weight: 600;
+}
+
+.ldview h2 {
+    font-size: 1.6em;
+    margin: 0 0 0.5em 0;
+    color: #333;
+}
+
+.ldview .images-section {
+    display: flex;
+    gap: 1em;
+    margin: 1em 0;
+    flex-wrap: wrap;
+}
+
+.ldview .image-container {
+    flex: 0 0 auto;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.ldview .sameas-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 0.7em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.ldview .image-container:hover {
+    transform: scale(1.02);
+}
+
+.ldview .image-container a {
+    display: block;
+    text-decoration: none;
+}
+
+.ldview .image-container img {
+    height: 200px;
+    width: auto;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s;
+}
+
+.ldview .image-container:hover img {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.ldview .blank-nodes-section {
+    margin-top: 2rem;
+}
+
+.ldview .blank-node {
+    margin-bottom: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.ldview .blank-nodes-section h2 {
+    color: #666;
+    font-size: 1.4em;
+    margin-bottom: 0;
+}
+
+.ldview .blank-node h3 {
+    color: #2980b9;
+    font-size: 1.1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+    line-height: 1.4;
+}
+
+.ldview .predicate-chain-context {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.ldview .predicate-chain-context a {
+    color: #999;
+}
+
+.ldview .prefix {
+    color: #2980b9;
+}
+
+.ldview .local {
+    color: #333;
+    font-weight: 600;
+}
+
+.ldview .uri-object {
+    text-decoration: none;
+    color: #2980b9;
+}
+
+.ldview .uri-object:hover {
+    text-decoration: underline;
+}
+
+.ldview .uri-object .local {
+    color: #2980b9;
+}
+
+.ldview .blank-node-ref {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.ldview .blank-node-ref:hover {
+    text-decoration: underline;
+}
+
+.ldview .predicate {
+    white-space: nowrap;
+}
+
+.ldview .predicate .local {
+    color: #333;
+}
+
+.ldview .datatype {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    margin-left: 0.3em;
+    font-family: monospace;
+    vertical-align: super; 
+}
+
+.ldview .datatype:hover {
+    color: #2c3e50;
+}
+
+.ldview .wkt-details {
+    display: inline;
+}
+
+.ldview .wkt-summary {
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
+}
+
+.ldview .wkt-summary::-webkit-details-marker {
+    display: none;
+}
+
+.ldview .wkt-summary::before {
+    content: '▶';
+    font-size: 0.7em;
+    color: #999;
+    transition: transform 0.15s;
+}
+
+.ldview details[open] .wkt-summary::before {
+    transform: rotate(90deg);
+}
+
+.ldview .wkt-type {
+    color: #27ae60;
+}
+
+.ldview .wkt-hint {
+    font-family: Arial, sans-serif;
+    font-size: 0.85em;
+    color: #999;
+    font-style: italic;
+}
+
+.ldview .wkt-full {
+    display: block;
+    margin-top: 0.3em;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.ldview .language-tag {
+    font-size: 0.85em;
+    color: #27ae60;
+    margin-left: 0.3em;
+    font-family: monospace;
+    font-weight: 600;
+    vertical-align: super; 
+}
+
+.ldview .language-tag:hover {
+    color: #229954;
+}
+
+.ldview .properties-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.ldview .properties-table td:first-child {
+    width: var(--pred-col-width, 30%);
+    vertical-align: top;
+}
+
+.ldview .predicate-set {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+.ldview .map-container {
+    width: 100%;
+    min-width: 400px;
+    height: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ldview .marker-popup {
+    padding: 3px 6px;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.ldview .marker-popup h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.ldview .marker-popup p {
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #666;
+}
+
+/* Language tabs */
+.ldview .lang-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.ldview .lang-tab {
+    padding: 1px 8px;
+    font-size: 0.75em;
+    border: 1px solid #c0c8d8;
+    border-radius: 3px;
+    background: #f4f6fa;
+    color: #555;
+    cursor: pointer;
+    line-height: 1.6;
+}
+
+.ldview .lang-tab:hover {
+    background: #e0e8f4;
+    border-color: #2f54b2;
+    color: #2f54b2;
+}
+
+.ldview .lang-tab.active {
+    background: #2f54b2;
+    color: white;
+    border-color: #2f54b2;
+}
+
+.ldview .lang-tabs-cell {
+    vertical-align: top;
+}
+
+.ldview .lang-value {
+    padding-top: 2px;
+}
+
+.ldview .html-literal {
+    color: #444;
+    line-height: 1.6;
+}
+
+
+/* shmarql additions: let many type badges wrap instead of overflowing */
+.ldview .uri-line {
+    gap: 1em;
+}
+
+.ldview .types {
+    flex: 0 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.3em;
+    min-width: 0;
+}
+
+.ldview .uri-line h2 {
+    flex: 0 0 auto;
+    max-width: 50%;
+}

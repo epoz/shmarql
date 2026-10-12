@@ -1,0 +1,1644 @@
+schemaVersion: 1
+defaults:
+  severity: error
+  status: 400
+  showTechnicalDetail: false
+errors:
+  lodeon.unknown:
+    status: 500
+    severity: error
+  lodeon.not_found:
+    status: 404
+    severity: error
+    showTechnicalDetail: true
+  lodeon_problem_error.invalid_code:
+    status: 500
+    severity: error
+  api.content_length_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  api.json_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  tracing.disabled:
+    status: 500
+    severity: warning
+    showTechnicalDetail: true
+  app.root_missing:
+    status: 500
+    severity: error
+  app.editor_host_missing:
+    status: 500
+    severity: error
+  app.bootstrap_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  app.modal_load_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  app.config.load_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  app.config.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.indexeddb_unavailable:
+    status: 500
+    severity: error
+  persistence.project_load_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.project_save_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.autosave_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.project_list_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.project_activate_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.project_delete_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.asset_blob_load_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.asset_blob_save_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  persistence.asset_blob_delete_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  app.renderer_engine.missing:
+    status: 500
+    severity: error
+  config.metadata_panel.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.config_file_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.runtime_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.schema_version_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributors_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributors_enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributor_roles_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributor_role_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributor_role_label_key_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.contributor_role_schema_org_property_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.default_contributor_role_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.fields_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.field_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.metadata_panel.field_enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_search_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_provider_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_tools_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_limit_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_min_score_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_language_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_guidance_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_next_step_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_inline_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_providers_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_fulltext_provider_config_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_patterns_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_pattern_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_pattern_type_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_entity_reidentification_pattern_field_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_enabled_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_list_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_direction_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_limit_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_boolean_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_result_mapping_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_color_scheme_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.knowledge_graph.profile_graph_explorer_node_popup_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.request_invalid:
+    status: 400
+    severity: error
+  graph_explorer.profile_required:
+    status: 400
+    severity: error
+  graph_explorer.profile_disabled:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.iris_required:
+    status: 400
+    severity: error
+  graph_explorer.iris_invalid:
+    status: 400
+    severity: error
+  graph_explorer.iri_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.direction_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.limit_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.sparql_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  graph_explorer.sparql_result_invalid:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  auth.required:
+    status: 401
+    severity: error
+  auth.model_access_denied:
+    status: 403
+    severity: error
+  auth.bearer_required:
+    status: 401
+    severity: error
+  auth.invalid_bearer:
+    status: 401
+    severity: error
+  auth.knowledge_graph_access_denied:
+    status: 403
+    severity: error
+  auth.publish_access_denied:
+    status: 403
+    severity: error
+  virtual_model.not_found:
+    status: 404
+    severity: error
+  virtual_model.request_invalid:
+    status: 400
+    severity: error
+  virtual_model.request_fields_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  virtual_model.model_required:
+    status: 400
+    severity: error
+  virtual_model.stream_invalid:
+    status: 400
+    severity: error
+  virtual_model.streaming_unsupported:
+    status: 400
+    severity: error
+  virtual_model.storage_unsupported:
+    status: 400
+    severity: error
+  sparnatural.profile_unavailable:
+    status: 500
+    severity: error
+  auth.invalid_token:
+    status: 401
+    severity: error
+  auth.token_required:
+    status: 400
+    severity: error
+  auth.login_failed:
+    status: 401
+    severity: error
+    showTechnicalDetail: true
+  auth.login_payload_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  config.auth.methods_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.auth.token_credential_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.auth.bearer_credential_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.auth.external_provider_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  auth.external.provider_not_found:
+    status: 404
+    severity: error
+  auth.external.flow_invalid:
+    status: 400
+    severity: error
+  auth.external.provider_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  auth.external.identity_invalid:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  auth.external.exchange_invalid:
+    status: 401
+    severity: error
+  config.auth.access_policy_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  storage.indexeddb_unavailable:
+    status: 500
+    severity: error
+  storage.autosave_failed:
+    status: 500
+    severity: warning
+  project.export_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  project.import.invalid_package_format:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.import.unsupported_package_version:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.import.invalid_package:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.import.missing_project_entry:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.import.missing_document:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.import.file_read_failed:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  project.welcome_story_unavailable:
+    status: 404
+    severity: error
+  project.welcome_story_load_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  preview.login_required:
+    status: 401
+    severity: error
+  preview.rate_limit_exceeded:
+    status: 429
+    severity: warning
+  preview.render_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  preview.payload_too_large:
+    status: 413
+    severity: error
+    showTechnicalDetail: true
+  preview.cleanup_failed:
+    status: 500
+    severity: warning
+    showTechnicalDetail: true
+  preview.not_found:
+    status: 404
+    severity: error
+  preview.invalid_request:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  publish.login_required:
+    status: 401
+    severity: error
+  publish.failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  publish.payload_too_large:
+    status: 413
+    severity: error
+    showTechnicalDetail: true
+  publish.invalid_request:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  renderer.not_found:
+    status: 404
+    severity: error
+    showTechnicalDetail: true
+  renderer.build_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  renderer.markdown_empty:
+    status: 400
+    severity: error
+  renderer.invalid_target:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  renderer.asset_payload_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  renderer.asset_path_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  sparql.request_invalid:
+    status: 400
+    severity: error
+  sparql.profile_required:
+    status: 400
+    severity: error
+  sparql.query_required:
+    status: 400
+    severity: error
+  sparql.not_read_only:
+    status: 400
+    severity: error
+  sparql.endpoint_failed:
+    status: 502
+    severity: error
+  sparql.response_invalid:
+    status: 502
+    severity: error
+  sparql.result_set_count_invalid:
+    status: 502
+    severity: error
+  sparql.result_set_page_count_invalid:
+    status: 502
+    severity: error
+  sparql.result_set_page_key_invalid:
+    status: 502
+    severity: error
+  mcp.unavailable:
+    status: 500
+    severity: error
+  mcp.unknown_tool:
+    status: 400
+    severity: error
+  mcp.unknown_resource:
+    status: 400
+    severity: error
+  mcp.unknown_prompt:
+    status: 400
+    severity: error
+  mcp.node_payload_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  mcp.argument_required:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  mcp.argument_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  sparql.method_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  sparql.update_operation:
+    status: 400
+    severity: error
+  kg.schema_unavailable:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  kg.ontology_unavailable:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  kg.profile_unresolved:
+    status: 500
+    severity: error
+  kg.ontology_term_unknown:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  kg.class_unknown:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  kg.property_unknown:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  kg.class_iri_missing:
+    status: 500
+    severity: error
+  kg.term_expansion_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  kg.prefix_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  kg.property_path_unavailable:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  kg.property_not_literal:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  kg.property_not_available_for_class:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  kg.identifier_properties_unavailable:
+    status: 400
+    severity: warning
+  kg.literal_properties_unavailable:
+    status: 400
+    severity: warning
+  kg.identifier_search_unavailable:
+    status: 400
+    severity: warning
+  kg.literal_search_unavailable:
+    status: 400
+    severity: warning
+  fulltext.provider_tool_unavailable:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  fulltext.executor_unavailable:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.active_engine_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.engines_file_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.engines_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.active_engine_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.editor.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.locale_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.messages_directory_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.locale_directory_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.defaults_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.namespace_duplicate:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.namespace_file_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.resource_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.schema_version_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.resource_locale_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.namespace_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.messages_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.metadata_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.message_tree_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.message_key_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.localization.message_value_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.rich_text.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.rich_text.config_file_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.runtime_path.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.prompts.invalid:
+    status: 500
+    severity: error
+  config.followups.invalid:
+    status: 500
+    severity: error
+  followup.feature_read_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_read_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_yaml_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_shape_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_version_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_limits_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_section_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_include_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_query_templates_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.registry_include_resolved_outside_root:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.path_unsafe:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.identifier_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.rule_duplicate:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_action_incomplete:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.query_template_unsafe:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_empty:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_unknown_tool:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_multiple:
+    status: 500
+    severity: error
+  followup.template_filter_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.template_variable_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.template_expression_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.template_binding_missing_tool:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.template_binding_missing_argument:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.query_template_directory_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.query_template_path_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.query_template_read_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.gherkin_parser_unavailable:
+    status: 500
+    severity: error
+  followup.feature_gherkin_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.feature_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.feature_no_scenarios:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.scenario_steps_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.trigger_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.trigger_duplicate:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.trigger_after_actions:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.trigger_required_before_actions:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.conditions_after_trigger:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.step_order_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.condition_required:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.trigger_required:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.action_required:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.phase_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.model_task_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.condition_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.action_unknown:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_name_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_table_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_table_row_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_table_empty:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.tool_scope_table_duplicate:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.prompt_id_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.error_code_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  followup.regex_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.invalid:
+    status: 500
+    severity: error
+  config.errors.root_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.defaults_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.duplicate_code:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.registry_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.schema_version_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.namespace_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.defaults_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.errors_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.code_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.definition_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.required_fields_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.field_required:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.status_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.severity_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.show_technical_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.unknown_fields:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.technical_template_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.errors.unknown_missing:
+    status: 500
+    severity: error
+  config.renderer.engine_id_invalid:
+    status: 500
+    severity: error
+  config.renderer.engine_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.metadata_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.metadata_jsonld_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.metadata_jsonld_type_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.metadata_jsonld_properties_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_group_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_id_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_strategy_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_strategy_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_strategy_engine_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.template_directory_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.template_directory_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_template_invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.mapping_template_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.renderer.template_file_read_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  config.yaml.invalid:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.container_mapping_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.container_strategy_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.format_mapping_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.block_format_strategy_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.inline_format_strategy_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.special_node_strategy_unsupported:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.template_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.template_render_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  markdown.story_metadata_project_missing:
+    status: 500
+    severity: error
+  markdown.label_missing:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  localization.config_missing:
+    status: 500
+    severity: error
+  media.unsupported_type:
+    status: 400
+    severity: error
+  media.metadata_read_failed:
+    status: 400
+    severity: warning
+    showTechnicalDetail: true
+  media.asset_blob_read_failed:
+    status: 500
+    severity: error
+  iiif.origin_blocked:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  iiif.url_empty:
+    status: 400
+    severity: error
+  iiif.url_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  iiif.fetch_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  iiif.info_json_invalid:
+    status: 400
+    severity: error
+  iiif.manifest_invalid:
+    status: 400
+    severity: error
+  iiif.no_image_service:
+    status: 400
+    severity: error
+  iiif.no_canvas:
+    status: 400
+    severity: error
+  embed.spec_json_invalid:
+    status: 400
+    severity: error
+  embed.spec_invalid:
+    status: 400
+    severity: error
+  embed.disabled:
+    status: 400
+    severity: error
+  embed.renderer_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  embed.origin_blocked:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  embed.url_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  embed.metadata_unavailable:
+    status: 502
+    severity: warning
+    showTechnicalDetail: true
+  embed.metadata.request_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  embed.metadata.urls_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  sparql.query_empty:
+    status: 400
+    severity: error
+  sparql.request_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  visualization.sparql_query_empty:
+    status: 400
+    severity: error
+  visualization.data_url_empty:
+    status: 400
+    severity: error
+  visualization.data_url_failed:
+    status: 502
+    severity: error
+    showTechnicalDetail: true
+  visualization.json_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  visualization.plotly_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  rawgraphs.project_empty:
+    status: 400
+    severity: error
+  rawgraphs.project_invalid:
+    status: 400
+    severity: error
+    showTechnicalDetail: true
+  rawgraphs.render_failed:
+    status: 500
+    severity: error
+    showTechnicalDetail: true
+  tracer.config_invalid:
+    status: 500
+    severity: error
+  tracer.model_profile_missing:
+    status: 400
+    severity: error
+  tracer.knowledge_graph_profile_missing:
+    status: 400
+    severity: error
+  tracer.arguments.conflicting_case_selection:
+    status: 400
+    severity: error
+  tracer.input_invalid:
+    status: 400
+    severity: error
+  tracer.input.message_not_object:
+    status: 400
+    severity: error
+  tracer.input.message_role_invalid:
+    status: 400
+    severity: error
+  tracer.input.message_content_invalid:
+    status: 400
+    severity: error
+  tracer.input.messages_empty:
+    status: 400
+    severity: error
+  tracer.input.expected_json_object:
+    status: 400
+    severity: error
+  tracer.input.expected_json_array:
+    status: 400
+    severity: error
+  tracer.input.read_failed:
+    status: 400
+    severity: error
+  tracer.input.invalid_json:
+    status: 400
+    severity: error
+  tracer.output.write_failed:
+    status: 500
+    severity: error
+  tracer.competency.unknown_or_disabled:
+    status: 400
+    severity: error
+  tracer.competency.none_enabled:
+    status: 400
+    severity: error
+  tracer.competency.parser_unavailable:
+    status: 500
+    severity: error
+  tracer.http_failed:
+    status: 502
+    severity: error
+  tracer.response_invalid:
+    status: 502
+    severity: error
+  tracer.tool_result.available:
+    status: 200
+    severity: info
+  tracer.tool_result.external_message:
+    status: 200
+    severity: info
+  tracer.tool_result.rows:
+    status: 200
+    severity: info
+  tracer.tool_result.paths:
+    status: 200
+    severity: info
+  tracer.tool_result.candidates:
+    status: 200
+    severity: info
+  tracer.tool_result.count:
+    status: 200
+    severity: info
+  tracer.tool_result.status:
+    status: 200
+    severity: info
+  tracer.warning.aggregation_without_run_sparql:
+    status: 200
+    severity: warning
+  tracer.warning.benchmark_duration_limit_exceeded:
+    status: 200
+    severity: warning
+  tracer.warning.benchmark_evidence_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_exact_identifier_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_expectation_missing:
+    status: 200
+    severity: warning
+  tracer.warning.benchmark_expected_mention_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_expected_tool_any_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_expected_tool_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_forbidden_tool_used:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_input_token_limit_exceeded:
+    status: 200
+    severity: warning
+  tracer.warning.benchmark_proposal_missing:
+    status: 200
+    severity: error
+  tracer.warning.benchmark_warning_limit_exceeded:
+    status: 200
+    severity: error
+  tracer.warning.empty_tool_scope:
+    status: 200
+    severity: error
+  tracer.warning.expensive_suggestions:
+    status: 200
+    severity: warning
+  tracer.warning.high_model_input_tokens:
+    status: 200
+    severity: warning
+  tracer.warning.high_model_message_chars:
+    status: 200
+    severity: warning
+  tracer.warning.high_system_prompt_chars:
+    status: 200
+    severity: warning
+  tracer.warning.high_tool_schema_chars:
+    status: 200
+    severity: warning
+  tracer.warning.large_tool_evidence:
+    status: 200
+    severity: warning
+  tracer.warning.long_content_fallback_continuation:
+    status: 200
+    severity: warning
+  tracer.warning.model_error:
+    status: 200
+    severity: error
+  tracer.warning.model_failed_before_tool_call:
+    status: 200
+    severity: error
+  tracer.warning.ollama_tool_schema_model_error:
+    status: 200
+    severity: warning
+  tracer.warning.proposal_before_evidence:
+    status: 200
+    severity: error
+  tracer.warning.proposal_loop:
+    status: 200
+    severity: error
+  tracer.warning.recoverable_tool_error:
+    status: 200
+    severity: warning
+  tracer.warning.recoverable_tool_timeout:
+    status: 200
+    severity: warning
+  tracer.warning.recovered_by_followup:
+    status: 200
+    severity: warning
+  tracer.warning.repeated_identical_tool_calls:
+    status: 200
+    severity: warning
+  tracer.warning.repeated_tool_calls:
+    status: 200
+    severity: warning
+  tracer.warning.schema_only_instance_answer:
+    status: 200
+    severity: warning
+  tracer.warning.slow_operation:
+    status: 200
+    severity: warning
+  tracer.warning.slow_tool:
+    status: 200
+    severity: warning
+  tracer.warning.strong_tool_scope_reduction:
+    status: 200
+    severity: warning
+  tracer.warning.too_many_tool_calls:
+    status: 200
+    severity: warning
+  tracer.warning.tool_error:
+    status: 200
+    severity: error
+  tracer.warning.tool_timeout:
+    status: 200
+    severity: error
+  tracer.warning.use_tools_without_evidence:
+    status: 200
+    severity: error
+  tracer.warning.weak_tool_synthesis:
+    status: 200
+    severity: warning
+  tracer.check.final_message_returned:
+    status: 200
+    severity: info
+  tracer.failure.final_message_missing:
+    status: 500
+    severity: error
+  tracer.check.suggestions_returned:
+    status: 200
+    severity: info
+  tracer.check.response_tool_found:
+    status: 200
+    severity: info
+  tracer.check.response_any_tool_found:
+    status: 200
+    severity: info
+  tracer.check.response_identifier_preserved:
+    status: 200
+    severity: info
+  tracer.check.trace_file_found:
+    status: 200
+    severity: info
+  tracer.failure.trace_file_missing:
+    status: 500
+    severity: error
+  tracer.check.response_or_trace_tool_found:
+    status: 200
+    severity: info
+  tracer.failure.expected_tool_missing:
+    status: 500
+    severity: error
+  tracer.check.response_or_trace_any_tool_found:
+    status: 200
+    severity: info
+  tracer.failure.any_expected_tool_missing:
+    status: 500
+    severity: error
+  tracer.failure.trace_warning_error:
+    status: 500
+    severity: error
+  tracer.check.no_error_warnings:
+    status: 200
+    severity: info
+  tracer.failure.trace_warning:
+    status: 500
+    severity: error
+  tracer.check.warning_count_within_limit:
+    status: 200
+    severity: info
+  tracer.failure.warning_count_exceeded:
+    status: 500
+    severity: error
+  tracer.check.evidence_tool_found:
+    status: 200
+    severity: info
+  tracer.failure.evidence_tool_missing:
+    status: 500
+    severity: error
+  tracer.check.response_or_trace_identifier_preserved:
+    status: 200
+    severity: info
+  tracer.failure.identifier_not_preserved:
+    status: 500
+    severity: error
+  tracer.check.trace_or_response_mention_found:
+    status: 200
+    severity: info
+  tracer.failure.mention_missing:
+    status: 500
+    severity: error
+  tracer.failure.forbidden_tool_used:
+    status: 500
+    severity: error
+  tracer.check.forbidden_tool_not_used:
+    status: 200
+    severity: info
+  tracer.check.proposal_after_evidence:
+    status: 200
+    severity: info
+  tracer.failure.proposal_after_evidence_missing:
+    status: 500
+    severity: error
+  tracer.check.proposal_retry_found:
+    status: 200
+    severity: info
+  tracer.failure.proposal_retry_missing:
+    status: 500
+    severity: error
+  tracer.check.duration_within_limit:
+    status: 200
+    severity: info
+  tracer.failure.duration_exceeded:
+    status: 500
+    severity: error
+  tracer.check.input_tokens_unavailable:
+    status: 200
+    severity: info
+  tracer.check.input_tokens_within_limit:
+    status: 200
+    severity: info
+  tracer.failure.input_tokens_exceeded:
+    status: 500
+    severity: error
+  tracer.analyze.failed:
+    status: 500
+    severity: error
+  tracer.analyze.competency_parser_unavailable:
+    status: 500
+    severity: error
+  tracer.analyze.invalid_trace_json:
+    status: 400
+    severity: error
+  tracer.analyze.invalid_trace_event:
+    status: 400
+    severity: error
+  tracer.analyze.no_trace_files:
+    status: 404
+    severity: warning
+  tracer.analyze.output_required:
+    status: 400
+    severity: error
+  tracer.analyze.evaluation_artifacts_dir_required:
+    status: 400
+    severity: error
+  tracer.analyze.evaluation_result_file_invalid:
+    status: 400
+    severity: error
+  tracer.analyze.evaluation_adapter_unknown:
+    status: 400
+    severity: error
+  leaflet.geojson_invalid:
+    status: 400
+    severity: error
+  leaflet.geometry_unsupported:
+    status: 400
+    severity: error
+  leaflet.coordinate_invalid:
+    status: 400
+    severity: error
+  leaflet.sparql_variables_missing:
+    status: 400
+    severity: error
+  leaflet.tile_layer_unavailable:
+    status: 400
+    severity: error
+  leaflet.viewer_initialization_failed:
+    status: 500
+    severity: error
+  leaflet.query_empty:
+    status: 400
+    severity: error
+  leaflet.file_read_failed:
+    status: 400
+    severity: error
+  leaflet.manual_properties_invalid:
+    status: 400
+    severity: error
+  config.verovio.invalid:
+    status: 500
+    severity: error
+  verovio.input_missing:
+    status: 400
+    severity: error
+  verovio.builder_failed:
+    status: 500
+    severity: error
+  verovio.input_too_large:
+    status: 400
+    severity: error
+  verovio.format_unsupported:
+    status: 400
+    severity: error
+  verovio.input_invalid:
+    status: 400
+    severity: error
+  verovio.input_warning:
+    status: 200
+    severity: warning
+  verovio.pae_warning:
+    status: 200
+    severity: warning
+  verovio.query_empty:
+    status: 400
+    severity: error
+  verovio.sparql_data_missing:
+    status: 400
+    severity: error
+  verovio.file_read_failed:
+    status: 400
+    severity: error
+  verovio.result_empty:
+    status: 200
+    severity: warning
+  verovio.render_failed:
+    status: 500
+    severity: error
+  verovio.viewer_initialization_failed:
+    status: 500
+    severity: error
+  verovio.mei_export_failed:
+    status: 500
+    severity: error
+  verovio.midi_generation_failed:
+    status: 500
+    severity: error
+  verovio.playback_initialization_failed:
+    status: 500
+    severity: error
+  verovio.soundfont_load_failed:
+    status: 500
+    severity: error
+  verovio.playback_failed:
+    status: 500
+    severity: error
+  verovio.seek_failed:
+    status: 500
+    severity: error
+  verovio.compare_selection_invalid:
+    status: 400
+    severity: error
+  verovio.transposition_failed:
+    status: 500
+    severity: error

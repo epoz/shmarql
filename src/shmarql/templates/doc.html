@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% macro render_nav(items) -%}
+<ul>
+    {% for item in items %}
+    <li class="{% if item.is_section %}nav-section{% endif %}{% if item.url and item.url == current_url %} active{% endif %}">
+        {% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}<span>{{ item.title }}</span>{% endif %}
+        {% if item.children %}{{ render_nav(item.children) }}{% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro render_toc(tokens) -%}
+<ul>
+    {% for t in tokens %}
+    <li><a href="#{{ t.id }}">{{ t.name|striptags }}</a>{% if t.children %}{{ render_toc(t.children) }}{% endif %}</li>
+    {% endfor %}
+</ul>
+{%- endmacro %}
+
+{% block title %}{{ page.title }}{% if page.title != site_title %} – {{ site_title }}{% endif %}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/pygments.css">
+    {% if page.meta.description and not page.head %}<meta name="description" content="{{ page.meta.description }}">{% endif %}
+    {% if page.is_datastory %}
+    <link rel="stylesheet" href="/static/lodeon/vendor/datatables/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/MarkerCluster.css">
+    <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="/static/lodeon/styles/runtime.css">
+    <link rel="stylesheet" href="/static/lodeon/verovio/lodeon-verovio.css">
+    {{ page.head|safe }}
+    {% endif %}
+{% endblock %}
+
+{% block container_class %} container--docs{% endblock %}
+
+{% block content %}
+<div class="docs-layout">
+    {% if nav %}
+    <aside class="docs-nav">{{ render_nav(nav) }}</aside>
+    {% endif %}
+    <article class="docs-content{% if page.is_datastory %} datastory{% endif %}">
+        {{ page.html|safe }}
+    </article>
+    {% if page.toc and (page.toc|length > 1 or page.toc[0].children) %}
+    <aside class="docs-toc">{{ render_toc(page.toc) }}</aside>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/docs.js"></script>
+    {% if page.is_datastory %}
+    <script src="/static/lodeon/vendor/jquery/jquery-3.7.1.min.js"></script>
+    <script src="/static/lodeon/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/lodeon/vendor/plotly-3.7.0.min.js"></script>
+    <script src="/static/lodeon/vendor/d3-7.9.0.min.js"></script>
+    <script src="/static/lodeon/vendor/openseadragon-6.0.2.min.js"></script>
+    <script src="/static/lodeon/vendor/leaflet/leaflet.js"></script>
+    <script src="/static/lodeon/vendor/leaflet/leaflet.markercluster.js"></script>
+    <script src="/static/lodeon/scripts/runtime.js"></script>
+    <script type="module" src="/static/lodeon/verovio/lodeon-verovio.js"></script>
+    {% endif %}
+{% endblock %}

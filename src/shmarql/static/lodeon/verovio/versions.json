@@ -1,0 +1,20 @@
+{
+  "verovio": {
+    "version": "6.2.0",
+    "integrity": "sha512-yYU4CAik+ln4tdDOSLJPypQ24fiRsJtNgmgobsPnrSQYxesjwLrrPvth4mumeBRh3S20VERw9+GPXpRyhT1R4A==",
+    "bundledModuleSha256": "34106d487884ab395ddb1a98f7416fef03c60984684ac59fd86f080885f6b274"
+  },
+  "spessasynthLib": {
+    "version": "4.3.12",
+    "integrity": "sha512-74G7z9B/b6vwZNo/i3YwKiinYhJKCNdu1A0DeYTFoOPoHFqGD7tE1AvetmWZuOaxr7UukEoNt2m4O5KDFn1kuA==",
+    "workletSha256": "4a6e2bf7ca16a510841f467f4563dcf9155c328ff6eef808a508def280de709e"
+  },
+  "spessasynthCore": {
+    "version": "4.3.16",
+    "integrity": "sha512-ZEbPMeJgyuS/3lRP7l8Kvr2MYkW5gqFdPCi15GjeCgCVm/gPS2txDFdH5ouwJ/9HGQxE7NhWco/OnpznLISaaA=="
+  },
+  "soundfont": {
+    "version": "2.0.3 BETA",
+    "sha256": "e2ed326ff44d15f78f2fdc72403b6fa6b77ee7266d3aad0d2198bc95797bc66c"
+  }
+}
