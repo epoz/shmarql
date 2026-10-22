@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('menu.entity') }} – {{ site_title }}{% endblock %}
+
+{% block content %}
+<h1>{{ _('entity.lookup') }}</h1>
+<form class="entity-lookup" action="/entity" method="get">
+    <input type="url" name="uri" placeholder="https://…" required class="entity-uri-input">
+    {% if profiles|length > 1 %}
+    <select name="profile">
+        {% for p in profiles %}
+        <option value="{{ p.key }}"{% if p.default %} selected{% endif %}>{{ p.title }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+    <button type="submit" class="button-primary">{{ _('entity.lookup_button') }}</button>
+</form>
+{% endblock %}

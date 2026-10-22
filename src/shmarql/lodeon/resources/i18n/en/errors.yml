@@ -1,0 +1,2812 @@
+schemaVersion: 1
+locale: en
+namespace: errors
+messages:
+  lodeon:
+    unknown:
+      title: Something went wrong
+      detail: LODEON could not complete the requested operation.
+      hint: Please try again. If the problem persists, inspect the trace or server logs.
+    not_found:
+      title: The requested LODEON endpoint was not found
+      detail: LODEON could not find the requested API endpoint.
+      hint: Check the requested URL and try again.
+      technicalDetailTemplate: No API route matched {method} {path}
+  lodeon_problem_error:
+    invalid_code:
+      title: The LODEON problem definition is invalid
+      detail: LODEON tried to create a Problem Details response without a valid error code.
+      hint: Check the server-side error construction path.
+  api:
+    content_length_invalid:
+      title: The request body length is invalid
+      detail: LODEON could not read the request body because the Content-Length header is invalid.
+      hint: Retry the request with a valid HTTP client.
+      technicalDetailTemplate: Invalid Content-Length header for {method} {path}
+    json_invalid:
+      title: The request JSON is invalid
+      detail: LODEON could not process the request because the JSON body is invalid.
+      hint: Check the request body and try again.
+      technicalDetailTemplate: 'Invalid JSON body for {method} {path}: {externalError}'
+  tracing:
+    disabled:
+      title: Tracing was disabled
+      detail: LODEON could not initialize tracing and disabled trace recording for this operation.
+      hint: Check the tracing output directory and permissions.
+      technicalDetailTemplate: 'Tracing initialization failed with the following error: {externalError}'
+  app:
+    root_missing:
+      title: The LODEON application root is missing
+      detail: The editor could not find the HTML element where LODEON should be mounted.
+      hint: Ask an administrator to check the deployed editor page.
+    editor_host_missing:
+      title: The LODEON editor host is missing
+      detail: The editor could not find the HTML element where the story editor should be mounted.
+      hint: Ask an administrator to check the deployed editor page.
+    bootstrap_failed:
+      title: LODEON could not start
+      detail: The editor failed during application startup.
+      hint: Reload the page or ask an administrator to inspect the browser console and server logs.
+      technicalDetailTemplate: 'Application startup failed with the following error: {externalError}'
+    modal_load_failed:
+      title: The dialog content could not be loaded
+      detail: LODEON could not load the requested dialog content.
+      hint: Try again or ask an administrator to check the deployed static files.
+      technicalDetailTemplate: 'Dialog content loading failed with the following error: {externalError}'
+    config:
+      load_failed:
+        title: The LODEON configuration could not be loaded
+        detail: The editor could not load the public LODEON configuration.
+        hint: Ask an administrator to check the API and configuration files.
+        technicalDetailTemplate: 'Configuration loading failed with the following error: {externalError}'
+      invalid:
+        title: The LODEON configuration is invalid
+        detail: LODEON could not use the loaded configuration because it is invalid.
+        hint: Ask an administrator to validate the configuration files.
+        technicalDetailTemplate: 'Configuration validation failed with the following error: {externalError}'
+    renderer_engine:
+      missing:
+        title: The renderer engine is not configured
+        detail: LODEON could not find the active renderer engine configuration.
+        hint: Ask an administrator to check renderer.activeEngine and the runtime renderer mappings.
+  persistence:
+    indexeddb_unavailable:
+      title: Browser storage is unavailable
+      detail: LODEON cannot access the browser database used for local projects.
+      hint: Check browser storage permissions, private browsing settings, or site data restrictions.
+    project_load_failed:
+      title: The local project could not be loaded
+      detail: LODEON started with a new empty project because the saved browser project could not be loaded.
+      hint: Check browser storage permissions and site data.
+      technicalDetailTemplate: 'Local project loading failed with the following error: {externalError}'
+    project_save_failed:
+      title: The local project could not be saved
+      detail: LODEON could not write the current project to browser storage.
+      hint: Check available browser storage and site data permissions.
+      technicalDetailTemplate: 'Local project saving failed with the following error: {externalError}'
+    autosave_failed:
+      title: Autosave failed
+      detail: LODEON could not save the latest project changes to browser storage.
+      hint: Export the project package and check browser storage permissions.
+      technicalDetailTemplate: 'Autosave failed with the following error: {externalError}'
+    project_list_failed:
+      title: Local projects could not be listed
+      detail: LODEON could not read the list of browser-local projects.
+      hint: Check browser storage permissions and site data.
+      technicalDetailTemplate: 'Local project listing failed with the following error: {externalError}'
+    project_activate_failed:
+      title: The local project could not be opened
+      detail: LODEON could not switch to the selected browser-local project.
+      hint: Check browser storage permissions and site data.
+      technicalDetailTemplate: 'Local project activation failed with the following error: {externalError}'
+    project_delete_failed:
+      title: The local project could not be deleted
+      detail: LODEON could not delete the selected browser-local project.
+      hint: Check browser storage permissions and try again.
+      technicalDetailTemplate: 'Local project deletion failed with the following error: {externalError}'
+    asset_blob_load_failed:
+      title: Local project assets could not be loaded
+      detail: LODEON could not read browser-local media assets.
+      hint: Check browser storage permissions and site data.
+      technicalDetailTemplate: 'Local asset loading failed with the following error: {externalError}'
+    asset_blob_save_failed:
+      title: Local project assets could not be saved
+      detail: LODEON could not write browser-local media assets.
+      hint: Check available browser storage and site data permissions.
+      technicalDetailTemplate: 'Local asset saving failed with the following error: {externalError}'
+    asset_blob_delete_failed:
+      title: Local project assets could not be deleted
+      detail: LODEON could not remove browser-local media assets.
+      hint: Check browser storage permissions and try again.
+      technicalDetailTemplate: 'Local asset deletion failed with the following error: {externalError}'
+  config:
+    metadata_panel:
+      invalid:
+        title: The metadata panel configuration is invalid
+        detail: LODEON could not read the metadata panel configuration.
+        hint: Ask an administrator to check metadata.
+        technicalDetailTemplate: 'Invalid metadata panel field: {field}'
+      enabled_invalid:
+        title: The metadata panel enabled flag is invalid
+        detail: LODEON could not read whether the metadata panel is enabled.
+        hint: Ask an administrator to check metadata.enabled.
+        technicalDetailTemplate: 'Invalid metadata panel field: {field}'
+      config_file_invalid:
+        title: The metadata panel runtime file path is invalid
+        detail: LODEON could not load the configured metadata panel runtime file.
+        hint: Ask an administrator to check metadata.configFile.
+        technicalDetailTemplate: 'Invalid metadata panel field: {field}'
+      runtime_invalid:
+        title: The metadata panel runtime configuration is invalid
+        detail: LODEON could not use the metadata panel runtime configuration.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      schema_version_invalid:
+        title: The metadata panel runtime schema version is invalid
+        detail: LODEON could not use the metadata panel runtime configuration.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributors_invalid:
+        title: The metadata panel contributors configuration is invalid
+        detail: LODEON could not read the contributor configuration.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributors_enabled_invalid:
+        title: The metadata panel contributors enabled flag is invalid
+        detail: LODEON could not read whether contributors are enabled.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributor_roles_invalid:
+        title: The metadata panel contributor roles are invalid
+        detail: LODEON could not read the configured contributor roles.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributor_role_invalid:
+        title: A metadata panel contributor role is invalid
+        detail: LODEON could not read one configured contributor role.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributor_role_label_key_invalid:
+        title: A metadata panel contributor role label key is invalid
+        detail: LODEON could not read one configured contributor role label key.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      contributor_role_schema_org_property_invalid:
+        title: A metadata panel contributor role schema.org property is invalid
+        detail: LODEON could not read one configured contributor role schema.org property.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      default_contributor_role_invalid:
+        title: The metadata panel default contributor role is invalid
+        detail: LODEON could not find the configured default contributor role.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      fields_invalid:
+        title: The metadata panel fields configuration is invalid
+        detail: LODEON could not read the configured metadata fields.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      field_invalid:
+        title: A metadata panel field configuration is invalid
+        detail: LODEON could not read one configured metadata field.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+      field_enabled_invalid:
+        title: A metadata panel field enabled flag is invalid
+        detail: LODEON could not read whether one metadata field is enabled.
+        hint: Ask an administrator to check runtime/metadata-panel.yml.
+        technicalDetailTemplate: 'Invalid metadata panel runtime field: {field}'
+    knowledge_graph:
+      profile_search_invalid:
+        title: A knowledge graph search configuration is invalid
+        detail: LODEON could not read the search configuration of one knowledge graph profile.
+        hint: Ask an administrator to check the profile search configuration.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_invalid:
+        title: A knowledge graph fulltext configuration is invalid
+        detail: LODEON could not read the fulltext configuration of one knowledge graph profile.
+        hint: Ask an administrator to check the profile fulltext configuration.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_enabled_invalid:
+        title: A knowledge graph fulltext enabled flag is invalid
+        detail: LODEON could not read whether fulltext search is enabled for one knowledge graph profile.
+        hint: Set search.fullText.enabled to true or false.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_provider_invalid:
+        title: A knowledge graph fulltext provider is invalid
+        detail: LODEON could not use the configured fulltext provider of one knowledge graph profile.
+        hint: Choose an implemented fulltext provider.
+        technicalDetailTemplate: 'Invalid provider {provider} in field {field} for knowledge graph profile: {profileId}'
+      profile_fulltext_tools_invalid:
+        title: A knowledge graph fulltext tool list is invalid
+        detail: LODEON could not read the configured fulltext-enabled tools of one knowledge graph profile.
+        hint: Use only supported LODEON search tool names.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile {profileId}; supported tools: {tools}'
+      profile_fulltext_limit_invalid:
+        title: A knowledge graph fulltext limit is invalid
+        detail: LODEON could not read the default fulltext result limit of one knowledge graph profile.
+        hint: Set search.fullText.defaultLimit to a positive integer.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_min_score_invalid:
+        title: A knowledge graph fulltext minimum score is invalid
+        detail: LODEON could not read the minimum fulltext score of one knowledge graph profile.
+        hint: Use a number or null for search.fullText.minScore.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_language_invalid:
+        title: A knowledge graph fulltext language setting is invalid
+        detail: LODEON could not read the fulltext language setting of one knowledge graph profile.
+        hint: Use a non-empty language string or null.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_guidance_invalid:
+        title: A knowledge graph fulltext guidance configuration is invalid
+        detail: LODEON could not read the model guidance configuration of one knowledge graph profile.
+        hint: Ask an administrator to check search.fullText.queryGuidance.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_next_step_invalid:
+        title: A knowledge graph fulltext next-step setting is invalid
+        detail: LODEON could not read the configured fulltext next-step guidance of one knowledge graph profile.
+        hint: Choose a supported fulltext next-step value.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile {profileId}; supported values: {nextSteps}'
+      profile_fulltext_inline_invalid:
+        title: A knowledge graph fulltext inline-SPARQL setting is invalid
+        detail: LODEON could not read whether inline provider fulltext syntax is allowed in later SPARQL.
+        hint: Set search.fullText.queryGuidance.allowInlineFullTextInSparql to true or false.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_providers_invalid:
+        title: A knowledge graph fulltext provider registry is invalid
+        detail: LODEON could not read the configured fulltext provider registry of one knowledge graph profile.
+        hint: Configure provider entries under search.fullText.providers.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_fulltext_provider_config_invalid:
+        title: A knowledge graph fulltext provider entry is invalid
+        detail: LODEON could not read one fulltext provider configuration entry.
+        hint: Configure only implemented fulltext providers.
+        technicalDetailTemplate: 'Invalid provider entry {provider} in field {field} for knowledge graph profile: {profileId}'
+      profile_entity_reidentification_invalid:
+        title: A knowledge graph entity reidentification configuration is invalid
+        detail: LODEON could not read the entity reidentification configuration of one knowledge graph profile.
+        hint: Ask an administrator to check search.entityReidentification.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_entity_reidentification_enabled_invalid:
+        title: A knowledge graph entity reidentification enabled flag is invalid
+        detail: LODEON could not read whether entity reidentification is enabled for one knowledge graph profile.
+        hint: Set search.entityReidentification.enabled to true or false.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_entity_reidentification_patterns_invalid:
+        title: A knowledge graph entity reidentification pattern registry is invalid
+        detail: LODEON could not read the configured entity reidentification patterns of one knowledge graph profile.
+        hint: Configure pattern entries under search.entityReidentification.patterns.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_entity_reidentification_pattern_invalid:
+        title: A knowledge graph entity reidentification pattern is invalid
+        detail: LODEON could not read one entity reidentification pattern entry.
+        hint: Use a non-empty pattern id and a mapping object.
+        technicalDetailTemplate: 'Invalid pattern {patternId} in field {field} for knowledge graph profile: {profileId}'
+      profile_entity_reidentification_pattern_type_invalid:
+        title: A knowledge graph entity reidentification pattern type is invalid
+        detail: LODEON could not read one entity reidentification pattern type.
+        hint: Use a supported entity reidentification pattern type.
+        technicalDetailTemplate: 'Invalid pattern {patternId} in field {field} for knowledge graph profile: {profileId}'
+      profile_entity_reidentification_pattern_field_invalid:
+        title: A knowledge graph entity reidentification pattern field is invalid
+        detail: LODEON could not read one required field of an entity reidentification pattern.
+        hint: Configure label, anchorVariable, nodeVariable, and sparqlPattern.
+        technicalDetailTemplate: 'Invalid pattern {patternId} in field {field} for knowledge graph profile: {profileId}'
+      profile_graph_explorer_invalid:
+        title: A knowledge graph explorer configuration is invalid
+        detail: LODEON could not read the graph explorer configuration of one knowledge graph profile.
+        hint: Ask an administrator to check the graphExplorer profile configuration.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_enabled_invalid:
+        title: A knowledge graph explorer enabled flag is invalid
+        detail: LODEON could not read whether graph exploration is enabled for one knowledge graph profile.
+        hint: Set graphExplorer.enabled to true or false.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_list_invalid:
+        title: A knowledge graph explorer property list is invalid
+        detail: LODEON could not read one configured graph explorer property list.
+        hint: Use a list of non-empty IRI strings.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_direction_invalid:
+        title: A knowledge graph explorer direction is invalid
+        detail: LODEON could not read the configured graph traversal direction.
+        hint: Choose a supported graph explorer direction.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile {profileId}; supported values: {directions}'
+      profile_graph_explorer_limit_invalid:
+        title: A knowledge graph explorer limit is invalid
+        detail: LODEON could not read one configured graph explorer limit.
+        hint: Use positive integers for graph explorer limits.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_boolean_invalid:
+        title: A knowledge graph explorer option is invalid
+        detail: LODEON could not read one configured graph explorer boolean option.
+        hint: Set graph explorer options to true or false.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_result_mapping_invalid:
+        title: A knowledge graph explorer result mapping is invalid
+        detail: LODEON could not read the SPARQL result mapping for graph explorer start resources.
+        hint: Configure resultMapping.iri and resultMapping.label as lists of variable names.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_color_scheme_invalid:
+        title: A knowledge graph explorer color scheme is invalid
+        detail: LODEON could not read one configured graph explorer color scheme.
+        hint: Configure defaultColorScheme and colorSchemes with nodeColors iri, blank, literal and edgeColors default.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      profile_graph_explorer_node_popup_invalid:
+        title: A knowledge graph explorer node popup configuration is invalid
+        detail: LODEON could not read the configured graph explorer node popup metadata.
+        hint: Configure nodePopup with enabled, typeLabelProperties, and property definitions containing id, label, predicate, link, and maxValues.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+    auth:
+      methods_invalid:
+        title: The authentication methods are invalid
+        detail: LODEON could not start because the resolved authentication method configuration is invalid.
+        hint: Configure at least one valid login method when authentication is enabled.
+        technicalDetailTemplate: 'Invalid authentication method field: {field}'
+      token_credential_invalid:
+        title: A token credential is invalid
+        detail: LODEON could not start because a named token credential is incomplete or its secret is unavailable.
+        hint: Check the credential id, tokenEnv reference, groups, and injected environment secret.
+        technicalDetailTemplate: 'Invalid token credential field: {field}'
+      bearer_credential_invalid:
+        title: A Bearer credential is invalid
+        detail: LODEON could not start because a named machine credential is incomplete or its secret is unavailable.
+        hint: Check the credential id, tokenEnv reference, groups, and injected environment secret.
+        technicalDetailTemplate: 'Invalid Bearer credential field: {field}'
+      external_provider_invalid:
+        title: An external login provider is invalid
+        detail: LODEON could not start because an external login provider configuration is invalid.
+        hint: Check the provider protocol, endpoints, client secret, scopes, claim mappings, and optional icon.
+        technicalDetailTemplate: 'Invalid external login provider field: {field}'
+      access_policy_invalid:
+        title: An authentication access policy is invalid
+        detail: LODEON could not start because a group-based access policy has the wrong structure.
+        hint: Use a non-empty allowedGroups list only with enabled authentication.
+        technicalDetailTemplate: 'Invalid authentication access policy field: {field}'
+    renderer:
+      invalid:
+        title: The renderer configuration is invalid
+        detail: LODEON could not load the active renderer engine configuration.
+        hint: Ask an administrator to check config/runtime/renderers.yml and local renderer overrides.
+        technicalDetailTemplate: 'Invalid renderer configuration field: {field}'
+      active_engine_invalid:
+        title: The active renderer engine is invalid
+        detail: LODEON could not load the renderer configuration because renderer.activeEngine is invalid.
+        hint: Set renderer.activeEngine to a configured renderer engine id.
+        technicalDetailTemplate: 'Invalid renderer configuration field: {field}'
+      engines_file_invalid:
+        title: The renderer engines file is invalid
+        detail: LODEON could not load the renderer configuration because renderer.enginesFile is invalid.
+        hint: Set renderer.enginesFile to a safe runtime renderer configuration path.
+        technicalDetailTemplate: 'Invalid renderer configuration field: {field}'
+      engines_invalid:
+        title: The renderer engines configuration is invalid
+        detail: LODEON could not load the renderer configuration because the engines section is missing or invalid.
+        hint: Check the configured runtime renderer file.
+        technicalDetailTemplate: 'Invalid renderer engines field: {field}'
+      active_engine_unknown:
+        title: The active renderer engine is not configured
+        detail: LODEON could not find the configured active renderer engine.
+        hint: Add the active renderer engine to the runtime renderer configuration or select another engine.
+        technicalDetailTemplate: 'Unknown renderer engine: {activeEngine}'
+      engine_id_invalid:
+        title: A renderer engine ID is invalid
+        detail: LODEON could not load the renderer configuration because an engine id is invalid.
+        hint: Use non-empty renderer engine ids.
+      engine_invalid:
+        title: A renderer engine is invalid
+        detail: LODEON could not load the renderer configuration because an engine has the wrong structure.
+        hint: Check the renderer engine configuration.
+        technicalDetailTemplate: 'Invalid renderer engine: {engineId}'
+      metadata_invalid:
+        title: Renderer metadata configuration is invalid
+        detail: LODEON could not load renderer metadata configuration.
+        hint: Check renderer metadata mappings.
+        technicalDetailTemplate: Invalid renderer metadata configuration for {engineId}
+      metadata_jsonld_invalid:
+        title: Renderer JSON-LD configuration is invalid
+        detail: LODEON could not load renderer JSON-LD metadata configuration.
+        hint: Check renderer metadata JSON-LD mappings.
+        technicalDetailTemplate: Invalid renderer JSON-LD configuration for {engineId}
+      metadata_jsonld_type_missing:
+        title: Renderer JSON-LD type is missing
+        detail: LODEON could not load renderer JSON-LD metadata configuration because the type is missing.
+        hint: Configure the JSON-LD schema.org type.
+        technicalDetailTemplate: Missing renderer JSON-LD type for {engineId}
+      metadata_jsonld_properties_invalid:
+        title: Renderer JSON-LD properties are invalid
+        detail: LODEON could not load renderer JSON-LD metadata configuration because properties are invalid.
+        hint: Configure JSON-LD properties as an object.
+        technicalDetailTemplate: Invalid renderer JSON-LD properties for {engineId}
+      mapping_group_invalid:
+        title: A renderer mapping group is invalid
+        detail: LODEON could not load renderer mappings because a mapping group has the wrong structure.
+        hint: Check formatMappings, containerMappings, and specialNodeMappings.
+        technicalDetailTemplate: Invalid renderer mapping group {group} for {engineId}
+      mapping_id_invalid:
+        title: A renderer mapping ID is invalid
+        detail: LODEON could not load renderer mappings because a mapping id is invalid.
+        hint: Use non-empty renderer mapping ids.
+        technicalDetailTemplate: Invalid renderer mapping id in {engineId}.{group}
+      mapping_invalid:
+        title: A renderer mapping is invalid
+        detail: LODEON could not load renderer mappings because a mapping has the wrong structure.
+        hint: Check the affected renderer mapping.
+        technicalDetailTemplate: Invalid renderer mapping {engineId}.{group}.{mappingId}
+      mapping_strategy_missing:
+        title: A renderer mapping strategy is missing
+        detail: LODEON could not load renderer mappings because a mapping strategy is missing.
+        hint: Configure a supported renderer mapping strategy.
+        technicalDetailTemplate: Missing renderer mapping strategy for {engineId}.{group}.{mappingId}
+      mapping_strategy_unsupported:
+        title: A renderer mapping strategy is unsupported
+        detail: LODEON could not load renderer mappings because a mapping strategy is not supported.
+        hint: Use a supported renderer mapping strategy for the mapping group.
+        technicalDetailTemplate: 'Unsupported renderer mapping strategy for {engineId}.{group}.{mappingId}: {strategy}'
+      mapping_strategy_engine_unsupported:
+        title: A renderer mapping strategy is not supported by this engine
+        detail: LODEON could not load renderer mappings because a strategy is only supported by another renderer engine.
+        hint: Use an engine-compatible mapping strategy.
+        technicalDetailTemplate: 'Renderer mapping strategy not supported by {engineId}: {strategy}'
+      template_directory_missing:
+        title: A renderer template directory is missing
+        detail: LODEON could not load renderer mappings because a template mapping has no renderer template directory.
+        hint: Configure templateDirectory for the active renderer engine.
+        technicalDetailTemplate: Missing renderer template directory for {engineId}.{group}.{mappingId}
+      template_directory_invalid:
+        title: A renderer template directory is invalid
+        detail: LODEON could not load renderer mappings because a renderer template directory is invalid.
+        hint: Use a relative templateDirectory inside the active configuration package.
+        technicalDetailTemplate: 'Invalid renderer template directory for {engineId}.{field}: {path}'
+      mapping_template_invalid:
+        title: A renderer mapping template is invalid
+        detail: LODEON could not load renderer mappings because a template mapping has no valid template path.
+        hint: Configure a relative template path inside the active renderer template directory.
+        technicalDetailTemplate: 'Invalid renderer mapping template for {engineId}.{group}.{mappingId}.{field}: {path}'
+      mapping_template_missing:
+        title: A renderer mapping template is missing
+        detail: LODEON could not load renderer mappings because a configured template file was not found.
+        hint: Add the template file under the active renderer template directory.
+        technicalDetailTemplate: 'Missing renderer mapping template for {engineId}.{group}.{mappingId}: {template}'
+      template_file_read_failed:
+        title: A renderer template file could not be read
+        detail: LODEON could not load renderer mappings because a renderer template file could not be read.
+        hint: Check the template file permissions and encoding.
+        technicalDetailTemplate: 'Renderer template read failed for {engineId}.{template}: {externalError}'
+    editor:
+      invalid:
+        title: The editor configuration is invalid
+        detail: LODEON could not load the editor configuration.
+        hint: Ask an administrator to check the editor section in the configuration.
+        technicalDetailTemplate: 'Invalid editor configuration field: {field}'
+    localization:
+      invalid:
+        title: The localization configuration is invalid
+        detail: LODEON could not load the localization configuration.
+        hint: Ask an administrator to check the localization section in the configuration.
+        technicalDetailTemplate: 'Invalid localization configuration field: {field}'
+      locale_invalid:
+        title: A configured localization locale is invalid
+        detail: LODEON could not load the localization configuration because a locale is invalid.
+        hint: Set localization.activeLocale and localization.fallbackLocale to non-empty locale identifiers.
+        technicalDetailTemplate: 'Invalid localization locale field: {field}'
+      messages_directory_invalid:
+        title: The localization directory is invalid
+        detail: LODEON could not load the localization configuration because the configured directory is invalid.
+        hint: Set localization.messagesDirectory to a safe relative Runtime localization directory.
+        technicalDetailTemplate: 'Invalid localization messages directory field: {field}'
+      locale_directory_missing:
+        title: The localization locale directory is missing
+        detail: LODEON could not load localization resources because a locale directory is missing.
+        hint: Create the configured locale directory below the localization runtime directory.
+        technicalDetailTemplate: 'Missing localization locale directory for {locale}: {path}'
+      defaults_missing:
+        title: No default localization resources were found
+        detail: LODEON could not load localization resources because the locale has no default namespace files.
+        hint: Add versioned *.yml namespace files for the configured locale.
+        technicalDetailTemplate: 'Missing default localization namespace files for {locale}: {path}'
+      namespace_duplicate:
+        title: A localization namespace is duplicated
+        detail: LODEON could not load localization resources because a namespace is defined more than once.
+        hint: Ensure that each localization namespace appears only once per locale.
+        technicalDetailTemplate: 'Duplicate localization namespace {namespace}: {path}'
+      namespace_file_invalid:
+        title: A localization namespace file name is invalid
+        detail: LODEON could not load a localization namespace file because its filename is invalid.
+        hint: Use lowercase namespace files ending in .yml.
+        technicalDetailTemplate: 'Invalid localization namespace filename: {path}'
+      resource_invalid:
+        title: A localization resource is invalid
+        detail: LODEON could not load a localization resource because the file does not contain a valid object.
+        hint: Check the localization YAML file.
+        technicalDetailTemplate: 'Invalid localization resource: {path}'
+      schema_version_invalid:
+        title: A localization resource schema version is invalid
+        detail: LODEON could not load a localization resource because its schema version is unsupported.
+        hint: Set schemaVersion to 1.
+        technicalDetailTemplate: 'Invalid localization schema version: {path}'
+      resource_locale_invalid:
+        title: A localization resource locale is invalid
+        detail: LODEON could not load a localization resource because its locale does not match the locale directory.
+        hint: Set the resource locale to the locale directory name.
+        technicalDetailTemplate: 'Invalid localization locale for {locale}: {path}'
+      namespace_invalid:
+        title: A localization namespace is invalid
+        detail: LODEON could not load a localization resource because its namespace does not match the filename.
+        hint: Set the namespace to the filename without .yml.
+        technicalDetailTemplate: 'Invalid localization namespace {namespace}: {path}'
+      messages_invalid:
+        title: A localization messages tree is invalid
+        detail: LODEON could not load a localization resource because its messages section is invalid.
+        hint: Set messages to an object containing i18next-compatible message ids.
+        technicalDetailTemplate: 'Invalid localization messages tree for {namespace}: {path}'
+      metadata_invalid:
+        title: A localization metadata tree is invalid
+        detail: LODEON could not load a localization resource because its metadata section is invalid.
+        hint: Set metadata to an object or remove it.
+        technicalDetailTemplate: 'Invalid localization metadata tree for {namespace}: {path}'
+      message_tree_invalid:
+        title: A localization message tree is invalid
+        detail: LODEON could not load localization messages because a nested message tree is invalid.
+        hint: Use string leaves or nested objects in localization message trees.
+        technicalDetailTemplate: 'Invalid localization message tree {namespace}:{messageId}: {path}'
+      message_key_invalid:
+        title: A localization message key is invalid
+        detail: LODEON could not load localization messages because a message key is invalid.
+        hint: Use non-empty string keys in localization message trees.
+        technicalDetailTemplate: 'Invalid localization message key {namespace}:{messageId}: {path}'
+      message_value_invalid:
+        title: A localization message value is invalid
+        detail: LODEON could not load localization messages because a message value is invalid.
+        hint: Use string leaves or nested objects in localization message trees.
+        technicalDetailTemplate: 'Invalid localization message value {namespace}:{messageId}: {path}'
+    rich_text:
+      invalid:
+        title: The rich-text configuration is invalid
+        detail: LODEON could not load the rich-text authoring configuration.
+        hint: Ask an administrator to check config/runtime/rich-text.yml and local rich-text overrides.
+        technicalDetailTemplate: 'Invalid rich-text configuration field: {field}'
+      config_file_invalid:
+        title: The rich-text configuration file is invalid
+        detail: LODEON could not load the rich-text authoring configuration because the configured runtime file is invalid.
+        hint: Set editor.richText.configFile to a safe runtime rich-text configuration path.
+        technicalDetailTemplate: 'Invalid rich-text configuration field: {field}'
+    runtime_path:
+      invalid:
+        title: A runtime configuration path is invalid
+        detail: LODEON could not load a runtime configuration file because the path is unsafe.
+        hint: Use safe relative runtime configuration paths.
+        technicalDetailTemplate: 'Invalid runtime configuration path: {path}'
+    prompts:
+      invalid:
+        title: The prompt configuration is invalid
+        detail: LODEON could not load the configured prompt registry or prompt files.
+        hint: Ask an administrator to check runtime and profile prompt files.
+    followups:
+      invalid:
+        title: The follow-up configuration is invalid
+        detail: LODEON could not load the configured follow-up registry or Gherkin rules.
+        hint: Ask an administrator to check runtime and profile follow-up files.
+    errors:
+      invalid:
+        title: The error-message configuration is invalid
+        detail: LODEON could not load the configured error-message registry.
+        hint: Ask an administrator to check config/runtime/errors/*.yml.
+      root_missing:
+        title: The error-message registry directory is missing
+        detail: LODEON could not load the configured error-message registry because the registry directory does not exist.
+        hint: Ask an administrator to check config/runtime/errors/.
+        technicalDetailTemplate: 'Missing error registry directory: {path}'
+      defaults_missing:
+        title: No default error-message registries were found
+        detail: LODEON could not load the configured error-message registry because no default registry files were found.
+        hint: Ask an administrator to check config/runtime/errors/*.yml.
+        technicalDetailTemplate: 'No default error registries found in: {path}'
+      duplicate_code:
+        title: An error-message code is duplicated
+        detail: LODEON could not load the configured error-message registry because an error code is defined more than once.
+        hint: Remove duplicate error-code definitions from runtime error registries.
+        technicalDetailTemplate: 'Duplicate error code: {errorCode}'
+      registry_invalid:
+        title: An error-message registry is invalid
+        detail: LODEON could not load an error-message registry because it has the wrong structure.
+        hint: Check the YAML structure of the runtime error registry.
+        technicalDetailTemplate: 'Invalid error registry file: {path}'
+      schema_version_invalid:
+        title: An error-message registry version is unsupported
+        detail: LODEON could not load an error-message registry because its schema version is unsupported.
+        hint: Use the current error registry schema version.
+        technicalDetailTemplate: 'Invalid error registry schema version in: {path}'
+      namespace_invalid:
+        title: An error-message registry namespace is invalid
+        detail: LODEON could not load an error-message registry because its namespace is missing or invalid.
+        hint: Add a valid namespace to the runtime error registry.
+        technicalDetailTemplate: 'Invalid error registry namespace in: {path}'
+      defaults_invalid:
+        title: Error-message registry defaults are invalid
+        detail: LODEON could not load an error-message registry because the defaults section has the wrong structure.
+        hint: Check the defaults section of the runtime error registry.
+        technicalDetailTemplate: 'Invalid error registry defaults in: {path}'
+      errors_missing:
+        title: An error-message registry has no errors
+        detail: LODEON could not load an error-message registry because it does not define any errors.
+        hint: Add an errors section to the runtime error registry.
+        technicalDetailTemplate: 'Missing error definitions in: {path}'
+      code_invalid:
+        title: An error-message code is invalid
+        detail: LODEON could not load an error-message registry because an error code is invalid.
+        hint: Use stable dotted error codes.
+        technicalDetailTemplate: 'Invalid error code in registry: {path}'
+      definition_invalid:
+        title: An error-message definition is invalid
+        detail: LODEON could not load an error-message registry because an error definition has the wrong structure.
+        hint: Check the affected error definition.
+        technicalDetailTemplate: 'Invalid error definition {errorCode} in: {path}'
+      required_fields_missing:
+        title: An error-message definition is incomplete
+        detail: LODEON could not load an error-message registry because an error definition misses required fields.
+        hint: Add title, detail, and hint to every error definition.
+        technicalDetailTemplate: 'Error definition {errorCode} in {path} misses fields: {fields}'
+      field_required:
+        title: An error-message field is required
+        detail: LODEON could not load an error-message registry because a required field is empty.
+        hint: Fill all required error-message fields.
+        technicalDetailTemplate: 'Required error-message field is empty: {field}'
+      status_invalid:
+        title: An error-message HTTP status is invalid
+        detail: LODEON could not load an error-message registry because an HTTP status is invalid.
+        hint: Use HTTP status values from 100 to 599.
+        technicalDetailTemplate: Invalid error-message HTTP status for {errorCode}
+      severity_invalid:
+        title: An error-message severity is invalid
+        detail: LODEON could not load an error-message registry because a severity value is invalid.
+        hint: Use info, warning, or error.
+        technicalDetailTemplate: 'Invalid error-message severity for {errorCode}: {severity}'
+      show_technical_invalid:
+        title: An error-message technical-detail flag is invalid
+        detail: LODEON could not load an error-message registry because showTechnicalDetail is invalid.
+        hint: Use a boolean showTechnicalDetail value.
+        technicalDetailTemplate: Invalid showTechnicalDetail value for {errorCode}
+      unknown_fields:
+        title: An error-message definition has unknown fields
+        detail: LODEON could not load an error-message registry because unknown fields were configured.
+        hint: Remove unsupported fields from error-message definitions.
+        technicalDetailTemplate: 'Unknown fields in {path} {label}: {fields}'
+      technical_template_invalid:
+        title: An error-message technical-detail template is invalid
+        detail: LODEON could not load an error-message registry because a technical detail template is invalid.
+        hint: Use a non-empty string for technicalDetailTemplate.
+        technicalDetailTemplate: Invalid technicalDetailTemplate in {path} {label}
+      unknown_missing:
+        title: The fallback error-message definition is missing
+        detail: LODEON could not load an error-message registry because lodeon.unknown is missing.
+        hint: Define lodeon.unknown in the runtime error registry.
+    yaml:
+      invalid:
+        title: A YAML configuration file is invalid
+        detail: LODEON could not load a configuration file because it does not contain a YAML object.
+        hint: Check the YAML configuration file.
+        technicalDetailTemplate: 'Invalid YAML configuration file: {path}'
+    verovio:
+      invalid:
+        title: The Verovio configuration is invalid
+        detail: LODEON cannot initialize music-notation features because the runtime configuration is incomplete or invalid.
+        hint: Correct the Verovio section in the active configuration package.
+        technicalDetailTemplate: 'Invalid Verovio configuration field: {field}'
+  graph_explorer:
+    request_invalid:
+      title: The graph explorer request is invalid
+      detail: LODEON could not process the graph explorer expansion request.
+      hint: Check the submitted graph explorer settings and try again.
+    profile_required:
+      title: A knowledge graph profile is required
+      detail: LODEON cannot expand graph nodes without a knowledge graph profile.
+      hint: Select a configured knowledge graph profile and try again.
+    profile_disabled:
+      title: Graph exploration is not enabled for this profile
+      detail: The selected knowledge graph profile does not allow graph explorer expansion.
+      hint: Ask an administrator to enable graphExplorer for this profile.
+      technicalDetailTemplate: 'Graph explorer is disabled for knowledge graph profile: {profileId}'
+    iris_required:
+      title: At least one start resource is required
+      detail: LODEON cannot expand an empty graph explorer request.
+      hint: Enter one or more start IRIs, blank node labels, or run a SPARQL query that returns resources.
+    iris_invalid:
+      title: The start resources are invalid
+      detail: LODEON could not read the submitted graph explorer start resources.
+      hint: Submit start resources as a string or as a list of IRI or blank node label strings.
+    iri_invalid:
+      title: A start resource is invalid
+      detail: LODEON cannot expand one submitted graph explorer start resource.
+      hint: Use absolute http, https, or urn IRIs, or blank node labels such as _:blankNode1.
+      technicalDetailTemplate: 'Invalid graph explorer start resource: {iri}'
+    direction_invalid:
+      title: The graph explorer direction is invalid
+      detail: LODEON could not read the requested graph traversal direction.
+      hint: Choose a supported graph explorer direction.
+      technicalDetailTemplate: 'Supported graph explorer directions: {directions}'
+    limit_invalid:
+      title: A graph explorer limit is invalid
+      detail: LODEON could not read one requested graph explorer limit.
+      hint: Use positive integers for graph explorer request limits.
+      technicalDetailTemplate: 'Invalid graph explorer request field: {field}'
+    sparql_failed:
+      title: The graph explorer SPARQL request failed
+      detail: LODEON could not expand the graph because the SPARQL request failed.
+      hint: Check the selected knowledge graph profile and try again.
+      technicalDetailTemplate: 'Graph explorer SPARQL failed with status {statusCode}: {externalError}'
+    sparql_result_invalid:
+      title: The graph explorer SPARQL result is invalid
+      detail: LODEON could not read the SPARQL result returned for graph expansion.
+      hint: Check that the endpoint returns SPARQL JSON results.
+      technicalDetailTemplate: 'Graph explorer SPARQL result parsing failed: {reason}{externalError}'
+  auth:
+    required:
+      title: Authentication is required
+      detail: You need to be signed in before using this LODEON function.
+      hint: Sign in and try again.
+    model_access_denied:
+      title: Model access is not permitted
+      detail: Your current LODEON session cannot use the selected model.
+      hint: Select an available model or contact the instance operator.
+    bearer_required:
+      title: Machine Bearer authentication is required
+      detail: This Virtual Model request requires a configured Machine Bearer credential.
+      hint: Send the credential in the Authorization header using the Bearer scheme.
+    invalid_bearer:
+      title: The Machine Bearer credential is invalid
+      detail: LODEON could not authenticate the supplied Machine Bearer credential.
+      hint: Check the configured credential and try again.
+    knowledge_graph_access_denied:
+      title: Knowledge Graph access is not permitted
+      detail: Your current LODEON session cannot use the selected Knowledge Graph.
+      hint: Select an available Knowledge Graph or contact the instance operator.
+    publish_access_denied:
+      title: Publishing is not permitted
+      detail: Your current LODEON session is not permitted to publish stories.
+      hint: Contact the instance operator if you require publishing access.
+    invalid_token:
+      title: The login token is invalid
+      detail: LODEON could not authenticate the submitted login token.
+      hint: Check the token and try again.
+    token_required:
+      title: An access token is required
+      detail: LODEON cannot log in without an access token.
+      hint: Enter the access token and try again.
+    login_failed:
+      title: Login failed
+      detail: LODEON could not complete the login request.
+      hint: Check the token and try again.
+      technicalDetailTemplate: 'Login failed with the following error: {externalError}'
+    login_payload_invalid:
+      title: The login request is invalid
+      detail: LODEON could not process the login request because the payload has the wrong structure.
+      hint: Submit a login request with an access token.
+      technicalDetailTemplate: Invalid login request payload for {field}
+    external:
+      provider_not_found:
+        title: The external login provider is unavailable
+        detail: LODEON could not find an enabled external login provider for this request.
+        hint: Return to the login screen and select one of the available providers.
+      flow_invalid:
+        title: The external login flow is invalid
+        detail: LODEON could not continue the external login because its protected flow state is invalid or expired.
+        hint: Return to the login screen and start a new external login.
+      provider_failed:
+        title: The external login provider failed
+        detail: LODEON could not complete the configured external provider request.
+        hint: Try again later or contact the instance operator.
+        technicalDetailTemplate: External provider failure for {providerId} during {operation}
+      identity_invalid:
+        title: The external identity is invalid
+        detail: LODEON could not obtain the configured subject and group information from the external provider.
+        hint: Contact the instance operator to check the configured identity mappings.
+        technicalDetailTemplate: Invalid external identity mapping for {providerId} at {field}
+      exchange_invalid:
+        title: The external login exchange is invalid
+        detail: LODEON could not create a session because the login exchange is invalid, expired, or already used.
+        hint: Return to the login screen and start a new external login.
+  virtual_model:
+    not_found:
+      title: Virtual Model not found
+      detail: LODEON could not find the requested Virtual Model.
+      hint: Check the configured Virtual Model id.
+    request_invalid:
+      title: The Virtual Model request is invalid
+      detail: LODEON could not process the supplied Virtual Model request.
+      hint: Check the supported API request structure and try again.
+    request_fields_invalid:
+      title: The Virtual Model request contains unsupported fields
+      detail: LODEON accepts only the documented fields for this Virtual Model endpoint.
+      hint: Remove unsupported generation, Tool, profile, or provider settings and try again.
+      technicalDetailTemplate: 'Unsupported Virtual Model request fields: {unexpected}'
+    model_required:
+      title: A Virtual Model id is required
+      detail: LODEON cannot execute a Virtual Model request without a Virtual Model id.
+      hint: Select an id returned by the Models endpoint.
+    stream_invalid:
+      title: The stream setting is invalid
+      detail: The Virtual Model stream field must be true or false.
+      hint: Use false for a non-streaming request.
+    streaming_unsupported:
+      title: Streaming is not supported on this endpoint
+      detail: LODEON currently returns a completed response after the Assistant turn finishes.
+      hint: Set stream to false or omit it. Use AG-UI for progress events when that endpoint is available.
+    storage_unsupported:
+      title: Stored Responses are not supported
+      detail: LODEON processes Virtual Model requests without storing an OpenAI Response resource.
+      hint: Set store to false or omit it.
+  sparnatural:
+    profile_unavailable:
+      title: The Sparnatural profile is unavailable
+      detail: LODEON could not load the configured Sparnatural profile document.
+      hint: Check the Knowledge Graph profile artifact configuration.
+  storage:
+    indexeddb_unavailable:
+      title: Browser storage is not available
+      detail: LODEON could not access IndexedDB in this browser.
+      hint: Check browser privacy settings, storage permissions, or try another browser.
+    autosave_failed:
+      title: Autosave failed
+      detail: LODEON could not save the current project state in browser storage.
+      hint: Export the project package and check browser storage permissions.
+  project:
+    export_failed:
+      title: Project export failed
+      detail: LODEON could not create the project export package.
+      hint: Try again. If the project contains large assets, check browser memory and storage.
+      technicalDetailTemplate: 'Project export failed with the following error: {externalError}'
+    import:
+      invalid_package_format:
+        title: Unsupported project package format
+        detail: The selected file is not a supported LODEON project package.
+        hint: Import a .lodeon.zip or .lodeon.json file exported by LODEON.
+        technicalDetailTemplate: 'Project package format validation failed with the following error: {reason}'
+      unsupported_package_version:
+        title: Unsupported project package version
+        detail: The selected LODEON project package uses an unsupported package version.
+        hint: Export the project again with the current LODEON version.
+        technicalDetailTemplate: 'Project package version validation failed with the following error: {version}'
+      invalid_package:
+        title: Invalid LODEON project package
+        detail: The selected file has the expected package type, but the project data is invalid.
+        hint: Check that the package contains a valid project.lodeon.json file.
+        technicalDetailTemplate: 'Project package validation failed with the following error: {reason}'
+      missing_project_entry:
+        title: The project package is incomplete
+        detail: The ZIP package does not contain project.lodeon.json.
+        hint: Import a complete .lodeon.zip package exported by LODEON.
+        technicalDetailTemplate: 'Project package entry validation failed with the following error: {entry}'
+      missing_document:
+        title: The project document is missing
+        detail: The project package does not contain a valid editable ProseMirror document.
+        hint: Import a complete LODEON project package.
+        technicalDetailTemplate: 'Project document validation failed with the following error: {reason}'
+      file_read_failed:
+        title: The selected file could not be read
+        detail: LODEON could not read the selected import file.
+        hint: Check the file and try again.
+        technicalDetailTemplate: 'Project import file reading failed with the following error: {externalError}'
+    welcome_story_unavailable:
+      title: The Welcome Story is unavailable
+      detail: This LODEON installation does not provide a Welcome Story.
+      hint: Start a new project or ask an administrator to check the package configuration.
+    welcome_story_load_failed:
+      title: The Welcome Story could not be loaded
+      detail: LODEON started with a new empty project because the configured Welcome Story could not be loaded.
+      hint: Start a new project or ask an administrator to check the package configuration.
+      technicalDetailTemplate: 'Welcome Story loading failed with the following error: {externalError}'
+  preview:
+    login_required:
+      title: Login is required for preview
+      detail: You need to be signed in before rendering a preview.
+      hint: Sign in and try again.
+    rate_limit_exceeded:
+      title: Too many preview requests
+      detail: LODEON received too many preview requests in a short time.
+      hint: Wait a moment before rendering the next preview.
+    render_failed:
+      title: Preview rendering failed
+      detail: LODEON could not render the current story preview.
+      hint: Check the story content, special nodes, and renderer configuration.
+      technicalDetailTemplate: 'Preview rendering failed with the following error: {externalError}'
+    payload_too_large:
+      title: The preview payload is too large
+      detail: The preview request exceeds the configured deployment limit.
+      hint: Reduce local media asset sizes or ask an administrator to increase the gateway request body limit.
+      technicalDetailTemplate: 'Preview payload validation failed with the following error: {externalError}'
+    cleanup_failed:
+      title: Preview cleanup failed
+      detail: LODEON could not remove a temporary preview artefact.
+      hint: This does not affect the current story. Ask an administrator to inspect the renderer if it persists.
+      technicalDetailTemplate: 'Preview cleanup failed with the following error: {externalError}'
+    not_found:
+      title: Preview not found
+      detail: The requested preview artefact could not be found.
+      hint: Render a new preview.
+    invalid_request:
+      title: Invalid preview request
+      detail: LODEON could not process the preview request.
+      hint: Try rendering the preview again.
+      technicalDetailTemplate: 'Preview request validation failed with the following error: {reason}'
+  publish:
+    login_required:
+      title: Login is required for publishing
+      detail: You need to be signed in before publishing a story.
+      hint: Sign in and try again.
+    failed:
+      title: Publishing failed
+      detail: LODEON could not publish the current story.
+      hint: Check the story content, special nodes, and renderer configuration.
+      technicalDetailTemplate: 'Publishing failed with the following error: {externalError}'
+    payload_too_large:
+      title: The publish payload is too large
+      detail: The publish request exceeds the configured deployment limit.
+      hint: Reduce local media asset sizes or ask an administrator to increase the gateway request body limit.
+      technicalDetailTemplate: 'Publish payload validation failed with the following error: {externalError}'
+    invalid_request:
+      title: Invalid publish request
+      detail: LODEON could not process the publish request.
+      hint: Check the story slug, metadata, assets, and renderer configuration.
+      technicalDetailTemplate: 'Publish request validation failed with the following error: {reason}'
+  renderer:
+    not_found:
+      title: Renderer resource not found
+      detail: The renderer could not find the requested resource.
+      hint: Render or publish the story again.
+      technicalDetailTemplate: 'The renderer could not find the requested resource: {path}'
+    build_failed:
+      title: Renderer build failed
+      detail: The renderer could not build the requested preview or published story.
+      hint: Check the renderer output, Markdown, special nodes, and MkDocs/Shmarql configuration.
+      technicalDetailTemplate: 'Renderer build failed with the following error: {externalError}'
+    markdown_empty:
+      title: The story Markdown is empty
+      detail: The renderer received an empty Markdown document.
+      hint: Add story content before previewing or publishing.
+    invalid_target:
+      title: The render target is invalid
+      detail: The renderer rejected the requested preview or publish target.
+      hint: Check the story slug and render request.
+      technicalDetailTemplate: 'Renderer target validation failed with the following error: {reason}'
+    asset_payload_invalid:
+      title: The asset payload is invalid
+      detail: The renderer received invalid asset data.
+      hint: Check local media assets and try again.
+      technicalDetailTemplate: 'Renderer asset payload validation failed with the following error: {reason}'
+    asset_path_invalid:
+      title: The asset path is invalid
+      detail: The renderer rejected an asset path in the preview or publish request.
+      hint: Local story assets must use supported story asset paths.
+      technicalDetailTemplate: 'Renderer asset path validation failed with the following error: {reason}'
+  sparql:
+    request_invalid:
+      title: The SPARQL request is invalid
+      detail: LODEON could not process the SPARQL request.
+      hint: Check the selected knowledge graph profile and query.
+      technicalDetailTemplate: 'SPARQL request validation failed with the following error: {reason}'
+    profile_required:
+      title: A knowledge graph profile is required
+      detail: LODEON needs a knowledge graph profile before it can execute this SPARQL query.
+      hint: Select a knowledge graph profile and try again.
+    query_required:
+      title: A SPARQL query is required
+      detail: LODEON cannot execute an empty SPARQL request.
+      hint: Enter a SELECT, ASK, CONSTRUCT, or DESCRIBE query.
+    not_read_only:
+      title: The SPARQL query is not read-only
+      detail: LODEON only allows read-only SPARQL queries.
+      hint: Use SELECT, ASK, CONSTRUCT, or DESCRIBE. SERVICE clauses are allowed, but update operations are blocked.
+      technicalDetailTemplate: 'SPARQL read-only validation failed with the following error: {reason}'
+    endpoint_failed:
+      title: The knowledge graph endpoint did not answer
+      detail: LODEON could not retrieve data from the selected knowledge graph endpoint.
+      hint: Try again later or ask an administrator to check the knowledge graph profile and endpoint.
+      technicalDetailTemplate: 'The knowledge graph endpoint failed with the following error: {externalError}'
+    response_invalid:
+      title: The SPARQL endpoint returned an invalid response
+      detail: LODEON received a response that could not be interpreted as SPARQL results.
+      hint: Try again or ask an administrator to inspect the endpoint response.
+    result_set_count_invalid:
+      title: The result-set count is invalid
+      detail: LODEON could not read one exact non-negative total from the configured count variable.
+      hint: Use an aggregate count query that returns exactly one row and the configured count variable.
+      technicalDetailTemplate: The count query did not return a valid value for variable {countVariable}.
+    result_set_page_count_invalid:
+      title: The result-set page is inconsistent
+      detail: LODEON received a page whose row count does not match the exact total and requested range.
+      hint: Try the request again or check that the count and page queries describe the same logical result set.
+      technicalDetailTemplate: Expected {expectedRowCount} rows for offset {pageOffset}, page size {pageSize}, and total {totalCount}, but received {actualRowCount}.
+    result_set_page_key_invalid:
+      title: The result-set keys are inconsistent
+      detail: LODEON received a page that does not contain exactly one row for each declared logical result.
+      hint: Make the page query return one row per declared result key and make the count query count those same distinct keys.
+      technicalDetailTemplate: 'Result keys {resultKeyVariables}; missing columns: {missingKeyVariables}; rows with missing key values: {missingKeyValueCount}; duplicate keys: {duplicateKeyCount}.'
+    method_invalid:
+      title: The SPARQL HTTP method is invalid
+      detail: LODEON could not run the SPARQL request because the configured HTTP method is unsupported.
+      hint: Use GET or POST in the knowledge graph profile.
+      technicalDetailTemplate: 'SPARQL HTTP method validation failed with the following error: {method}'
+    update_operation:
+      title: The SPARQL query contains an update operation
+      detail: LODEON only allows read-only SPARQL queries.
+      hint: Use SELECT, ASK, CONSTRUCT, or DESCRIBE. SERVICE clauses are allowed, but update operations are blocked.
+    query_empty:
+      title: The SPARQL query is empty
+      detail: LODEON cannot run a SPARQL request without a query.
+      hint: Enter or generate a SPARQL query and run it again.
+    request_failed:
+      title: The SPARQL request failed
+      detail: LODEON could not complete the SPARQL request.
+      hint: Check the query, selected knowledge graph profile, and endpoint status.
+      technicalDetailTemplate: 'SPARQL request failed with the following error: {externalError}'
+  mcp:
+    unavailable:
+      title: The assistant tool runtime is unavailable
+      detail: LODEON could not access the MCP tool runtime.
+      hint: Ask an administrator to check the API and MCP configuration.
+      technicalDetailTemplate: 'The MCP runtime is unavailable with the following error: {reason}'
+    unknown_tool:
+      title: The requested tool is unknown
+      detail: LODEON does not know the assistant tool requested for this turn.
+      hint: Try again. If the problem persists, ask an administrator to inspect the configured tools.
+    unknown_resource:
+      title: The requested MCP resource is unknown
+      detail: LODEON does not know the MCP resource requested for this turn.
+      hint: Ask an administrator to inspect the MCP resource registry.
+    unknown_prompt:
+      title: The requested MCP prompt is unknown
+      detail: LODEON does not know the MCP prompt requested for this turn.
+      hint: Ask an administrator to inspect the MCP prompt registry.
+    node_payload_invalid:
+      title: The proposed node is invalid
+      detail: LODEON could not validate the proposed ProseMirror node payload.
+      hint: Try again or ask the assistant to simplify the proposed node.
+      technicalDetailTemplate: 'MCP node payload validation failed with the following error: {reason}'
+    argument_required:
+      title: A tool argument is required
+      detail: LODEON could not run the assistant tool because a required argument is missing.
+      hint: Try again or ask the assistant to provide the required tool input.
+      technicalDetailTemplate: 'MCP argument validation failed for {argument}: {expected}'
+    argument_invalid:
+      title: A tool argument is invalid
+      detail: LODEON could not run the assistant tool because an argument has an unsupported value.
+      hint: Try again or ask the assistant to correct the tool input.
+      technicalDetailTemplate: 'MCP argument validation failed for {argument}: {expected}{reason}'
+  kg:
+    schema_unavailable:
+      title: The knowledge graph schema is unavailable
+      detail: LODEON could not load the configured assistant schema for the active knowledge graph.
+      hint: Ask an administrator to check the knowledge graph profile files.
+      technicalDetailTemplate: 'Knowledge graph schema loading failed with the following error: {path}{reason}'
+    ontology_unavailable:
+      title: The ontology context is unavailable
+      detail: LODEON could not load the configured ontology context.
+      hint: Ask an administrator to check the ontology files in the active knowledge graph profile.
+      technicalDetailTemplate: 'Knowledge graph ontology loading failed with the following error: {path}{reason}'
+    profile_unresolved:
+      title: The knowledge graph profile could not be resolved
+      detail: LODEON could not resolve the active knowledge graph profile for the MCP runtime.
+      hint: Ask an administrator to check the knowledge graph profile configuration.
+    ontology_term_unknown:
+      title: The ontology term is unknown
+      detail: LODEON could not find the requested ontology term.
+      hint: Search ontology terms first or use a full IRI or known prefixed name.
+      technicalDetailTemplate: 'Unknown ontology term: {term}'
+    class_unknown:
+      title: The knowledge graph class is unknown
+      detail: LODEON could not find the requested class in the active knowledge graph profile.
+      hint: Use the configured class list before requesting class-specific tools.
+      technicalDetailTemplate: 'Unknown class id: {classId}'
+    property_unknown:
+      title: The knowledge graph property is unknown
+      detail: LODEON could not find the requested property in the active knowledge graph profile.
+      hint: Use the configured class profile or predicate list before requesting property-specific tools.
+      technicalDetailTemplate: 'Unknown property id: {propertyId}'
+    class_iri_missing:
+      title: A class IRI is missing
+      detail: The active knowledge graph profile contains a class without a usable IRI.
+      hint: Ask an administrator to check the generated assistant schema.
+    term_expansion_failed:
+      title: A schema term could not be expanded
+      detail: The active knowledge graph profile contains a term that cannot be expanded to an IRI.
+      hint: Ask an administrator to check prefixes and schema terms.
+      technicalDetailTemplate: 'Schema term expansion failed for: {term}'
+    prefix_unknown:
+      title: A schema prefix is unknown
+      detail: The active knowledge graph profile references an unknown prefix.
+      hint: Ask an administrator to check prefixes and schema terms.
+      technicalDetailTemplate: 'Unknown schema prefix: {prefix}'
+    property_path_unavailable:
+      title: A property path is unavailable
+      detail: The active knowledge graph profile contains a property without a usable SPARQL path.
+      hint: Ask an administrator to check the generated assistant schema.
+      technicalDetailTemplate: 'Property path validation failed for {propertyId}: {reason}'
+    property_not_literal:
+      title: The property is not a literal property
+      detail: LODEON cannot use the selected property for a literal search.
+      hint: Choose a literal property or inspect the class profile.
+      technicalDetailTemplate: 'Property is not literal: {propertyId}'
+    property_not_available_for_class:
+      title: The property is not available for the selected class
+      detail: LODEON cannot use the selected property with the selected class.
+      hint: Choose another property or inspect the class profile.
+      technicalDetailTemplate: Property {propertyId} is not available for class {classId}
+    identifier_properties_unavailable:
+      title: Identifier search is not available for this filter
+      detail: No configured identifier properties match the requested filters.
+      hint: Try a broader identifier search or inspect the active knowledge graph profile.
+    literal_properties_unavailable:
+      title: Literal search is not available for this filter
+      detail: No configured literal properties match the requested filters.
+      hint: Try a broader literal search or inspect the active knowledge graph profile.
+    identifier_search_unavailable:
+      title: Identifier search is not available for this filter
+      detail: No configured identifier properties match the requested filters.
+      hint: Try a broader identifier search or inspect the active knowledge graph profile.
+    literal_search_unavailable:
+      title: Literal search is not available for this filter
+      detail: No configured literal properties match the requested filters.
+      hint: Try a broader literal search or inspect the active knowledge graph profile.
+  fulltext:
+    provider_tool_unavailable:
+      title: The fulltext provider cannot run this tool
+      detail: LODEON could not execute the requested search tool through the configured fulltext provider.
+      hint: Ask an administrator to check the knowledge graph fulltext provider configuration.
+      technicalDetailTemplate: Fulltext provider {provider} cannot run tool {tool}
+    executor_unavailable:
+      title: The fulltext executor is unavailable
+      detail: LODEON could not execute the provider-generated fulltext query.
+      hint: Ask an administrator to check the knowledge graph fulltext execution path.
+      technicalDetailTemplate: Fulltext provider {provider} cannot execute tool {tool} without a SPARQL executor
+  followup:
+    feature_read_failed:
+      title: A follow-up feature file could not be read
+      detail: LODEON could not read one of the configured Gherkin follow-up files.
+      hint: Check the configured follow-up feature paths and file permissions.
+      technicalDetailTemplate: 'Follow-up feature read failed for {path}: {externalError}'
+    registry_read_failed:
+      title: The follow-up registry could not be read
+      detail: LODEON could not read the configured follow-up registry file.
+      hint: Check config/runtime/followups/registry.yml and local overrides.
+      technicalDetailTemplate: 'Follow-up registry read failed for {path}: {externalError}'
+    registry_yaml_invalid:
+      title: The follow-up registry YAML is invalid
+      detail: LODEON could not parse the configured follow-up registry.
+      hint: Validate the YAML syntax of the follow-up registry.
+      technicalDetailTemplate: 'Follow-up registry YAML parsing failed for {path}: {externalError}'
+    registry_shape_invalid:
+      title: The follow-up registry structure is invalid
+      detail: The configured follow-up registry does not use the expected YAML object structure.
+      hint: Check the follow-up registry schema.
+      technicalDetailTemplate: Invalid follow-up registry structure in {path}
+    registry_version_invalid:
+      title: The follow-up registry version is unsupported
+      detail: The configured follow-up registry uses an unsupported schema version.
+      hint: Use the current follow-up registry schema version.
+      technicalDetailTemplate: 'Unsupported follow-up registry version in {path}: {version}'
+    registry_limits_invalid:
+      title: The follow-up registry limits are invalid
+      detail: A configured follow-up execution limit is invalid.
+      hint: Check the limits section of the follow-up registry.
+      technicalDetailTemplate: 'Invalid follow-up registry limit: {field}'
+    registry_section_invalid:
+      title: A follow-up registry section is invalid
+      detail: A configured follow-up registry section has the wrong structure.
+      hint: Check the runtimeRules and profileRules sections.
+      technicalDetailTemplate: Invalid follow-up registry section {section} in {path}
+    registry_include_invalid:
+      title: A follow-up include pattern is invalid
+      detail: A configured follow-up include pattern is not valid.
+      hint: Use relative .feature include patterns inside the follow-up directory.
+      technicalDetailTemplate: 'Invalid follow-up include pattern in {path}: {pattern}'
+    registry_query_templates_invalid:
+      title: The follow-up query-template configuration is invalid
+      detail: The configured follow-up query-template section has the wrong structure.
+      hint: Check queryTemplates.directory in the follow-up registry.
+      technicalDetailTemplate: Invalid follow-up query-template field {field} in {path}
+    registry_include_resolved_outside_root:
+      title: A follow-up include resolves outside its root
+      detail: A configured follow-up include pattern points outside the allowed follow-up directory.
+      hint: Use only safe relative include patterns.
+      technicalDetailTemplate: 'Follow-up include resolved outside {root}: {candidate}'
+    path_unsafe:
+      title: A follow-up path is unsafe
+      detail: A configured follow-up path is absolute, empty, or leaves the allowed directory.
+      hint: Use safe relative paths in follow-up configuration.
+      technicalDetailTemplate: 'Unsafe follow-up path for {field} in {path}: {value}'
+    identifier_invalid:
+      title: A follow-up identifier is invalid
+      detail: A configured follow-up identifier contains unsupported characters.
+      hint: Use simple configuration identifiers with letters, numbers, underscores, or hyphens.
+      technicalDetailTemplate: 'Invalid follow-up identifier for {field}: {value}'
+    rule_duplicate:
+      title: A follow-up rule is duplicated
+      detail: The configured follow-up rules contain duplicate generated rule identifiers.
+      hint: Rename duplicate Gherkin scenarios or rules.
+      technicalDetailTemplate: 'Duplicate follow-up rule IDs in {path}: {ruleIds}'
+    tool_action_incomplete:
+      title: A follow-up tool action is incomplete
+      detail: A configured follow-up tool action is missing a required tool name or query template.
+      hint: Check the Gherkin action step for the affected rule.
+      technicalDetailTemplate: Incomplete follow-up tool action in rule {ruleId}
+    query_template_unsafe:
+      title: A follow-up query template is not read-only
+      detail: A configured follow-up query template would produce a non-read-only SPARQL query.
+      hint: Use only SELECT, ASK, CONSTRUCT, or DESCRIBE in follow-up query templates.
+      technicalDetailTemplate: 'Unsafe follow-up query template {template}: {reason}'
+    tool_scope_empty:
+      title: A follow-up tool scope is empty
+      detail: A configured follow-up tool-scope action does not list any tools.
+      hint: Add at least one tool to the Gherkin tool-scope table.
+      technicalDetailTemplate: Empty follow-up tool scope in rule {ruleId}
+    tool_scope_unknown_tool:
+      title: A follow-up tool scope references an unknown tool
+      detail: A configured follow-up tool-scope action references tools that are not available.
+      hint: Check the configured tool names in the Gherkin tool-scope table.
+      technicalDetailTemplate: 'Unknown follow-up tool names in rule {ruleId}: {toolNames}'
+    tool_scope_multiple:
+      title: Multiple follow-up tool scopes matched
+      detail: More than one follow-up rule tried to constrain the tool catalog for the same model call.
+      hint: Adjust the follow-up rules so only one tool-scope rule can match.
+    template_filter_unknown:
+      title: A follow-up template filter is unknown
+      detail: A follow-up query template uses an unsupported template filter.
+      hint: Use only supported follow-up template filters.
+      technicalDetailTemplate: 'Unknown follow-up template filter: {filterName}'
+    template_variable_missing:
+      title: A follow-up template variable is missing
+      detail: A follow-up query template references a variable that is not available.
+      hint: Check the template variables bound by the follow-up rule.
+      technicalDetailTemplate: 'Missing follow-up template variable: {variableName}'
+    template_expression_unsupported:
+      title: A follow-up template expression is unsupported
+      detail: A follow-up query template contains an unsupported template expression.
+      hint: Use only the supported follow-up template syntax.
+      technicalDetailTemplate: 'Unsupported follow-up template expression: {expression}'
+    template_binding_missing_tool:
+      title: A follow-up template binding has no tool result
+      detail: A follow-up rule tried to bind a query variable from a previous tool call, but no previous tool call is available.
+      hint: Check the rule conditions before binding variables from previous tool arguments.
+      technicalDetailTemplate: Missing previous tool event for follow-up rule {ruleId}
+    template_binding_missing_argument:
+      title: A follow-up template binding argument is missing
+      detail: A follow-up rule tried to bind a query variable from a tool argument that is not available.
+      hint: Check the source argument name in the follow-up rule.
+      technicalDetailTemplate: Missing argument {argument} for follow-up rule {ruleId}
+    query_template_directory_invalid:
+      title: The follow-up query-template directory is invalid
+      detail: The configured follow-up query-template directory is outside the allowed follow-up profile directory.
+      hint: Use a safe relative query-template directory.
+      technicalDetailTemplate: 'Invalid follow-up query-template directory: {directory}'
+    query_template_path_invalid:
+      title: A follow-up query-template path is invalid
+      detail: A configured follow-up query template is outside the allowed query-template directory.
+      hint: Use a safe relative path inside the configured query-template directory.
+      technicalDetailTemplate: 'Invalid follow-up query-template path: {template}'
+    query_template_read_failed:
+      title: A follow-up query template could not be read
+      detail: LODEON could not read a configured follow-up query template.
+      hint: Check the query-template path and file permissions.
+      technicalDetailTemplate: 'Follow-up query-template read failed for {template}: {externalError}'
+    gherkin_parser_unavailable:
+      title: The Gherkin parser is unavailable
+      detail: LODEON could not load the parser required for follow-up feature files.
+      hint: Check the API dependencies.
+    feature_gherkin_invalid:
+      title: A follow-up feature file is invalid
+      detail: LODEON could not parse a configured Gherkin follow-up file.
+      hint: Validate the Gherkin syntax of the follow-up feature.
+      technicalDetailTemplate: 'Invalid follow-up Gherkin in {path}: {externalError}'
+    feature_missing:
+      title: A follow-up feature is missing
+      detail: A configured Gherkin follow-up file does not contain a feature.
+      hint: Add a Feature section to the follow-up file.
+      technicalDetailTemplate: Missing follow-up feature in {path}
+    feature_no_scenarios:
+      title: A follow-up feature has no scenarios
+      detail: A configured Gherkin follow-up feature does not contain any scenarios.
+      hint: Add at least one Scenario to the follow-up feature.
+      technicalDetailTemplate: Follow-up feature has no scenarios in {path}
+    scenario_steps_missing:
+      title: A follow-up scenario has no steps
+      detail: A configured follow-up scenario does not contain any Gherkin steps.
+      hint: Add Given, When, and Then steps to the scenario.
+      technicalDetailTemplate: 'Follow-up scenario has no steps in {path}: {scenario}'
+    trigger_unknown:
+      title: A follow-up trigger is unknown
+      detail: A configured follow-up scenario uses an unsupported When step.
+      hint: Use the supported follow-up trigger step.
+      technicalDetailTemplate: 'Unknown follow-up trigger in {path}: {scenario}: {trigger}'
+    trigger_duplicate:
+      title: A follow-up trigger is duplicated
+      detail: A configured follow-up scenario contains more than one trigger step.
+      hint: Use exactly one When step per follow-up scenario.
+      technicalDetailTemplate: 'Duplicate follow-up trigger in {path}: {scenario}'
+    trigger_after_actions:
+      title: A follow-up trigger appears after actions
+      detail: A configured follow-up scenario places the trigger after action steps.
+      hint: Place the When step before all Then action steps.
+      technicalDetailTemplate: 'Follow-up trigger appears after actions in {path}: {scenario}'
+    trigger_required_before_actions:
+      title: A follow-up trigger is required before actions
+      detail: A configured follow-up scenario defines actions before the trigger step.
+      hint: Place the When step before all Then action steps.
+      technicalDetailTemplate: 'Follow-up trigger required before actions in {path}: {scenario}'
+    conditions_after_trigger:
+      title: Follow-up conditions appear after the trigger
+      detail: A configured follow-up scenario defines condition steps after the trigger.
+      hint: Place all Given and condition And steps before the When step.
+      technicalDetailTemplate: 'Follow-up conditions appear after the trigger in {path}: {scenario}'
+    step_order_invalid:
+      title: A follow-up step order is invalid
+      detail: A configured follow-up scenario uses an unsupported step order or keyword.
+      hint: Use Given conditions, one When trigger, and Then actions.
+      technicalDetailTemplate: 'Invalid follow-up step order in {path}: {scenario}: {keyword} {stepText}'
+    condition_required:
+      title: A follow-up condition is required
+      detail: A configured follow-up scenario does not define any condition steps.
+      hint: Add at least one Given condition.
+      technicalDetailTemplate: 'Missing follow-up condition in {path}: {scenario}'
+    trigger_required:
+      title: A follow-up trigger is required
+      detail: A configured follow-up scenario does not define the required trigger step.
+      hint: Add the supported When step to the scenario.
+      technicalDetailTemplate: 'Missing follow-up trigger in {path}: {scenario}'
+    action_required:
+      title: A follow-up action is required
+      detail: A configured follow-up scenario does not define any action steps.
+      hint: Add at least one Then action.
+      technicalDetailTemplate: 'Missing follow-up action in {path}: {scenario}'
+    phase_invalid:
+      title: A follow-up phase is invalid
+      detail: A configured follow-up condition references an invalid phase.
+      hint: Use a valid follow-up phase identifier.
+      technicalDetailTemplate: 'Invalid follow-up phase in {path}: {scenario}: {phase}'
+    model_task_invalid:
+      title: A model task is invalid
+      detail: A configured follow-up condition or action references an invalid model task.
+      hint: Use one of the supported model task identifiers.
+      technicalDetailTemplate: 'Invalid model task in {path}: {scenario}: {task}'
+    condition_unknown:
+      title: A follow-up condition is unknown
+      detail: A configured follow-up scenario uses an unsupported condition step.
+      hint: Use only supported follow-up condition steps.
+      technicalDetailTemplate: 'Unknown follow-up condition in {path}: {scenario}: {condition}'
+    action_unknown:
+      title: A follow-up action is unknown
+      detail: A configured follow-up scenario uses an unsupported action step.
+      hint: Use only supported follow-up action steps.
+      technicalDetailTemplate: 'Unknown follow-up action in {path}: {scenario}: {action}'
+    tool_name_invalid:
+      title: A follow-up tool name is invalid
+      detail: A configured follow-up action references an invalid tool name.
+      hint: Use a valid tool identifier.
+      technicalDetailTemplate: 'Invalid follow-up tool name in {path}: {scenario}: {toolName}'
+    tool_scope_table_missing:
+      title: A follow-up tool-scope table is missing
+      detail: A configured follow-up tool-scope action does not include a tool table.
+      hint: Add a one-column Gherkin table with allowed tool names.
+      technicalDetailTemplate: 'Missing follow-up tool-scope table in {path}: {scenario}'
+    tool_scope_table_row_invalid:
+      title: A follow-up tool-scope table row is invalid
+      detail: A configured follow-up tool-scope table row does not contain exactly one tool name.
+      hint: Use one tool name per Gherkin table row.
+      technicalDetailTemplate: 'Invalid follow-up tool-scope table row in {path}: {scenario}: {cellCount}'
+    tool_scope_table_empty:
+      title: A follow-up tool-scope table is empty
+      detail: A configured follow-up tool-scope table does not contain any tool names.
+      hint: Add at least one tool name to the table.
+      technicalDetailTemplate: 'Empty follow-up tool-scope table in {path}: {scenario}'
+    tool_scope_table_duplicate:
+      title: A follow-up tool-scope table contains duplicates
+      detail: A configured follow-up tool-scope table lists a tool more than once.
+      hint: Remove duplicate tool names from the table.
+      technicalDetailTemplate: 'Duplicate follow-up tool-scope entries in {path}: {scenario}: {toolNames}'
+    prompt_id_invalid:
+      title: A follow-up prompt ID is invalid
+      detail: A configured follow-up action references an invalid prompt ID.
+      hint: Use a safe relative prompt identifier.
+      technicalDetailTemplate: 'Invalid follow-up prompt ID in {path}: {scenario}: {promptId}'
+    error_code_invalid:
+      title: A follow-up error code is invalid
+      detail: A configured follow-up action references an invalid error code.
+      hint: Use a registry-backed dotted error code.
+      technicalDetailTemplate: 'Invalid follow-up error code in {path}: {scenario}: {errorCode}'
+    regex_invalid:
+      title: A follow-up regular expression is invalid
+      detail: A configured follow-up condition contains an invalid regular expression.
+      hint: Check the user-message regex in the Gherkin condition.
+      technicalDetailTemplate: 'Invalid follow-up regex in {path}: {scenario}: {externalError}'
+  markdown:
+    container_mapping_missing:
+      title: A Special Block renderer mapping is missing
+      detail: LODEON could not export the story because a Special Block has no renderer mapping.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Missing Special Block renderer mapping: {containerId}'
+    container_strategy_unsupported:
+      title: A Special Block renderer strategy is unsupported
+      detail: LODEON could not export the story because a Special Block renderer mapping uses an unsupported strategy.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Unsupported Special Block renderer strategy for {containerId}: {strategy}'
+    format_mapping_missing:
+      title: A rich-text renderer mapping is missing
+      detail: LODEON could not export the story because a rich-text format has no renderer mapping.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Missing rich-text renderer mapping: {formatId}'
+    block_format_strategy_unsupported:
+      title: A block-format renderer strategy is unsupported
+      detail: LODEON could not export the story because a block-format renderer mapping uses an unsupported strategy.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Unsupported block-format renderer strategy for {formatId}: {strategy}'
+    inline_format_strategy_unsupported:
+      title: An inline-format renderer strategy is unsupported
+      detail: LODEON could not export the story because an inline-format renderer mapping uses an unsupported strategy.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Unsupported inline-format renderer strategy for {formatId}: {strategy}'
+    special_node_strategy_unsupported:
+      title: A Special Node renderer strategy is unsupported
+      detail: LODEON could not export the story because a Special Node renderer mapping uses an unsupported strategy.
+      hint: Ask an administrator to check the active renderer engine mappings.
+      technicalDetailTemplate: 'Unsupported Special Node renderer strategy: {strategy}'
+    template_missing:
+      title: A renderer template is missing
+      detail: LODEON could not export the story because a configured renderer template is missing.
+      hint: Ask an administrator to check the active renderer engine template configuration.
+      technicalDetailTemplate: 'Missing renderer template: {template}'
+    template_render_failed:
+      title: A renderer template failed
+      detail: LODEON could not export the story because a renderer template failed.
+      hint: Ask an administrator to check the active renderer template.
+      technicalDetailTemplate: 'Renderer template failed for {template}: {externalError}'
+    story_metadata_project_missing:
+      title: Story metadata is unavailable
+      detail: LODEON could not render a Story Metadata node because project metadata is unavailable.
+      hint: Open the metadata panel and check the story metadata.
+    label_missing:
+      title: A Markdown export label is missing
+      detail: LODEON could not export Markdown because a required localization label is missing.
+      hint: Ask an administrator to check the active runtime localization resources.
+      technicalDetailTemplate: 'Missing Markdown export label: {key}'
+  localization:
+    config_missing:
+      title: Localization is not configured
+      detail: LODEON could not resolve runtime text because localization settings are missing.
+      hint: Ask an administrator to check the localization configuration.
+  media:
+    unsupported_type:
+      title: Unsupported media type
+      detail: LODEON does not support the selected file type as a local media asset.
+      hint: Use a supported image, audio, or video file.
+    metadata_read_failed:
+      title: Media metadata could not be read
+      detail: LODEON could not extract metadata from the selected media file.
+      hint: The asset can still be used, but some metadata fields may stay empty.
+      technicalDetailTemplate: 'Media metadata read failed for {mediaKind}: {field}'
+    asset_blob_read_failed:
+      title: The media asset could not be read
+      detail: LODEON could not read the local media asset data.
+      hint: Try adding the asset again or export the project package as a backup.
+  iiif:
+    origin_blocked:
+      title: The IIIF origin is not allowed
+      detail: The IIIF resource URL is not allowed by this LODEON configuration.
+      hint: Use an allowed IIIF provider or ask an administrator to update the IIIF configuration.
+      technicalDetailTemplate: 'IIIF origin validation failed with the following error: {origin}'
+    url_empty:
+      title: No IIIF URL is configured
+      detail: LODEON cannot load a IIIF resource without a URL.
+      hint: Enter a IIIF Image API info.json URL or a Presentation API manifest URL.
+    url_invalid:
+      title: The IIIF URL is invalid
+      detail: LODEON could not use the configured IIIF URL.
+      hint: Enter a valid absolute IIIF URL.
+      technicalDetailTemplate: 'IIIF URL validation failed with the following error: {reason}'
+    fetch_failed:
+      title: The IIIF resource could not be loaded
+      detail: LODEON could not fetch the IIIF resource.
+      hint: Check the URL and try again.
+      technicalDetailTemplate: 'IIIF resource loading failed with the following error: {externalError}'
+    info_json_invalid:
+      title: The IIIF image service is invalid
+      detail: The resource does not contain a valid IIIF Image API info.json response.
+      hint: Use a IIIF Image API info.json URL or a Presentation API manifest URL.
+    manifest_invalid:
+      title: The IIIF manifest is invalid
+      detail: The resource does not contain a valid IIIF Presentation API manifest.
+      hint: Use a valid IIIF manifest URL or Image API info.json URL.
+    no_image_service:
+      title: No IIIF image service was found
+      detail: The IIIF manifest does not contain a supported image service.
+      hint: Use another IIIF manifest or an Image API info.json URL.
+    no_canvas:
+      title: No IIIF canvas was found
+      detail: The IIIF manifest does not contain a canvas that LODEON can display.
+      hint: Use another IIIF manifest or an Image API info.json URL.
+  embed:
+    spec_json_invalid:
+      title: The embed configuration is not valid JSON
+      detail: LODEON could not render the remote embed because its node configuration is not valid JSON.
+      hint: Recreate the embed node or check the generated Markdown fence.
+    spec_invalid:
+      title: The embed configuration is invalid
+      detail: LODEON could not render the remote embed because its node configuration has the wrong structure.
+      hint: Recreate the embed node or check the generated Markdown fence.
+    disabled:
+      title: Remote embeds are disabled
+      detail: LODEON could not render the remote embed because embeds are disabled in this configuration.
+      hint: Ask an administrator to enable remote embeds for this LODEON instance.
+    renderer_invalid:
+      title: The embed renderer is invalid
+      detail: LODEON could not render the remote embed because the configured renderer is not supported.
+      hint: Recreate the embed node or check the generated Markdown fence.
+      technicalDetailTemplate: 'Unsupported embed renderer: {renderer}'
+    origin_blocked:
+      title: The embed origin is not allowed
+      detail: The remote embed URL is not allowed by this LODEON configuration.
+      hint: Use an allowed embed provider or ask an administrator to update the embed configuration.
+      technicalDetailTemplate: 'Embed origin validation failed with the following error: {origin}'
+    url_invalid:
+      title: The embed URL is invalid
+      detail: LODEON could not use the configured remote embed URL.
+      hint: Enter a valid absolute HTTPS URL from an allowed origin.
+      technicalDetailTemplate: 'Embed URL validation failed with the following error: {reason}'
+    metadata_unavailable:
+      title: Embed metadata could not be loaded
+      detail: LODEON could not retrieve a title or label for the remote embed.
+      hint: The embed can still be used with a generated fallback label.
+      technicalDetailTemplate: 'Embed metadata loading failed with the following error: {externalError}'
+    metadata:
+      request_invalid:
+        title: The embed metadata request is invalid
+        detail: LODEON could not process the embed metadata request.
+        hint: Reload the editor and try again.
+        technicalDetailTemplate: 'Invalid embed metadata request field: {field}'
+      urls_invalid:
+        title: The embed metadata URL list is invalid
+        detail: LODEON could not process the embed metadata request because the URL list has the wrong structure.
+        hint: Reload the editor and try again.
+        technicalDetailTemplate: 'Invalid embed metadata request field: {field}'
+  visualization:
+    sparql_query_empty:
+      title: The visualization query is empty
+      detail: LODEON cannot create a query-based visualization without a SPARQL query.
+      hint: Enter or generate a SPARQL query and run it again.
+    data_url_empty:
+      title: The visualization data URL is empty
+      detail: LODEON cannot load visualization data without a URL.
+      hint: Enter a data URL or use a SPARQL query as the data source.
+    data_url_failed:
+      title: Visualization data could not be loaded
+      detail: LODEON could not load data from the configured data URL.
+      hint: Check the URL and try again.
+      technicalDetailTemplate: 'Visualization data loading failed with the following error: {externalError}'
+    json_invalid:
+      title: The visualization JSON is invalid
+      detail: LODEON could not parse the visualization JSON configuration.
+      hint: Check the Plotly data, layout, or config JSON.
+      technicalDetailTemplate: 'Visualization JSON validation failed with the following error: {field}'
+    plotly_failed:
+      title: Plotly rendering failed
+      detail: LODEON could not render the Plotly visualization.
+      hint: Check the query result and Plotly JSON configuration.
+      technicalDetailTemplate: 'Plotly rendering failed with the following error: {externalError}'
+  rawgraphs:
+    project_empty:
+      title: The RAWGraphs project is empty
+      detail: LODEON cannot render an empty RAWGraphs project.
+      hint: Add or import a RAWGraphs project configuration.
+    project_invalid:
+      title: The RAWGraphs project is invalid
+      detail: LODEON could not parse the RAWGraphs project JSON.
+      hint: Check the RAWGraphs project configuration.
+      technicalDetailTemplate: 'RAWGraphs project validation failed with the following error: {externalError}'
+    render_failed:
+      title: RAWGraphs rendering failed
+      detail: LODEON could not render the RAWGraphs visualization.
+      hint: Check the RAWGraphs project configuration and data.
+      technicalDetailTemplate: 'RAWGraphs rendering failed with the following error: {externalError}'
+  tracer:
+    config_invalid:
+      title: The tracer configuration is invalid
+      detail: The tracer could not load the configured runtime or competency setup.
+      hint: Check the tracer command, config files, and competency question files.
+      technicalDetailTemplate: Invalid tracer configuration at {path}
+    model_profile_missing:
+      title: The tracer model profile is missing
+      detail: The tracer needs a configured model profile before it can run.
+      hint: Set --model-profile or configure assistant.defaultModel.
+    knowledge_graph_profile_missing:
+      title: The tracer knowledge graph profile is missing
+      detail: The tracer needs a configured knowledge graph profile before it can run.
+      hint: Set --knowledge-graph-profile or configure knowledgeGraph.defaultProfile.
+    arguments:
+      conflicting_case_selection:
+        title: The tracer arguments are conflicting
+        detail: The tracer received mutually exclusive case-selection arguments.
+        hint: Use either --case or competency-question selection arguments, not both.
+    input_invalid:
+      title: The tracer input is invalid
+      detail: The tracer could not read or parse the requested input file.
+      hint: Check the JSON, JSONL, or messages file used for the trace run.
+    input:
+      message_not_object:
+        title: The tracer message input is invalid
+        detail: A message entry in the tracer input file is not a JSON object.
+        hint: Check the messages file used for the trace run.
+        technicalDetailTemplate: Invalid message entry in {path} at index {index}
+      message_role_invalid:
+        title: The tracer message role is invalid
+        detail: A message entry in the tracer input file uses an unsupported role.
+        hint: Use one of the roles accepted by the LODEON assistant chat payload.
+        technicalDetailTemplate: Invalid message role in {path} at index {index}
+      message_content_invalid:
+        title: The tracer message content is invalid
+        detail: A message entry in the tracer input file has empty or invalid content.
+        hint: Use non-empty string content for each message.
+        technicalDetailTemplate: Invalid message content in {path} at index {index}
+      messages_empty:
+        title: The tracer messages file is empty
+        detail: The tracer messages file does not contain any messages.
+        hint: Add at least one message object to the tracer messages file.
+        technicalDetailTemplate: No messages found in {path}
+      expected_json_object:
+        title: The tracer JSON input is invalid
+        detail: The tracer expected a JSON object but received another JSON value.
+        hint: Check the JSON input file used for this tracer option.
+        technicalDetailTemplate: Expected JSON object for {label} in {path}
+      expected_json_array:
+        title: The tracer JSON input is invalid
+        detail: The tracer expected a JSON array but received another JSON value.
+        hint: Check the JSON input file used for this tracer option.
+        technicalDetailTemplate: Expected JSON array for {label} in {path}
+      read_failed:
+        title: The tracer input file could not be read
+        detail: The tracer could not read the requested input file.
+        hint: Check that the file exists and is readable.
+        technicalDetailTemplate: 'Reading {path} failed: {externalError}'
+      invalid_json:
+        title: The tracer JSON input is invalid
+        detail: The tracer could not parse the requested input file as JSON.
+        hint: Check the JSON syntax of the input file.
+        technicalDetailTemplate: 'Parsing {path} failed: {externalError}'
+    output:
+      write_failed:
+        title: The tracer output could not be written
+        detail: The tracer could not add benchmark metadata to the generated trace artifact.
+        hint: Check that the configured trace output directory is writable.
+        technicalDetailTemplate: 'Writing {path} failed: {externalError}'
+    competency:
+      unknown_or_disabled:
+        title: The tracer competency question selection is invalid
+        detail: One or more selected competency questions are unknown or disabled for benchmarking.
+        hint: Check the selected competency question ids and benchmark flags.
+        technicalDetailTemplate: 'Unknown or disabled competency question ids: {ids}'
+      none_enabled:
+        title: The tracer found no benchmark competency questions
+        detail: The configured competency-question file does not contain enabled benchmark questions.
+        hint: Enable benchmark metadata for at least one competency question.
+        technicalDetailTemplate: No benchmark competency questions found in {path}
+      parser_unavailable:
+        title: The tracer competency parser is unavailable
+        detail: The tracer could not load the competency-question parser.
+        hint: Run the tracer in an environment with the LODEON API dependencies available.
+        technicalDetailTemplate: 'Competency parser import failed: {externalError}'
+    http_failed:
+      title: The traced LODEON endpoint failed
+      detail: The tracer could not complete an HTTP request against the LODEON API.
+      hint: Check that the target LODEON instance is running and reachable.
+    response_invalid:
+      title: The traced endpoint returned an invalid response
+      detail: The tracer received a response that could not be parsed as the expected JSON payload.
+      hint: Check the target endpoint and server logs.
+    tool_result:
+      available:
+        title: Tool result available
+        detail: The tracer recorded that a tool result is available.
+        hint: Inspect the trace details for the full tool result.
+      external_message:
+        title: Tool result message available
+        detail: The tracer recorded a tool-provided result message.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: '{externalMessage}'
+      rows:
+        title: Tool result rows available
+        detail: The tracer recorded tabular rows returned by a tool.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: 'Rows: {rows}; variables: {variables}'
+      paths:
+        title: Tool result paths available
+        detail: The tracer recorded query paths returned by a tool.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: 'Paths: {paths}'
+      candidates:
+        title: Tool result candidates available
+        detail: The tracer recorded candidates returned by a tool.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: 'Candidates: {candidates}'
+      count:
+        title: Tool result count available
+        detail: The tracer recorded a result count returned by a tool.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: 'Count: {count}'
+      status:
+        title: Tool result status available
+        detail: The tracer recorded a status returned by a tool.
+        hint: Inspect the trace details for the full tool result.
+        technicalDetailTemplate: 'Status: {status}'
+    warning:
+      aggregation_without_run_sparql:
+        title: Aggregation question did not reach SPARQL execution
+        detail: The trace suggests an aggregation-style request, but no successful SPARQL execution ran.
+        hint: Review tool scopes, follow-up rules, and whether run_sparql should have been used.
+      benchmark_duration_limit_exceeded:
+        title: Benchmark duration limit exceeded
+        detail: The trace duration exceeded the configured competency-question benchmark limit.
+        hint: Review model latency, endpoint latency, and benchmark thresholds.
+      benchmark_evidence_missing:
+        title: Benchmark evidence is missing
+        detail: The benchmark expected successful evidence, but the trace did not contain it.
+        hint: Review tool use, tool scopes, and competency-question benchmark expectations.
+      benchmark_exact_identifier_missing:
+        title: Benchmark exact identifier is missing
+        detail: The benchmark expected an exact identifier in tool arguments, but the trace did not contain it.
+        hint: Review identifier-preservation prompts and generated tool arguments.
+      benchmark_expectation_missing:
+        title: Benchmark expectation is missing
+        detail: The trace references a competency question without a matching benchmark expectation.
+        hint: Check the competency-question file and benchmark metadata.
+      benchmark_expected_mention_missing:
+        title: Benchmark expected mention is missing
+        detail: The benchmark expected a mention that was not found in the trace.
+        hint: Review answer synthesis, evidence rows, and competency-question benchmark expectations.
+      benchmark_expected_tool_any_missing:
+        title: Benchmark expected tool group is missing
+        detail: None of the accepted benchmark tools ran successfully.
+        hint: Review tool availability, tool scopes, and benchmark expectations.
+      benchmark_expected_tool_missing:
+        title: Benchmark expected tool is missing
+        detail: A required benchmark tool did not run successfully.
+        hint: Review tool availability, tool scopes, and benchmark expectations.
+      benchmark_forbidden_tool_used:
+        title: Benchmark forbidden tool was used
+        detail: A tool forbidden by the benchmark expectation was used.
+        hint: Review follow-up rules, tool scopes, and benchmark expectations.
+      benchmark_input_token_limit_exceeded:
+        title: Benchmark input-token limit exceeded
+        detail: The trace input-token count exceeded the configured competency-question benchmark limit.
+        hint: Review prompt/context size and benchmark thresholds.
+      benchmark_proposal_missing:
+        title: Benchmark proposal is missing
+        detail: The benchmark expected a proposal after evidence, but the trace did not contain it.
+        hint: Review proposal tools, follow-up rules, and competency-question benchmark expectations.
+      benchmark_warning_limit_exceeded:
+        title: Benchmark warning limit exceeded
+        detail: The trace contained more non-error warnings than allowed by the benchmark.
+        hint: Review trace warnings and competency-question benchmark thresholds.
+      empty_tool_scope:
+        title: Tool scope removed all tools
+        detail: A tool scope reduced the model-visible tool catalog to zero tools.
+        hint: Review the matching follow-up rule and tool-scope configuration.
+      expensive_suggestions:
+        title: Suggestion call used many input tokens
+        detail: The assistant suggestion request exceeded the configured input-token warning threshold.
+        hint: Review suggestion prompt context and tool trace size.
+      high_model_input_tokens:
+        title: Model call used many input tokens
+        detail: A model response reported input-token usage above the configured warning threshold.
+        hint: Review prompt context, story context, and tool-result compression.
+      high_model_message_chars:
+        title: Model request context is large
+        detail: A model request exceeded the configured message-character warning threshold.
+        hint: Review prompt context, story context, and tool-result compression.
+      high_system_prompt_chars:
+        title: System prompt is large
+        detail: A prompt build exceeded the configured system-prompt warning threshold.
+        hint: Review runtime prompts, profile prompts, and context compaction.
+      high_tool_schema_chars:
+        title: Tool schema context is large
+        detail: A model request exceeded the configured tool-schema warning threshold.
+        hint: Review available tool catalog size and tool-scope rules.
+      large_tool_evidence:
+        title: Synthesis evidence is large
+        detail: A synthesis prompt included evidence above the configured size threshold.
+        hint: Review SPARQL result sizes and synthesis compression.
+      long_content_fallback_continuation:
+        title: Content fallback repeated too often
+        detail: The assistant used content-fallback continuation more often than the configured threshold.
+        hint: Review model behavior and synthesis prompts.
+      model_error:
+        title: Model error recorded
+        detail: The trace contains a model-error event.
+        hint: Review provider configuration, model response, and external error details.
+      model_failed_before_tool_call:
+        title: Model failed before tool use
+        detail: The model request failed before any assistant tool call was executed.
+        hint: Review model/tool-call compatibility and provider errors.
+      ollama_tool_schema_model_error:
+        title: Ollama model failed with native tools enabled
+        detail: An Ollama-backed model request failed while native tool schemas were enabled.
+        hint: Review model support for tool calling and the size of the tool schema.
+      proposal_before_evidence:
+        title: Proposal ran before evidence
+        detail: A proposal tool ran before any successful evidence tool.
+        hint: Review follow-up rules and proposal tool ordering.
+      proposal_loop:
+        title: Multiple proposal tools ran
+        detail: More proposal tools ran in one turn than the configured threshold allows.
+        hint: Review proposal follow-up rules and tool scopes.
+      recoverable_tool_error:
+        title: Tool error was recovered
+        detail: A tool ended with an error status, but later follow-up action recovered successful evidence.
+        hint: Review the failed tool and follow-up recovery path.
+      recoverable_tool_timeout:
+        title: Tool timeout was recovered
+        detail: A tool timeout occurred, but later follow-up action recovered successful evidence.
+        hint: Review the timed-out tool and follow-up recovery path.
+      recovered_by_followup:
+        title: Follow-up recovered the turn
+        detail: A follow-up rule recovered successful evidence after earlier tool errors.
+        hint: Review the follow-up path and whether the original tool failure should be optimized.
+      repeated_identical_tool_calls:
+        title: Repeated identical tool calls detected
+        detail: The trace contains repeated identical tool calls above the configured threshold.
+        hint: Review follow-up rules and model instructions to avoid loops.
+      repeated_tool_calls:
+        title: Repeated tool calls detected
+        detail: The trace contains repeated tool calls above the configured threshold.
+        hint: Review follow-up rules and model instructions to avoid loops.
+      schema_only_instance_answer:
+        title: Instance question used only schema tools
+        detail: The user request appears to ask for data instances, but only schema tools succeeded.
+        hint: Review tool scopes and whether run_sparql or search tools should have been used.
+      slow_operation:
+        title: Trace operation was slow
+        detail: A traced operation exceeded the configured duration warning threshold.
+        hint: Review model latency, endpoint latency, and tool timings.
+      slow_tool:
+        title: Tool call was slow
+        detail: A tool call exceeded the configured duration warning threshold.
+        hint: Review remote endpoint latency, query complexity, and tool implementation.
+      strong_tool_scope_reduction:
+        title: Tool scope strongly reduced available tools
+        detail: A tool scope removed a large share of model-visible tools.
+        hint: Review whether the scoped tool catalog still supports the user task.
+      too_many_tool_calls:
+        title: Assistant used many tools
+        detail: The assistant turn used more tools than the configured warning threshold.
+        hint: Review model behavior, follow-up rules, and task decomposition.
+      tool_error:
+        title: Tool error recorded
+        detail: A tool ended with a non-success status.
+        hint: Review the tool result and external error details.
+      tool_timeout:
+        title: Tool timeout recorded
+        detail: A tool reported a timeout.
+        hint: Review query complexity, remote endpoint latency, and timeout settings.
+      use_tools_without_evidence:
+        title: Tool use produced no evidence
+        detail: Tool use was requested, but no successful evidence tool ran.
+        hint: Review model tool use, tool scopes, and provider/tool-call compatibility.
+      weak_tool_synthesis:
+        title: Tool-backed synthesis is weak
+        detail: A tool-backed turn produced an empty, very short, or pseudo-tool-call final answer.
+        hint: Review synthesis prompts and model behavior after tool results.
+    check:
+      final_message_returned:
+        title: The assistant returned a final message
+        detail: The benchmark check found a non-empty assistant message.
+        hint: Review the trace report for the corresponding benchmark step.
+      suggestions_returned:
+        title: Assistant suggestions were returned
+        detail: The benchmark check received suggestion questions.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Suggestion question count: {count}'
+      response_tool_found:
+        title: The response used an expected tool
+        detail: The benchmark check found an expected tool in the assistant response.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Expected tool: {tool}'
+      response_any_tool_found:
+        title: The response used one accepted tool
+        detail: The benchmark check found at least one accepted tool in the assistant response.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Accepted tools: {tools}'
+      response_identifier_preserved:
+        title: The response preserved an identifier
+        detail: The benchmark check found the expected identifier in the assistant response.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Identifier: {identifier}'
+      trace_file_found:
+        title: The trace file was found
+        detail: The benchmark check found the trace file for the assistant run.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Trace file: {path}'
+      response_or_trace_tool_found:
+        title: The response or trace used an expected tool
+        detail: The benchmark check found an expected tool in the response or trace.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Expected tool: {tool}'
+      response_or_trace_any_tool_found:
+        title: The response or trace used one accepted tool
+        detail: The benchmark check found at least one accepted tool in the response or trace.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Accepted tools: {tools}'
+      no_error_warnings:
+        title: The trace has no error warnings
+        detail: The benchmark check found no error-level trace warnings.
+        hint: Review the trace report for the corresponding benchmark step.
+      warning_count_within_limit:
+        title: The trace warning count is within the benchmark limit
+        detail: The benchmark check found no more than the allowed number of non-error warnings.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Trace warnings: {count}; limit: {maxWarnings}'
+      evidence_tool_found:
+        title: The trace contains an evidence tool
+        detail: The benchmark check found a successful evidence-producing tool call.
+        hint: Review the trace report for the corresponding benchmark step.
+      response_or_trace_identifier_preserved:
+        title: The response or trace preserved an identifier
+        detail: The benchmark check found the expected identifier in the response or trace.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Identifier: {identifier}'
+      trace_or_response_mention_found:
+        title: The response or trace mentions an expected value
+        detail: The benchmark check found an expected mention in the response or trace.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Mention: {mention}'
+      forbidden_tool_not_used:
+        title: A forbidden tool was not used
+        detail: The benchmark check confirmed that a forbidden tool was not used.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Forbidden tool: {tool}'
+      proposal_after_evidence:
+        title: A proposal followed evidence
+        detail: The benchmark check found a proposal tool call after evidence was collected.
+        hint: Review the trace report for the corresponding benchmark step.
+      proposal_retry_found:
+        title: A proposal retry was found
+        detail: The benchmark check found a proposal retry prompt.
+        hint: Review the trace report for the corresponding benchmark step.
+      duration_within_limit:
+        title: The trace duration is within the benchmark limit
+        detail: The benchmark check measured a duration within the configured limit.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Duration: {durationMs} ms; limit: {maxDurationMs} ms'
+      input_tokens_unavailable:
+        title: Input token count is unavailable
+        detail: The benchmark check could not determine the input token count from the trace.
+        hint: Review whether model usage metadata was available in the trace.
+      input_tokens_within_limit:
+        title: Input token count is within the benchmark limit
+        detail: The benchmark check measured an input token count within the configured limit.
+        hint: Review the trace report for the corresponding benchmark step.
+        technicalDetailTemplate: 'Input tokens: {inputTokens}; limit: {maxInputTokens}'
+    failure:
+      final_message_missing:
+        title: The assistant returned no final message
+        detail: The benchmark check did not find a usable final assistant message.
+        hint: Review the assistant response and model/tool trace for this benchmark run.
+      trace_file_missing:
+        title: The trace file is missing
+        detail: The benchmark check could not find the trace file for the assistant run.
+        hint: Check tracing configuration and the trace output directory.
+        technicalDetailTemplate: Trace id {traceId} was not found below {traceDir}
+      expected_tool_missing:
+        title: An expected tool was not used
+        detail: The benchmark check did not find an expected tool in the response or trace.
+        hint: Review tool availability, tool scopes, and the competency-question benchmark expectations.
+        technicalDetailTemplate: 'Missing tool: {tool}'
+      any_expected_tool_missing:
+        title: No accepted tool was used
+        detail: The benchmark check did not find any accepted tool in the response or trace.
+        hint: Review tool availability, tool scopes, and the competency-question benchmark expectations.
+        technicalDetailTemplate: 'Accepted tools: {tools}'
+      trace_warning_error:
+        title: The trace contains an error warning
+        detail: The benchmark check found an error-level trace warning.
+        hint: Review the trace analyzer warning code and the related trace events.
+        technicalDetailTemplate: 'Trace warning code: {warningCode}'
+      trace_warning:
+        title: The trace contains a warning
+        detail: The benchmark check was configured to fail on warnings and found a trace warning.
+        hint: Review the trace analyzer warning code and the related trace events.
+        technicalDetailTemplate: 'Trace warning code: {warningCode}'
+      warning_count_exceeded:
+        title: The trace warning count exceeds the benchmark limit
+        detail: The benchmark check found more than the allowed number of non-error warnings.
+        hint: Review the trace warnings and the competency-question benchmark threshold.
+        technicalDetailTemplate: 'Trace warnings: {count}; limit: {maxWarnings}'
+      evidence_tool_missing:
+        title: The trace contains no evidence tool
+        detail: The benchmark check expected evidence but found no successful evidence-producing tool call.
+        hint: Review tool scopes, model tool use, and the competency-question benchmark expectations.
+      identifier_not_preserved:
+        title: An expected identifier was not preserved
+        detail: The benchmark check did not find the expected identifier in the response or trace.
+        hint: Review the prompt, generated query, and benchmark identifier expectation.
+        technicalDetailTemplate: 'Identifier: {identifier}'
+      mention_missing:
+        title: An expected mention is missing
+        detail: The benchmark check did not find an expected mention in the response or trace.
+        hint: Review the answer synthesis, tool results, and benchmark mention expectation.
+        technicalDetailTemplate: 'Mention: {mention}'
+      forbidden_tool_used:
+        title: A forbidden tool was used
+        detail: The benchmark check found a tool that this question forbids.
+        hint: Review tool scopes and the competency-question forbidden-tool expectation.
+        technicalDetailTemplate: 'Forbidden tool: {tool}'
+      proposal_after_evidence_missing:
+        title: A proposal did not follow evidence
+        detail: The benchmark check expected a proposal after evidence but did not find one.
+        hint: Review proposal tool scopes, follow-up rules, and benchmark expectations.
+      proposal_retry_missing:
+        title: A proposal retry is missing
+        detail: The benchmark check expected a proposal retry prompt but did not find one.
+        hint: Review proposal retry follow-up rules and benchmark expectations.
+      duration_exceeded:
+        title: The trace duration exceeds the benchmark limit
+        detail: The benchmark check measured a duration above the configured limit.
+        hint: Review model latency, endpoint latency, and the benchmark duration threshold.
+        technicalDetailTemplate: 'Duration: {durationMs} ms; limit: {maxDurationMs} ms'
+      input_tokens_exceeded:
+        title: Input token count exceeds the benchmark limit
+        detail: The benchmark check measured an input token count above the configured limit.
+        hint: Review prompt/context size and the competency-question token threshold.
+        technicalDetailTemplate: 'Input tokens: {inputTokens}; limit: {maxInputTokens}'
+    analyze:
+      failed:
+        title: The trace analysis failed
+        detail: The trace analyzer failed while processing trace input.
+        hint: Check the trace analyzer command and input files.
+        technicalDetailTemplate: 'Trace analysis failed: {externalError}'
+      competency_parser_unavailable:
+        title: The trace analyzer competency parser is unavailable
+        detail: The trace analyzer could not load the competency-question parser.
+        hint: Run the analyzer in an environment with the LODEON API dependencies available.
+        technicalDetailTemplate: 'Competency parser import failed: {externalError}'
+      invalid_trace_json:
+        title: The trace file contains invalid JSON
+        detail: The trace analyzer could not parse one JSONL line in a trace file.
+        hint: Check the trace file or regenerate the trace.
+        technicalDetailTemplate: 'Invalid JSON in {path} at line {line}: {externalError}'
+      invalid_trace_event:
+        title: The trace file contains an invalid event
+        detail: Each JSONL line in a trace file must contain one event object.
+        hint: Check the trace file or regenerate the trace.
+        technicalDetailTemplate: 'Invalid trace event in {path} at line {line}: {reason}'
+      no_trace_files:
+        title: No trace files were found
+        detail: The trace analyzer did not find any trace files for the requested paths.
+        hint: Check the input path or trace output directory.
+      output_required:
+        title: The trace analyzer output path is missing
+        detail: The selected trace analysis format requires an output file.
+        hint: Provide an output path for the requested analysis format.
+        technicalDetailTemplate: Missing output path for format {format}
+      evaluation_artifacts_dir_required:
+        title: The evaluation adapter artifact directory is missing
+        detail: The trace analyzer needs an artifact directory when evaluation adapters or evaluation result imports are requested.
+        hint: Provide --evaluation-artifacts-dir for the adapter run.
+      evaluation_result_file_invalid:
+        title: The evaluation result file argument is invalid
+        detail: The trace analyzer expects evaluation result files in adapterId=path format.
+        hint: Use --evaluation-result-file with an adapter id and a file path.
+      evaluation_adapter_unknown:
+        title: The evaluation adapter is unknown
+        detail: The trace analyzer received an evaluation adapter id that is not registered.
+        hint: Use one of the registered evaluation adapter ids.
+        technicalDetailTemplate: 'Unknown adapter id: {adapterId}'
+  leaflet:
+    geojson_invalid:
+      title: The GeoJSON is invalid
+      detail: LODEON could not normalize the geographic input as GeoJSON.
+      hint: Check the JSON structure and use a supported GeoJSON geometry.
+      technicalDetailTemplate: 'GeoJSON normalization failed: {externalError}'
+    geometry_unsupported:
+      title: The map geometry is unsupported
+      detail: LODEON cannot render one of the supplied geographic geometry types.
+      hint: Use a GeoJSON Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, or GeometryCollection.
+      technicalDetailTemplate: 'Unsupported geometry type: {geometryType}'
+    coordinate_invalid:
+      title: A map coordinate is invalid
+      detail: LODEON could not normalize a latitude or longitude value.
+      hint: Use a latitude from -90 to 90 and a longitude from -180 to 180.
+      technicalDetailTemplate: 'Invalid coordinate at item {index}: latitude={latitude}, longitude={longitude}'
+    sparql_variables_missing:
+      title: The map query result is missing geographic variables
+      detail: The SPARQL result does not contain latitude and longitude or a supported geometry.
+      hint: Return ?latitude and ?longitude or return ?geometry.
+      technicalDetailTemplate: Missing canonical geographic variables in row {row}
+    tile_layer_unavailable:
+      title: The map tile layer is unavailable
+      detail: LODEON could not find the selected map tile layer in the runtime configuration.
+      hint: Select a configured tile layer or ask an administrator to update the Leaflet configuration.
+      technicalDetailTemplate: 'Unknown tile layer: {tileLayerId}'
+    viewer_initialization_failed:
+      title: The interactive map could not be initialized
+      detail: LODEON could not start the Leaflet map viewer.
+      hint: Retry the preview and check the browser console if the problem continues.
+      technicalDetailTemplate: 'Leaflet viewer initialization failed: {externalError}'
+    query_empty:
+      title: The map query is empty
+      detail: LODEON cannot run a map query without SPARQL source text.
+      hint: Enter a read-only SPARQL query or create one with the visual query builder.
+    file_read_failed:
+      title: The GeoJSON file could not be read
+      detail: LODEON could not load the selected GeoJSON file in the browser.
+      hint: Select a readable UTF-8 JSON or GeoJSON file and try again.
+    manual_properties_invalid:
+      title: The popup properties are invalid
+      detail: LODEON expects the manual point properties to be a JSON object.
+      hint: Enter key-value properties in JSON object syntax, for example {"source":"Archive"}.
+  verovio:
+    input_missing:
+      title: Music notation data is missing
+      detail: LODEON cannot validate or render an item without text-based music notation data.
+      hint: Provide complete MEI or Plaine & Easie data.
+    builder_failed:
+      title: The visual query builder could not be opened
+      detail: LODEON could not complete the visual query builder action.
+      hint: Try opening the builder again or edit the SPARQL query directly.
+      technicalDetailTemplate: 'Visual query builder failure: {externalError}'
+    input_too_large:
+      title: The music notation item is too large
+      detail: This individual notation item exceeds the configured technical safety size. It was not truncated.
+      hint: Reduce the individual encoding size or ask an administrator to review the transparent per-item safety setting.
+      technicalDetailTemplate: Item {itemId} has {actualBytes} bytes; configured maximum is {maximumBytes} bytes
+    format_unsupported:
+      title: The music notation format is unsupported
+      detail: LODEON cannot render the declared notation format.
+      hint: Use complete MEI or Plaine & Easie data, or omit the format for controlled detection.
+      technicalDetailTemplate: 'Unsupported notation format: {format}'
+    input_invalid:
+      title: The music notation data is invalid
+      detail: Verovio could not load the supplied notation item.
+      hint: Check the complete encoding and correct the reported validation errors.
+      technicalDetailTemplate: 'Validation failed for item {itemId}: {externalError}'
+    input_warning:
+      title: The music notation data has a warning
+      detail: Verovio reported a non-blocking issue in this item. Rendering remains available.
+      hint: Review the validation details if you want to correct the source encoding.
+      technicalDetailTemplate: 'Validation warning for item {itemId}: {externalError}'
+    pae_warning:
+      title: The Plaine & Easie data has a warning
+      detail: Verovio reported a non-blocking issue in this item. Rendering remains available.
+      hint: Review the indicated row and column if you want to correct the source notation.
+      technicalDetailTemplate: 'PAE warning for item {itemId} at row {row}, column {column}: {externalError}'
+    query_empty:
+      title: The notation query is empty
+      detail: LODEON cannot run a notation query without SPARQL source text.
+      hint: Enter a read-only SPARQL query or create one with the visual query builder.
+    sparql_data_missing:
+      title: The notation query result is missing data
+      detail: The SPARQL result does not contain the required ?data variable.
+      hint: Return one complete text-based Verovio input in ?data for every item.
+      technicalDetailTemplate: Missing ?data binding in result row {row}
+    file_read_failed:
+      title: The music notation file could not be read
+      detail: LODEON could not read the selected text file in the browser.
+      hint: Select a readable UTF-8 MEI or Plaine & Easie file and try again.
+    result_empty:
+      title: The notation query returned no items
+      detail: The successful query did not return any music notation items.
+      hint: Review the query or keep the previous validated render state.
+    render_failed:
+      title: The music notation could not be rendered
+      detail: Verovio could not generate the requested notation rendering.
+      hint: Review the item validation details and retry rendering.
+      technicalDetailTemplate: 'Rendering failed for item {itemId}: {externalError}'
+    viewer_initialization_failed:
+      title: The music notation viewer could not be initialized
+      detail: LODEON could not start the controlled Verovio viewer.
+      hint: Retry the view and check the technical details if the problem continues.
+      technicalDetailTemplate: 'Verovio viewer initialization failed: {externalError}'
+    mei_export_failed:
+      title: Normalized MEI could not be generated
+      detail: Verovio could not generate normalized MEI from this item. The original data remains unchanged.
+      hint: Review the item validation details and retry the download.
+      technicalDetailTemplate: 'MEI generation failed for item {itemId}: {externalError}'
+    midi_generation_failed:
+      title: MIDI could not be generated
+      detail: Verovio could not generate playback data for this notation item.
+      hint: Review the encoding and retry playback.
+      technicalDetailTemplate: 'MIDI generation failed for item {itemId}: {externalError}'
+    playback_initialization_failed:
+      title: Music playback could not be initialized
+      detail: LODEON could not initialize the local Web Audio playback system.
+      hint: Check browser audio permissions and retry playback.
+      technicalDetailTemplate: 'Playback initialization failed: {externalError}'
+    soundfont_load_failed:
+      title: The local instrument bank could not be loaded
+      detail: LODEON could not load the controlled General MIDI soundfont.
+      hint: Reload the application and retry playback.
+      technicalDetailTemplate: 'Soundfont loading failed: {externalError}'
+    playback_failed:
+      title: Music playback failed
+      detail: LODEON stopped playback because the MIDI player reported an error.
+      hint: Retry playback or review the item encoding.
+      technicalDetailTemplate: 'Playback failed for item {itemId}: {externalError}'
+    seek_failed:
+      title: The playback position could not be changed
+      detail: LODEON could not move playback to the selected position.
+      hint: Restart playback and try again.
+      technicalDetailTemplate: 'Seeking failed for item {itemId} at {timeSeconds} seconds: {externalError}'
+    compare_selection_invalid:
+      title: The comparison selection is invalid
+      detail: Compare Mode requires two different available notation items.
+      hint: Select one item for A and a different item for B.
+    transposition_failed:
+      title: The transposed view could not be generated
+      detail: Verovio could not generate the explicitly requested target-key view. The original remains available.
+      hint: Return to the original view or select another target key.
+      technicalDetailTemplate: 'Transposition failed for item {itemId} and target key {targetKey}: {externalError}'
+  assistant:
+    unknown:
+      title: Something went wrong
+      detail: LODEON could not complete this assistant request.
+      hint: Please try again. If the problem persists, ask an administrator to inspect the trace.
+    config:
+      invalid:
+        title: The assistant configuration is invalid
+        detail: LODEON could not start this assistant turn because the assistant configuration is invalid.
+        hint: Ask an administrator to check the model, knowledge graph, runtime prompt, follow-up, and error-message configuration.
+        technicalDetailTemplate: 'Configuration validation failed with the following error: {reason}'
+      knowledge_graph_invalid:
+        title: The knowledge graph configuration is invalid
+        detail: LODEON could not read the configured knowledge graph settings.
+        hint: Ask an administrator to check the knowledge graph configuration.
+        technicalDetailTemplate: 'Invalid configuration field: {field}'
+      knowledge_graph_profiles_invalid:
+        title: The knowledge graph profile configuration is invalid
+        detail: LODEON could not read the configured knowledge graph profiles.
+        hint: Ask an administrator to check the knowledge graph profile configuration.
+        technicalDetailTemplate: 'Invalid configuration field: {field}'
+      active_knowledge_graph_profile_unknown:
+        title: The active knowledge graph profile is unknown
+        detail: LODEON could not find the configured active knowledge graph profile.
+        hint: Ask an administrator to choose an existing knowledge graph profile.
+        technicalDetailTemplate: 'Unknown knowledge graph profile: {profileId}'
+      active_knowledge_graph_profile_required:
+        title: No active knowledge graph profile is configured
+        detail: LODEON needs an active knowledge graph profile when multiple profiles are configured.
+        hint: Ask an administrator to configure the active knowledge graph profile.
+      knowledge_graph_profile_unknown:
+        title: The knowledge graph profile is unknown
+        detail: LODEON could not find the requested knowledge graph profile.
+        hint: Choose a configured knowledge graph profile or ask an administrator to check the configuration.
+        technicalDetailTemplate: 'Unknown knowledge graph profile: {profileId}'
+      model_profile_unknown:
+        title: The model profile is unknown
+        detail: LODEON could not find the requested assistant model profile.
+        hint: Choose a configured model profile or ask an administrator to check the assistant configuration.
+        technicalDetailTemplate: 'Unknown model profile: {modelId}'
+      assistant_invalid:
+        title: The assistant configuration is invalid
+        detail: LODEON could not read the assistant configuration.
+        hint: Ask an administrator to check the assistant configuration.
+        technicalDetailTemplate: 'Invalid configuration field: {field}'
+      model_profiles_invalid:
+        title: The model profile configuration is invalid
+        detail: LODEON could not read the configured assistant model profiles.
+        hint: Ask an administrator to check the assistant model profile configuration.
+        technicalDetailTemplate: 'Invalid configuration field: {field}'
+      model_brokers_invalid:
+        title: The model broker configuration is invalid
+        detail: LODEON could not read the configured assistant model brokers.
+        hint: Ask an administrator to check the assistant model broker configuration.
+        technicalDetailTemplate: 'Invalid configuration field: {field}'
+      model_profile_shape_invalid:
+        title: A model profile has an invalid shape
+        detail: LODEON could not read one configured model profile.
+        hint: Configure the model profile as a mapping with the canonical model-profile fields.
+        technicalDetailTemplate: 'Invalid model profile shape at {field}: {profileId}'
+      model_profile_fields_invalid:
+        title: A model profile contains invalid fields
+        detail: LODEON found missing or unexpected fields in a model profile.
+        hint: Use only the documented canonical fields and include every required field.
+        technicalDetailTemplate: Invalid fields at {field} for {profileId}; missing={missing}; unexpected={unexpected}
+      model_profile_value_invalid:
+        title: A model profile value is invalid
+        detail: LODEON found an empty or invalid value in a model profile.
+        hint: Set the field to a non-empty value of the documented type.
+        technicalDetailTemplate: 'Invalid model profile value at {field}: {profileId}'
+      model_profile_provider_invalid:
+        title: A model provider is invalid
+        detail: LODEON does not recognize the configured model provider.
+        hint: Choose a supported public LODEON provider id.
+        technicalDetailTemplate: 'Invalid provider {provider} at {field}: {profileId}'
+      model_profile_endpoint_invalid:
+        title: A model endpoint configuration is invalid
+        detail: LODEON needs exactly one endpoint source for each model profile.
+        hint: Configure either baseURL or baseURLEnv, but not both.
+        technicalDetailTemplate: 'Invalid endpoint configuration at {field}: {profileId}'
+      model_profile_api_key_invalid:
+        title: A model credential configuration is invalid
+        detail: LODEON found conflicting credential sources in a model profile.
+        hint: Configure at most one direct or environment-backed credential source.
+        technicalDetailTemplate: 'Invalid credential configuration at {field}: {profileId}'
+      model_profile_generation_invalid:
+        title: Model generation settings are invalid
+        detail: LODEON could not use the configured model generation settings.
+        hint: Check token limits, timeout, sampling values, and reasoning effort.
+        technicalDetailTemplate: 'Invalid generation setting at {field}: {profileId}'
+      model_profile_generation_unsupported:
+        title: Model generation settings are unsupported
+        detail: LODEON cannot send the configured generation setting to this provider endpoint.
+        hint: Remove the setting or declare and verify the matching endpoint capability.
+        technicalDetailTemplate: 'Unsupported generation setting for provider {provider} at {field}: {profileId}'
+      model_profile_capabilities_invalid:
+        title: Model endpoint capabilities are invalid
+        detail: LODEON could not read the declared capabilities of an OpenAI-compatible endpoint.
+        hint: Declare every documented compatible-endpoint capability as true or false.
+        technicalDetailTemplate: 'Invalid capability declaration at {field}: {profileId}'
+      model_profile_capabilities_unsupported:
+        title: Model capability overrides are unsupported
+        detail: LODEON does not accept capability overrides for this native provider.
+        hint: Remove capabilities and use the provider capabilities supplied by LODEON.
+        technicalDetailTemplate: 'Unsupported capabilities for provider {provider} at {field}: {profileId}'
+      model_profile_prompt_caching_invalid:
+        title: Prompt caching settings are invalid
+        detail: LODEON could not read the configured prompt caching settings.
+        hint: Configure enabled as a boolean and retention as a supported value.
+        technicalDetailTemplate: 'Invalid prompt caching settings at {field}: {profileId}'
+      model_profile_prompt_caching_unsupported:
+        title: Prompt caching is unsupported
+        detail: LODEON cannot enable prompt caching for this provider configuration.
+        hint: Disable prompt caching or select a provider and endpoint capability that supports it.
+        technicalDetailTemplate: 'Unsupported prompt caching for provider {provider} at {field}: {profileId}'
+      model_profile_cache_retention_invalid:
+        title: Prompt cache retention is invalid
+        detail: LODEON cannot use the requested prompt cache retention with this provider.
+        hint: Choose a retention value supported by the selected provider.
+        technicalDetailTemplate: 'Invalid retention {retention} for provider {provider} at {field}: {profileId}'
+      model_profile_runtime_invalid:
+        title: Model runtime settings are invalid
+        detail: LODEON could not read the configured provider runtime settings.
+        hint: Use the documented runtime fields and value types.
+        technicalDetailTemplate: 'Invalid runtime setting at {field}: {profileId}'
+      model_profile_runtime_unsupported:
+        title: Model runtime settings are unsupported
+        detail: LODEON does not support the configured runtime fields for this provider.
+        hint: Remove provider-incompatible runtime fields.
+        technicalDetailTemplate: 'Unsupported runtime fields {unexpected} for provider {provider} at {field}: {profileId}'
+      model_profile_cost_invalid:
+        title: Model cost settings are invalid
+        detail: LODEON could not read the configured model token prices.
+        hint: Use an uppercase currency code and non-negative per-million-token prices.
+        technicalDetailTemplate: 'Invalid model cost at {field}: {profileId}'
+      default_model_required:
+        title: No default model is configured
+        detail: LODEON needs a default model when one or more models or model brokers are configured.
+        hint: Ask an administrator to configure the default assistant model.
+      default_model_unknown:
+        title: The default model is unknown
+        detail: LODEON could not find the configured default assistant model or model broker.
+        hint: Ask an administrator to choose an existing model or model broker as default.
+        technicalDetailTemplate: 'Unknown default model: {modelId}'
+      knowledge_graph_profile_invalid:
+        title: A knowledge graph profile is invalid
+        detail: LODEON could not read one configured knowledge graph profile.
+        hint: Ask an administrator to check the knowledge graph profile configuration.
+        technicalDetailTemplate: 'Invalid knowledge graph profile: {profileId}'
+      knowledge_graph_profile_kg_mcp_invalid:
+        title: A knowledge graph tool configuration is invalid
+        detail: LODEON could not read the tool configuration of one knowledge graph profile.
+        hint: Ask an administrator to check the knowledge graph tool configuration.
+        technicalDetailTemplate: 'Invalid field {field} in knowledge graph profile: {profileId}'
+      knowledge_graph_profile_artifact_path_invalid:
+        title: A knowledge graph profile path is invalid
+        detail: LODEON refused a knowledge graph profile path because it points outside the profile directory.
+        hint: Ask an administrator to keep profile artifacts inside the configured profile directory.
+        technicalDetailTemplate: 'Invalid artifact path for {field}: {path}'
+      profile_prompts_invalid:
+        title: The profile prompt configuration is invalid
+        detail: LODEON could not read the prompt configuration of the selected knowledge graph profile.
+        hint: Ask an administrator to check the profile prompt configuration.
+        technicalDetailTemplate: 'Invalid profile prompt field: {field}'
+      profile_prompt_base_missing:
+        title: The profile prompt directory is missing
+        detail: LODEON needs a prompt directory for the selected knowledge graph profile.
+        hint: Ask an administrator to configure a prompt directory or a knowledge graph profile base directory.
+      runtime_prompt_registry_missing:
+        title: The runtime prompt registry is missing
+        detail: LODEON could not find the runtime prompt registry.
+        hint: Ask an administrator to restore the runtime prompt registry.
+        technicalDetailTemplate: 'Missing runtime prompt registry: {path}'
+      runtime_prompt_registry_prompts_invalid:
+        title: The runtime prompt registry is invalid
+        detail: LODEON could not read the prompt entries in the runtime prompt registry.
+        hint: Ask an administrator to check the runtime prompt registry.
+        technicalDetailTemplate: 'Invalid runtime prompt registry field: {field}'
+      runtime_prompt_id_invalid:
+        title: A runtime prompt identifier is invalid
+        detail: LODEON found an invalid prompt identifier in the runtime prompt registry.
+        hint: Ask an administrator to check the runtime prompt registry.
+      runtime_prompt_entry_invalid:
+        title: A runtime prompt registry entry is invalid
+        detail: LODEON could not read one runtime prompt registry entry.
+        hint: Ask an administrator to check the runtime prompt registry entry.
+        technicalDetailTemplate: 'Invalid runtime prompt entry: {promptId}'
+      runtime_prompt_path_missing:
+        title: A runtime prompt path is missing
+        detail: LODEON found a runtime prompt registry entry without a prompt path.
+        hint: Ask an administrator to add the prompt path to the runtime prompt registry entry.
+        technicalDetailTemplate: 'Runtime prompt without path: {promptId}'
+      runtime_prompt_required_invalid:
+        title: A runtime prompt required flag is invalid
+        detail: LODEON found a runtime prompt registry entry with an invalid required flag.
+        hint: Ask an administrator to check the runtime prompt registry entry.
+        technicalDetailTemplate: 'Runtime prompt with invalid required flag: {promptId}'
+      runtime_prompt_variables_invalid:
+        title: A runtime prompt variable list is invalid
+        detail: LODEON found a runtime prompt registry entry with an invalid variable list.
+        hint: Ask an administrator to check the runtime prompt registry entry.
+        technicalDetailTemplate: 'Runtime prompt with invalid variables: {promptId}'
+      runtime_prompt_description_invalid:
+        title: A runtime prompt description is invalid
+        detail: LODEON found a runtime prompt registry entry without a usable description.
+        hint: Ask an administrator to add a short description to the runtime prompt registry entry.
+        technicalDetailTemplate: 'Runtime prompt with invalid description: {promptId}'
+      runtime_prompt_unknown:
+        title: The runtime prompt is unknown
+        detail: LODEON could not find the requested runtime prompt.
+        hint: Ask an administrator to check the runtime prompt registry.
+        technicalDetailTemplate: 'Unknown runtime prompt: {promptId}'
+      runtime_prompt_file_missing:
+        title: A required runtime prompt file is missing
+        detail: LODEON could not find a required runtime prompt file.
+        hint: Ask an administrator to add the missing prompt file.
+        technicalDetailTemplate: 'Missing runtime prompt file {promptPath}; searched: {searched}'
+      runtime_prompt_path_invalid:
+        title: A runtime prompt path is invalid
+        detail: LODEON refused a runtime prompt path because it points outside the prompt directory.
+        hint: Ask an administrator to keep runtime prompt paths inside the prompt directory.
+        technicalDetailTemplate: 'Invalid runtime prompt path: {promptPath}'
+      runtime_prompt_path_extension_invalid:
+        title: A runtime prompt path has an invalid format
+        detail: LODEON expects runtime prompt registry paths without file extensions.
+        hint: Ask an administrator to remove the file extension from the runtime prompt registry path.
+        technicalDetailTemplate: 'Invalid runtime prompt path: {promptPath}'
+      runtime_prompt_unknown_variables:
+        title: A runtime prompt received unknown variables
+        detail: LODEON could not render a runtime prompt because unsupported variables were provided.
+        hint: Ask an administrator to align the prompt template and its registry entry.
+        technicalDetailTemplate: 'Runtime prompt {promptId} received unknown variables: {variables}'
+      runtime_prompt_unknown_placeholders:
+        title: A runtime prompt uses unknown placeholders
+        detail: LODEON could not render a runtime prompt because the template contains unsupported placeholders.
+        hint: Ask an administrator to align the prompt template and its registry entry.
+        technicalDetailTemplate: 'Runtime prompt {promptId} uses unknown placeholders: {variables}'
+      runtime_prompt_variables_missing:
+        title: A runtime prompt is missing required variables
+        detail: LODEON could not render a runtime prompt because required variables were not provided.
+        hint: Ask an administrator to align the prompt template and the calling runtime path.
+        technicalDetailTemplate: 'Runtime prompt {promptId} is missing variables: {variables}'
+      profile_prompt_file_missing:
+        title: A profile prompt file is missing
+        detail: LODEON could not find a required prompt file for the selected knowledge graph profile.
+        hint: Ask an administrator to add the missing profile prompt file.
+        technicalDetailTemplate: 'Missing profile prompt file; searched: {searched}'
+      profile_prompt_path_invalid:
+        title: A profile prompt path is invalid
+        detail: LODEON refused a profile prompt path because it points outside the prompt directory.
+        hint: Ask an administrator to keep profile prompt paths inside the prompt directory.
+        technicalDetailTemplate: 'Invalid profile prompt path: {promptPath}'
+    auth:
+      required:
+        title: Authentication is required
+        detail: You need to be signed in before using the AI assistant.
+        hint: Sign in and try again.
+    rate_limit:
+      exceeded:
+        title: Too many assistant requests
+        detail: LODEON received too many assistant requests in a short time.
+        hint: Wait a moment before sending the next request.
+    disabled:
+      title: The AI assistant is disabled
+      detail: The AI assistant is not enabled for this LODEON instance.
+      hint: Ask an administrator to enable the assistant if it should be available.
+    request:
+      invalid:
+        title: The assistant request is invalid
+        detail: LODEON could not process the assistant request.
+        hint: Try again or start a new chat turn.
+      payload_invalid:
+        title: The assistant request payload is invalid
+        detail: LODEON could not process the assistant request because the request body has the wrong structure.
+        hint: Try again or start a new chat turn.
+        technicalDetailTemplate: Invalid assistant request payload for {endpoint}.
+      fields_invalid:
+        title: The assistant request contains unsupported fields
+        detail: LODEON could not process the assistant request because it contains fields outside the current request contract.
+        hint: Reload the editor and try again.
+        technicalDetailTemplate: 'Unsupported assistant request fields: {unexpected}'
+      model_invalid:
+        title: The selected model is invalid
+        detail: LODEON could not process the assistant request because the selected model or model broker identifier is invalid.
+        hint: Choose a configured model or model broker and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      knowledge_graph_profile_invalid:
+        title: The selected knowledge graph profile is invalid
+        detail: LODEON could not process the assistant request because the selected knowledge graph profile identifier is invalid.
+        hint: Choose a configured knowledge graph profile and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      turn_id_invalid:
+        title: The assistant turn identifier is invalid
+        detail: LODEON could not process the assistant request because the turn identifier has the wrong structure.
+        hint: Start a new assistant turn and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      messages_required:
+        title: The assistant request has no messages
+        detail: LODEON could not process the assistant request because it does not contain a chat message list.
+        hint: Start a new chat turn and try again.
+        technicalDetailTemplate: 'Missing or empty assistant request field: {field}'
+      messages_invalid:
+        title: The assistant message list is invalid
+        detail: LODEON could not process the assistant request because the message list has the wrong structure.
+        hint: Start a new chat turn and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      message_invalid:
+        title: An assistant message is invalid
+        detail: LODEON could not process the assistant request because one chat message has the wrong structure.
+        hint: Start a new chat turn and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      message_role_invalid:
+        title: An assistant message role is invalid
+        detail: LODEON could not process the assistant request because one chat message has an unsupported role.
+        hint: Start a new chat turn and try again.
+        technicalDetailTemplate: 'Invalid assistant message field: {field}'
+      message_content_invalid:
+        title: An assistant message is empty
+        detail: LODEON could not process the assistant request because one chat message has no usable content.
+        hint: Start a new chat turn and try again.
+        technicalDetailTemplate: 'Invalid assistant message field: {field}'
+      chat_id_invalid:
+        title: The assistant chat identifier is invalid
+        detail: LODEON could not process the assistant request because the active chat identifier is invalid.
+        hint: Reload the editor and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      chat_context_too_large:
+        title: The complete chat is too large
+        detail: LODEON did not send the chat to the model because its complete history exceeds the configured boundary. No chat messages were omitted.
+        hint: Ask an administrator to increase the configured Assistant context boundary.
+        technicalDetailTemplate: 'Chat {chatId}: {messageCount} messages, {messageChars} message characters, {systemPromptChars} system-prompt characters, {contextChars} context characters, configured boundary {maxInputCharacters}.'
+      user_message_too_large:
+        title: The assistant request is too long
+        detail: LODEON could not process the assistant request because a user message exceeds the configured size limit.
+        hint: Shorten the request and try again.
+        technicalDetailTemplate: 'Configured assistant user-message character limit: {maxUserMessageChars}'
+      story_memory_invalid:
+        title: The assistant memory payload is invalid
+        detail: LODEON could not process the assistant request because the memory payload has the wrong structure.
+        hint: Inspect or clear the project memory and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      story_context_invalid:
+        title: The story context payload is invalid
+        detail: LODEON could not process the assistant request because the story context has the wrong structure.
+        hint: Reload the editor and try again.
+        technicalDetailTemplate: 'Invalid assistant story context at {path}: {reason}'
+      tool_trace_invalid:
+        title: The assistant tool trace is invalid
+        detail: LODEON could not process the assistant request because the tool trace has the wrong structure.
+        hint: Start a new chat tab and try again.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      result_set_selection_invalid:
+        title: The selected result rows are invalid
+        detail: LODEON could not analyze the selected rows because the selection payload is invalid.
+        hint: Reload the result page, select the rows again, and retry.
+        technicalDetailTemplate: 'Invalid assistant request field: {field}'
+      result_set_selection_count_mismatch:
+        title: The selected row count does not match
+        detail: LODEON refused the analysis request because the announced row count differs from the rows supplied.
+        hint: Reload the result page and select the rows again.
+        technicalDetailTemplate: 'Announced rows: {rowCount}; supplied rows: {actualRowCount}'
+      result_set_selection_too_large:
+        title: The selected rows do not fit the model context
+        detail: LODEON did not send any selected rows because the complete selection exceeds the configured model context.
+        hint: Select fewer rows or analyze one smaller result page.
+        technicalDetailTemplate: 'Selection rows: {rowCount}; selection characters: {selectionChars}; configured context characters: {maxInputCharacters}'
+      tool_name_required:
+        title: The assistant tool name is missing
+        detail: LODEON could not execute the assistant tool request because no tool name was provided.
+        hint: Try again or start a new chat turn.
+        technicalDetailTemplate: 'Missing assistant tool request field: {field}'
+      tool_arguments_invalid:
+        title: The assistant tool arguments are invalid
+        detail: LODEON could not execute the assistant tool request because the tool arguments have the wrong structure.
+        hint: Try again or start a new chat turn.
+        technicalDetailTemplate: 'Invalid assistant tool request field: {field}'
+    model:
+      not_configured:
+        title: No assistant model is configured
+        detail: LODEON could not find a configured model for this assistant turn.
+        hint: Ask an administrator to check the selected model profile.
+      credentials_rejected:
+        title: The model provider rejected the configured credentials
+        detail: LODEON could not use the selected model because its provider rejected the configured credentials.
+        hint: Choose another model or ask an administrator to check the model credential configuration.
+      unavailable:
+        title: The selected model is unavailable
+        detail: The configured provider could not find or use the selected model.
+        hint: Choose another model, try again later, or ask an administrator to check the model profile.
+      context_limit_exceeded:
+        title: The model context limit was exceeded
+        detail: The selected model rejected the request because the complete input was too large.
+        hint: Shorten the conversation, exclude optional Story Content, or choose a model with a larger context limit.
+      provider_unavailable:
+        title: The model provider is temporarily unavailable
+        detail: The selected model provider could not complete the request.
+        hint: Try again later or choose another model.
+      connection_failed:
+        title: The model provider could not be reached
+        detail: LODEON could not connect to the configured model endpoint.
+        hint: Try again later or ask an administrator to check the endpoint and network connection.
+      request_failed:
+        title: The model request failed
+        detail: LODEON could not complete the request to the selected model provider.
+        hint: Try again, choose another model, or ask an administrator to inspect the model provider configuration.
+        technicalDetailTemplate: 'The model request failed with the following error: {externalError}'
+      timeout:
+        title: The model took too long to answer
+        detail: The selected model did not answer before the configured timeout was reached.
+        hint: Try again, use a shorter request, reduce story context, or choose a faster model.
+        technicalDetailTemplate: 'The model request failed with the following error: {externalError}'
+      rate_limited:
+        title: The model provider rate limit was reached
+        detail: The selected model provider temporarily rejected the request because too many requests were sent.
+        hint: Wait a moment before trying again or choose another model profile.
+        technicalDetailTemplate: 'The model request failed with the following error: {externalError}'
+      message_format_rejected:
+        title: The model provider rejected the conversation format
+        detail: The selected model provider rejected the request format used for this assistant turn.
+        hint: Try again without Force Tool Use, or choose another model. If the problem persists, ask an administrator to inspect the trace.
+        technicalDetailTemplate: 'The model request failed with the following error: {externalError}'
+      tool_calling_unavailable:
+        title: Tool calling is not available for this model
+        detail: The selected model did not confirm reliable structured tool-calling support.
+        hint: Choose a model with reliable tool calling or disable Force Tool Use for general questions.
+        technicalDetailTemplate: 'The model request failed with the following error: {externalError}'
+    tool:
+      required_but_missing:
+        title: No assistant tools are available
+        detail: Tool use was required for this turn, but LODEON did not have any tools available.
+        hint: Ask an administrator to check the assistant tool configuration.
+      no_structured_call_returned:
+        title: The model did not use a tool
+        detail: Tool use was required for this turn, but the selected model answered without a structured tool call.
+        hint: Disable Force Tool Use for general questions, try again, or choose a model with reliable tool-calling support.
+      no_evidence_call_returned:
+        title: The model did not gather evidence
+        detail: Tool use was required for this turn, but the selected model did not call an evidence-gathering tool before trying to continue.
+        hint: Try again, disable Force Tool Use for general questions, or choose a model with reliable tool-calling support.
+      unavailable:
+        title: An assistant tool is unavailable
+        detail: The assistant tried to use a tool that is currently not available.
+        hint: Ask an administrator to check the assistant tool runtime.
+      invalid_arguments:
+        title: The assistant sent invalid tool arguments
+        detail: The assistant tried to call a tool with arguments that LODEON could not accept.
+        hint: Try again or rephrase the request more explicitly.
+        technicalDetailTemplate: The assistant sent invalid arguments for tool {toolName}.
+      execution_failed:
+        title: An assistant tool failed
+        detail: LODEON could not complete one of the assistant tool calls.
+        hint: Try again. If the problem persists, ask an administrator to inspect the trace.
+      evidence_context_too_large:
+        title: The complete assistant tool evidence is too large
+        detail: LODEON did not send the tool evidence to the model because the complete evidence exceeds the configured context boundary.
+        hint: Use a more focused query or a user-controlled result-set page.
+        technicalDetailTemplate: 'Tool events: {toolEventCount}; evidence characters: {evidenceChars}; configured context characters: {maxInputCharacters}.'
+      evidence_contract_unknown:
+        title: The assistant tool evidence contract is missing
+        detail: LODEON cannot use the successful tool result because the tool has no registered evidence contract.
+        hint: Ask an administrator to update the assistant tool evidence registry.
+        technicalDetailTemplate: Missing evidence contract for assistant tool {toolName}.
+      evidence_result_invalid:
+        title: The assistant tool result is invalid
+        detail: LODEON cannot use the assistant tool result because it is not a structured object.
+        hint: Ask an administrator to inspect the tool implementation and trace.
+        technicalDetailTemplate: Invalid evidence result for assistant tool {toolName}.
+      evidence_result_shape_invalid:
+        title: The assistant tool result shape is invalid
+        detail: LODEON cannot use the successful tool result because required evidence fields are missing or invalid.
+        hint: Ask an administrator to align the tool implementation with its evidence contract.
+        technicalDetailTemplate: 'Invalid evidence fields for assistant tool {toolName}: {fields}.'
+      evidence_graph_result_unsupported:
+        title: Graph-shaped SPARQL evidence is not supported
+        detail: LODEON cannot use this SPARQL result because the assistant evidence pipeline currently supports tabular SELECT and boolean ASK results.
+        hint: Use a SELECT query that returns the required graph statements as rows.
+        technicalDetailTemplate: Unsupported {queryType} evidence result for assistant tool {toolName}.
+    external_mcp:
+      unavailable:
+        title: An external assistant Tool service is unavailable
+        detail: LODEON could not reach one configured external MCP service for this turn.
+        hint: Try again later or ask an administrator to check the external Tool service.
+        technicalDetailTemplate: 'External MCP server {serverId} is unavailable during {operation}.'
+      timeout:
+        title: An external assistant Tool took too long
+        detail: LODEON stopped the external MCP request at its configured deadline.
+        hint: Try again with a narrower request or ask an administrator to check the external Tool service.
+        technicalDetailTemplate: 'External MCP server {serverId} timed out during {operation}.'
+      network_policy_denied:
+        title: An external assistant Tool endpoint is not permitted
+        detail: LODEON refused the resolved MCP endpoint because it is outside the configured network policy.
+        hint: Ask an administrator to check the external MCP server URL and private-network setting.
+        technicalDetailTemplate: 'External MCP server {serverId} resolved to a forbidden target.'
+      redirect_forbidden:
+        title: An external assistant Tool redirect was refused
+        detail: LODEON does not follow redirects from configured MCP endpoints.
+        hint: Ask an administrator to configure the final MCP endpoint URL directly.
+        technicalDetailTemplate: 'External MCP server {serverId} returned a redirect during {operation}.'
+      protocol_invalid:
+        title: An external assistant Tool returned an invalid MCP response
+        detail: LODEON could not validate the external service response as supported MCP Streamable HTTP.
+        hint: Ask an administrator to check the MCP service version and transport configuration.
+        technicalDetailTemplate: 'Invalid external MCP response from {serverId} during {operation}: {reason}'
+      tool_not_advertised:
+        title: A configured external assistant Tool is unavailable
+        detail: The external MCP server did not advertise one Tool that this LODEON profile allowlists.
+        hint: Ask an administrator to align the Package Tool allowlist with the external service.
+        technicalDetailTemplate: 'External MCP server {serverId} did not advertise Tool {toolName}.'
+      tool_definition_invalid:
+        title: An external assistant Tool definition is invalid
+        detail: LODEON refused an advertised external Tool definition because it is invalid or exceeds configured limits.
+        hint: Ask an administrator to inspect the external MCP Tool schema and description.
+        technicalDetailTemplate: 'Invalid Tool definition from external MCP server {serverId}: {toolName}'
+      response_too_large:
+        title: An external assistant Tool response is too large
+        detail: LODEON refused the complete external MCP response because it exceeds the configured boundary.
+        hint: Use a narrower Tool request or ask an administrator to review the response limit.
+        technicalDetailTemplate: 'External MCP server {serverId} returned {actualBytes} bytes; configured maximum is {maximumBytes} bytes.'
+      call_failed:
+        title: An external assistant Tool failed
+        detail: The external MCP service could not complete the requested Tool call.
+        hint: Try again or ask an administrator to inspect the Assistant trace and external service.
+        technicalDetailTemplate: 'External MCP Tool {toolName} on server {serverId} failed.'
+    sparql:
+      not_read_only:
+        title: The SPARQL query is not read-only
+        detail: LODEON only allows read-only SPARQL queries.
+        hint: Use SELECT, ASK, CONSTRUCT, or DESCRIBE. SERVICE clauses are allowed, but update operations are blocked.
+      endpoint_failed:
+        title: The knowledge graph endpoint did not answer
+        detail: LODEON could not retrieve data from the selected knowledge graph endpoint.
+        hint: Try again later or ask an administrator to check the knowledge graph profile and endpoint.
+    followup:
+      invalid_rule:
+        title: An assistant follow-up rule is invalid
+        detail: LODEON could not evaluate the configured follow-up rules for this assistant turn.
+        hint: Ask an administrator to check the runtime and profile follow-up rules.
+        technicalDetailTemplate: 'The follow-up rules failed with the following error: {externalError}'
+      execution_failed:
+        title: Assistant follow-up handling failed
+        detail: LODEON could not complete the deterministic follow-up handling for this assistant turn.
+        hint: Ask an administrator to inspect the trace and follow-up rule configuration.
+    suggestions:
+      failed:
+        title: Suggested questions could not be generated
+        detail: LODEON could not generate assistant follow-up suggestions for this turn.
+        hint: You can continue writing or ask a new question manually.
+    cancel:
+      failed:
+        title: Assistant turn could not be stopped
+        detail: LODEON could not submit the stop request for the current assistant turn.
+        hint: Wait for the current turn to finish, then try again if needed.
+    probe:
+      failed:
+        title: Tool-calling probe failed
+        detail: LODEON could not verify tool-calling support for the selected model.
+        hint: Try again or choose another model profile.
+      checking:
+        title: Checking native tool calling
+        detail: LODEON is checking whether the selected model supports native structured tool calls.
+        hint: Wait for the probe result.
+      structured_tool_call_returned:
+        title: Native tool calling available
+        detail: The selected model returned the structured probe tool call.
+        hint: Tool-backed assistant workflows can use native tool calls with this profile.
+      no_structured_tool_call_returned:
+        title: Native tool calling unavailable
+        detail: The selected model did not return a structured probe tool call.
+        hint: Use content-fallback mode or choose another model profile for native tool calling.

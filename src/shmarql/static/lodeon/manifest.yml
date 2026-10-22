@@ -1,0 +1,19 @@
+publicRoot: assets/lodeon
+scripts:
+  - path: vendor/jquery/jquery-3.7.1.min.js
+  - path: vendor/datatables/jquery.dataTables.min.js
+  - path: vendor/plotly-3.7.0.min.js
+  - path: vendor/d3-7.9.0.min.js
+  - path: vendor/openseadragon-6.0.2.min.js
+  - path: vendor/leaflet/leaflet.js
+  - path: vendor/leaflet/leaflet.markercluster.js
+  - path: scripts/runtime.js
+  - path: verovio/lodeon-verovio.js
+    type: module
+styles:
+  - path: vendor/datatables/jquery.dataTables.min.css
+  - path: vendor/leaflet/leaflet.css
+  - path: vendor/leaflet/MarkerCluster.css
+  - path: vendor/leaflet/MarkerCluster.Default.css
+  - path: styles/runtime.css
+  - path: verovio/lodeon-verovio.css

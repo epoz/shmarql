@@ -1,0 +1,23 @@
+{%- macro cell(b) -%}
+{%- if b is none -%}
+{%- elif b.type == "uri" -%}
+<a href="{{ entity_href(b.value) }}" title="{{ b.value }}">{% set s = shorten(b.value) %}{% if s.prefix %}<span class="prefix">{{ s.prefix }}</span>{{ s.local }}{% else %}{{ b.value }}{% endif %}</a>
+{%- elif b.type == "bnode" -%}
+<span class="bnode">_:{{ b.value }}</span>
+{%- else -%}
+{{ b.value }}{% if b["xml:lang"] %}<span class="language-tag">@{{ b["xml:lang"] }}</span>{% endif %}
+{%- endif -%}
+{%- endmacro -%}
+{%- if results.boolean is defined -%}
+<p class="sparql-boolean">{{ "true" if results.boolean else "false" }}</p>
+{%- else -%}
+{%- set vars = results.head.vars if results.head and results.head.vars else [] -%}
+<table class="sparql-results">
+    <thead><tr>{% for v in vars %}<th>{{ v }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {%- for row in results.results.bindings %}
+        <tr>{% for v in vars %}<td>{{ cell(row.get(v)) }}</td>{% endfor %}</tr>
+    {%- endfor %}
+    </tbody>
+</table>
+{%- endif -%}

@@ -1,7 +1,11 @@
 databases
-.env
-docker-compose.yml
-
-__pycache__
 tmp
-.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.env

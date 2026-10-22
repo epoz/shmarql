@@ -1,4 +1,3 @@
-from .main import app
-from .markdownplugin import makeExtension, ShmarqlLexer
+"""SHMARQL - a FastAPI Linked Data front-end."""
 
-# from .am import login_required
+__version__ = "0.1.0"

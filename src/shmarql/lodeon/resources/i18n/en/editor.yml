@@ -1,0 +1,287 @@
+schemaVersion: 1
+locale: en
+namespace: editor
+
+messages:
+  actions:
+    project:
+      new:
+        label: "New"
+        description: "Create a new local Data Story project"
+      import:
+        label: "Import"
+        description: "Import a LODEON project package"
+      export:
+        label: "Export"
+        description: "Export the current project as a LODEON project package"
+      delete:
+        label: "Delete"
+        description: "Delete current project"
+    preview:
+      open:
+        label: "Preview"
+        description: "Render a Shmarql/MkDocs preview"
+        protectedDescription: "Render the current story in the configured MkDocs theme"
+    render:
+      html:
+        label: "Publish"
+        description: "Publish via Shmarql/MkDocs"
+        protectedDescription: "Publish the current story"
+  auth:
+    login: "Login"
+    logout: "Logout"
+    loginRequired: "Login required"
+  modal:
+    help:
+      title: "Help"
+    about:
+      title: "About LODEON"
+    loading: "Loading..."
+    close: "Close"
+    closeAria: "Close modal"
+    auth:
+      title: "Login"
+      closeAria: "Close login modal"
+      accessToken: "Access token"
+      or: "Or"
+    sparnatural:
+      title: "Sparnatural Builder"
+      closeAria: "Close Sparnatural builder"
+      initialStatus: "Visual query builder not loaded"
+      generatedSparql: "Generated SPARQL"
+      cancel: "Cancel"
+      useQuery: "Use query"
+      loading: "Loading visual query builder"
+      ready: "Visual query builder ready"
+      restoreFailed: "Saved visual query could not be restored"
+      updated: "Query updated"
+      cleared: "Query cleared"
+      generatedQueryAria: "Generated SPARQL query"
+      generatedQueryPlaceholder: "No SPARQL query generated yet."
+    publishStatus:
+      title: "Publish"
+      dismissAria: "Dismiss publish status"
+    packageStatus:
+      title: "Project package"
+      dismissAria: "Dismiss import/export status"
+  previewPanel:
+    title: "Rendered Preview"
+    initialStatus: "Preview not rendered"
+    close: "Close"
+    frameTitle: "Rendered Data Story preview"
+    rendering: "Rendering preview"
+    rendered: "Preview rendered"
+  publishStatus:
+    publishing: "Publishing"
+    published: "Published"
+  packageStatus:
+    exported: "Exported {{fileName}}"
+    importing: "Importing {{fileName}}"
+    imported: "Imported {{title}}"
+    addedAsset: "Added {{fileName}}"
+    removedUnusedAssets: "Removed {{count}} unused local {{assetLabel}}"
+    asset: "asset"
+    assets: "assets"
+  project:
+    untitled: "Untitled Data Story"
+  panels:
+    projectMetadata:
+      label: "Metadata"
+      description: "Publishing metadata for this Data Story"
+    projectStory:
+      label: "Story"
+      description: "Story document and metadata"
+  topbar:
+    homeAria: "LODEON home"
+    projectLabel: "Project"
+    projectTitleAria: "Project title"
+    primaryActionsAria: "Primary actions"
+    knowledgeGraphSelectLabel: "Select"
+    knowledgeGraphSelectAria: "Knowledge graph"
+    noKnowledgeGraphConfigured: "No Knowledge Graph configured"
+    dataStorySelectAria: "Data story"
+    importFileAria: "Import project file"
+    openHelpAria: "Open help"
+    helpTitle: "Help"
+    themeSwitchDay: "Switch to day theme"
+    themeSwitchNight: "Switch to night theme"
+  storyEditor:
+    aria: "LODEON story editor"
+    panelAria: "Story editor panel"
+  toolbar:
+    autosave:
+      saveNow: "Save now"
+      saving: "Saving"
+      saved: "Saved"
+    format:
+      undo: "Undo"
+      redo: "Redo"
+      zoomOut: "Zoom out"
+      zoomReset: "Reset zoom"
+      zoomIn: "Zoom in"
+      blockType: "Block type"
+      paragraph: "Paragraph"
+      heading1: "Heading 1"
+      heading2: "Heading 2"
+      heading3: "Heading 3"
+      heading4: "Heading 4"
+      heading5: "Heading 5"
+      heading6: "Heading 6"
+      blockFormat: "Block format"
+      blockStyle: "Block style"
+      bold: "Bold"
+      italic: "Italic"
+      underline: "Underline"
+      strike: "Strikethrough"
+      link: "Link"
+      inlineFormat: "Inline format"
+      inlineStyle: "Inline style"
+      bulletList: "Bullet list"
+      orderedList: "Ordered list"
+      blockquote: "Quote"
+      codeBlock: "Code block"
+      horizontalRule: "Horizontal rule"
+      insertImage: "Insert image"
+      insertTable: "Insert table"
+      addColumnAfter: "Add column after"
+      deleteColumn: "Delete column"
+      addRowAfter: "Add row after"
+      deleteRow: "Delete row"
+      deleteTable: "Delete table"
+      specialBlocks: "Special Blocks"
+      specialNodes: "Special Nodes"
+      containerContent: "Container content"
+    linkPopover:
+      urlLabel: "Link URL"
+      urlPlaceholder: "https://example.org"
+      apply: "Apply"
+      remove: "Remove"
+    imagePopover:
+      urlLabel: "Image URL"
+      urlPlaceholder: "https://example.org/image.jpg"
+      insert: "Insert"
+    popover:
+      cancel: "Cancel"
+  metadataPanel:
+    aria: "Project metadata"
+    resizeAria: "Resize metadata panel"
+    title: "Metadata"
+    expand: "Expand metadata panel"
+    collapse: "Collapse metadata panel"
+    aboutAria: "Open about LODEON"
+    aboutTitle: "About LODEON"
+    fields:
+      description:
+        label: "Description"
+        aria: "Story description"
+        placeholder: "Brief summary of the data story"
+        help: "Short abstract used for project exchange and future publication metadata."
+      keywords:
+        label: "Keywords"
+        aria: "Story keywords"
+        placeholder: "keyword, another keyword"
+        help: "Comma-separated terms describing the story."
+      language:
+        label: "Language"
+        aria: "Story language"
+        placeholder: "en"
+        help: "Use a short language tag such as en or de."
+      license:
+        label: "License"
+        aria: "Story license"
+        placeholder: "CC BY 4.0"
+        help: "Rights statement or license for the authored story."
+      slug:
+        label: "Slug"
+        aria: "Story slug"
+        statusValid: "Publishes to story folder"
+        statusInvalid: "Use letters, numbers, underscores, or hyphens"
+        validation: "Use letters, numbers, underscores, or hyphens. Do not use dots or slashes."
+      publishStoryZip:
+        label: "Publish Story ZIP"
+    contributors:
+      title: "Contributors"
+      add: "Add Contributor"
+      help: "Structured publication contributors for metadata, export, and schema.org output."
+      empty: "No contributors configured"
+      cardTitle: "Contributor {{index}}"
+      unnamed: "Unnamed contributor"
+      toggleAria: "Toggle contributor {{index}}"
+      removeAria: "Remove contributor {{index}}"
+      removeTitle: "Remove contributor"
+      name:
+        label: "Name"
+        aria: "Contributor {{index}} name"
+        placeholder: "Contributor name"
+      role:
+        label: "Role"
+        aria: "Contributor {{index}} role"
+        placeholder: "author"
+      affiliation:
+        label: "Affiliation"
+        aria: "Contributor {{index}} affiliation"
+        placeholder: "Institution or organization"
+      identifiers:
+        title: "Identifiers"
+        add: "Add Identifier"
+        empty: "No identifiers configured"
+        label: "Contributor {{contributorIndex}} identifier {{index}}"
+        removeAria: "Remove {{label}}"
+        removeTitle: "Remove identifier"
+        type:
+          label: "Type"
+          aria: "{{label}} type"
+          placeholder: "ORCID"
+        value:
+          label: "Identifier"
+          aria: "{{label}} value"
+          placeholder: "0000-0000-0000-0000"
+        url:
+          label: "URL"
+          aria: "{{label}} URL"
+          placeholder: "https://orcid.org/..."
+      roles:
+        author: "Author"
+        editor: "Editor"
+        translator: "Translator"
+    persistentIdentifiers:
+      title: "Persistent Identifiers"
+      add: "Add PID"
+      help: "Permanent identifiers under which this Data Story is published."
+      empty: "No persistent identifiers configured"
+      cardTitle: "PID {{index}}"
+      emptySummary: "No URL configured"
+      toggleAria: "Toggle PID {{index}}"
+      removeAria: "Remove PID {{index}}"
+      removeTitle: "Remove PID"
+      label: "Persistent identifier {{index}}"
+      type:
+        label: "Type"
+        aria: "{{label}} type"
+        placeholder: "DOI"
+      value:
+        label: "Identifier"
+        aria: "{{label}} value"
+        placeholder: "10.xxxx/example"
+      url:
+        label: "URL"
+        aria: "{{label}} URL"
+        placeholder: "https://doi.org/10.xxxx/example"
+    published:
+      title: "Published story"
+      empty: "not yet published"
+      url: "URL"
+      zip: "ZIP"
+      publishedAt: "Published {{date}}"
+      historyCount: "{{count}} publication events stored"
+    assets:
+      title: "Local assets"
+      empty: "No local assets"
+      total: "Total"
+      used: "Used"
+      unused: "Unused"
+      missing: "Missing"
+      missingWarning: "{{count}} referenced asset {{fileLabel}} missing from this project."
+      missingFileSingular: "file is"
+      missingFilePlural: "files are"
+      cleanup: "Clean Up Unused Assets"

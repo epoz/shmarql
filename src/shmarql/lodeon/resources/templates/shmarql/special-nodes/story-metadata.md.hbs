@@ -1,0 +1,12 @@
+<section class="tile lodeon-story-metadata" aria-label="{{values.title}}">
+{{#if values.rows.length}}
+<dl>
+{{#each values.rows}}
+<dt><strong>{{label}}:</strong></dt>
+<dd>{{{valueHtml}}}</dd>
+{{/each}}
+</dl>
+{{else}}
+<p>{{values.emptyText}}</p>
+{{/if}}
+</section>

@@ -1,0 +1,41 @@
+# SPARQL backend profiles. Each profile is keyed by a hash of its endpoint address;
+# list them with `uv run shmarql profiles` or GET /api/profiles.
+
+# The profile served at /sparql (name or key). Defaults to the first profile.
+default: wikidata
+
+# Optional global overrides for the entity viewer (see src/shmarql/entity/settings.py)
+display:
+  namespaces:
+    ex: http://example.org/
+
+profiles:
+  - name: wikidata
+    title: Wikidata
+    description: The Wikidata Query Service
+    endpoint: https://query.wikidata.org/sparql
+    timeout: 20
+    uri_prefixes:
+      - http://www.wikidata.org/entity/
+    display:
+      # Wikidata has no blank nodes and times out on the complex default query
+      construct_query: "CONSTRUCT { {subject_uris} ?p ?o . } WHERE { {subject_uris} ?p ?o . }"
+      show_inverse_relations: false
+    # Optional, for the story editor at /lodeon/:
+    # sparnatural: sparnatural/wikidata.ttl   # Sparnatural (SHACL) config enabling the
+    #                                         # visual query builder; relative to this file
+    # graph_explorer:                         # Graph Explorer node settings (LODEON names)
+    #   maxNodes: 200
+    #   defaultDirection: outgoing
+
+  - name: dbpedia
+    title: DBpedia
+    description: Structured content from Wikipedia
+    endpoint: https://dbpedia.org/sparql
+    uri_prefixes:
+      - http://dbpedia.org/resource/
+    display:
+      namespaces:
+        dbo: http://dbpedia.org/ontology/
+        dbr: http://dbpedia.org/resource/
+        dul: http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#

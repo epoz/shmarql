@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+{# Ported from ldview (https://codeberg.org/renevoorburg/ldview) templates/view.html #}
+
+{% block title %}{{ (main_subject.main_label if main_subject and main_subject.main_label else query_uri) }} – {{ site_title }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/css/entity.css">
+    <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/leaflet.css">
+    <script src="/static/lodeon/vendor/leaflet/leaflet.js"></script>
+{% endblock %}
+
+{% macro render_object(triple) -%}
+    {% if triple.is_wkt %}
+        {% set wkt_type = triple.object.split('(')[0].strip().split(' ')|last|upper %}
+        <details class="wkt-details">
+            <summary class="wkt-summary"><span class="wkt-type">{{ wkt_type }}</span> <span class="wkt-hint">{{ _('wkt.hint') }}</span></summary>
+            <span class="wkt-full">"{{ triple.object }}"{% if triple.datatype %}<span class="datatype" title="{{ triple.datatype }}">^^{{ shorten_uri(triple.datatype).prefix }}{{ shorten_uri(triple.datatype).local }}</span>{% endif %}</span>
+        </details>
+    {% elif triple.is_blank_object %}
+        <a href="#{{ triple.object_anchor }}" class="blank-node-ref">{% if triple.object_label %}[{{ triple.object_label }}]{% else %}[{{ triple.object|blank_node_display(skolem_pattern)|zwsp }}]{% endif %}</a>
+    {% elif triple.is_uri %}
+        <a href="{{ uri_href(triple.object) }}" class="uri-object">{% if triple.object_label %}{{ triple.object_label }}{% elif triple.object_short.prefix %}<span class="prefix">{{ triple.object_short.prefix }}</span><span class="local">{{ triple.object_short.local }}</span>{% else %}&lt;{{ triple.object|zwsp }}&gt;{% endif %}</a>
+    {% elif triple.is_numeric %}
+        {{ triple.object }}{% if triple.datatype %}<span class="datatype" title="{{ triple.datatype }}">^^{{ shorten_uri(triple.datatype).prefix }}{{ shorten_uri(triple.datatype).local }}</span>{% endif %}
+    {% elif triple.is_html %}
+        <span class="html-literal">{{ triple.object|safe }}</span>
+    {% else %}
+        "{{ triple.object }}"{% if triple.language %}<span class="language-tag">@{{ triple.language }}</span>{% elif triple.datatype %}<span class="datatype" title="{{ triple.datatype }}">^^{{ shorten_uri(triple.datatype).prefix }}{{ shorten_uri(triple.datatype).local }}</span>{% endif %}
+    {% endif %}
+{%- endmacro %}
+
+{% macro render_predicate_table(predicate_groups) %}
+    {% set ns = namespace(last_predicate=None, tab_index=0) %}
+    <table class="properties-table">
+        <tbody>
+            {% for group in predicate_groups %}
+                {% for triple in group.predicates %}
+                    {# Collect all triples for this predicate within this group #}
+                    {% set is_new_pred = (triple.predicate != ns.last_predicate) %}
+                    {% if is_new_pred %}
+                        {# Gather all triples for this predicate in this group #}
+                        {% set pred_triples = group.predicates | selectattr('predicate', 'equalto', triple.predicate) | list %}
+                        {# Split: tagged vs untagged plain string literals (is_literal=true, no language tag, not numeric, not html) #}
+                        {% set untagged = pred_triples | selectattr('is_literal', 'equalto', true) | selectattr('language', 'none') | selectattr('is_numeric', 'equalto', false) | selectattr('is_html', 'equalto', false) | list %}
+                        {% set tagged = pred_triples | selectattr('language') | list %}
+                        {% set langs = tagged | map(attribute='language') | unique | sort | list %}
+                        {% set has_tabs = (langs | length) >= 2 %}
+                        {% set ns.last_predicate = triple.predicate %}
+                        {% set ns.tab_index = ns.tab_index + 1 %}
+                        {% set tab_id = 'pred-' ~ ns.tab_index %}
+
+                        {# --- Rows for untagged values --- #}
+                        {% for ut in untagged %}
+                            <tr>
+                                {% if loop.first %}
+                                    <td class="predicate-cell" title="{{ ut.predicate }}">
+                                        <span class="predicate">
+                                            <a href="{{ uri_href(ut.predicate) }}" class="predicate-link">
+                                                <span class="prefix">{{ ut.predicate_short.prefix }}</span><span class="local">{{ ut.predicate_short.local|camel_wbr }}</span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                {% else %}
+                                    <td class="predicate-cell"></td>
+                                {% endif %}
+                                <td class="object-cell" title="{{ ut.object }}">{{ render_object(ut) }}</td>
+                            </tr>
+                        {% endfor %}
+
+                        {# --- Rows for tagged values (or single-language, no tabs) --- #}
+                        {% if tagged %}
+                            {% if has_tabs %}
+                                {# Determine active language: prefer current_lang, fallback to first available #}
+                                {% set active_lang = current_lang if current_lang in langs else langs[0] %}
+                                <tr>
+                                    {% if not untagged %}
+                                        <td class="predicate-cell" title="{{ triple.predicate }}">
+                                            <span class="predicate">
+                                                <a href="{{ uri_href(triple.predicate) }}" class="predicate-link">
+                                                    <span class="prefix">{{ triple.predicate_short.prefix }}</span><span class="local">{{ triple.predicate_short.local|camel_wbr }}</span>
+                                                </a>
+                                            </span>
+                                        </td>
+                                    {% else %}
+                                        <td class="predicate-cell"></td>
+                                    {% endif %}
+                                    <td class="object-cell lang-tabs-cell">
+                                        <div class="lang-tabs" data-tab-group="{{ tab_id }}">
+                                            {% for lang in langs %}
+                                                <button class="lang-tab{% if lang == active_lang %} active{% endif %}" data-lang="{{ lang }}" data-group="{{ tab_id }}">{{ lang }}</button>
+                                            {% endfor %}
+                                        </div>
+                                        {% for t in tagged %}
+                                            <div class="lang-value" data-lang="{{ t.language }}" data-group="{{ tab_id }}"{% if t.language != active_lang %} style="display:none"{% endif %}>{{ render_object(t) }}</div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                {# Only 1 language tag: show as regular rows without tabs #}
+                                {% for t in tagged %}
+                                    <tr>
+                                        {% if loop.first and not untagged %}
+                                            <td class="predicate-cell" title="{{ t.predicate }}">
+                                                <span class="predicate">
+                                                    <a href="{{ uri_href(t.predicate) }}" class="predicate-link">
+                                                        <span class="prefix">{{ t.predicate_short.prefix }}</span><span class="local">{{ t.predicate_short.local|camel_wbr }}</span>
+                                                    </a>
+                                                </span>
+                                            </td>
+                                        {% else %}
+                                            <td class="predicate-cell"></td>
+                                        {% endif %}
+                                        <td class="object-cell" title="{{ t.object }}">{{ render_object(t) }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+
+                        {# --- Non-string rows: URIs, blank nodes, numeric literals, html literals --- #}
+                        {% set non_literal = pred_triples | selectattr('is_literal', 'equalto', false) | list %}
+                        {%- set non_literal = non_literal + (pred_triples | selectattr('is_numeric', 'equalto', true) | list) -%}
+                        {%- set non_literal = non_literal + (pred_triples | selectattr('is_html', 'equalto', true) | selectattr('language', 'none') | list) -%}
+                        {% for t in non_literal %}
+                            <tr>
+                                {% if loop.first and not untagged and not tagged %}
+                                    <td class="predicate-cell" title="{{ t.predicate }}">
+                                        <span class="predicate">
+                                            <a href="{{ uri_href(t.predicate) }}" class="predicate-link">
+                                                <span class="prefix">{{ t.predicate_short.prefix }}</span><span class="local">{{ t.predicate_short.local|camel_wbr }}</span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                {% else %}
+                                    <td class="predicate-cell"></td>
+                                {% endif %}
+                                <td class="object-cell" title="{{ t.object }}">{{ render_object(t) }}</td>
+                            </tr>
+                        {% endfor %}
+
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block content %}
+    <div class="content ldview">
+        {% with main_subject = subjects[0] if subjects else None %}
+            {% if main_subject %}
+                <div class="main-subject">
+                    <div class="header-section">
+                        {% if main_subject.main_label %}
+                            <h1>{{ main_subject.main_label }}</h1>
+                        {% endif %}
+
+                        <div class="uri-line">
+                            <h2><a href="{{ main_subject.subject }}" class="uri-object" title="{{ main_subject.subject }}">&lt;{{ main_subject.subject|zwsp }}&gt;</a></h2>
+                            {% if main_subject.types %}
+                                <div class="types">
+                                    {% for type in main_subject.types %}
+                                        <a href="{{ uri_href(type.uri) }}" class="type-badge" title="{{ type.uri }}">
+                                            <span class="prefix">{{ type.prefix }}</span><span class="local">{{ type.local }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {% if main_subject.main_description %}
+                            <div class="description">
+                                {{ main_subject.main_description }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if main_subject.images or main_subject.coordinates_list %}
+                        <div class="images-section">
+                            {% if main_subject.images %}
+                                {% for image in main_subject.images %}
+                                    <div class="image-container" title="{{ image.predicate_short.prefix }}{{ image.predicate_short.local }}">
+                                        <a href="{{ image.link_url }}" target="_blank">
+                                            <img src="{{ image.url }}" alt="{{ main_subject.main_label or main_subject.subject_short.local }}" loading="lazy" onerror="this.closest('.image-container').remove()">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% if main_subject.coordinates_list %}
+                                <div id="map" class="map-container"></div>
+                                <script>
+                                    var coordinates = {{ main_subject.coordinates_list|tojson }};
+                                    var map = L.map('map');
+                                    
+                                    // Add tile layer
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    }).addTo(map);
+
+                                    // Add geometries and create bounds
+                                    var bounds = L.latLngBounds();
+                                    coordinates.forEach(function(coord, index) {
+                                        var type = coord.type || 'point';
+                                        var label = coord.label || 'Locatie ' + (index + 1);
+                                        
+                                        if (type === 'point') {
+                                            // Single point - use marker
+                                            var center = coord.center || coord;
+                                            var marker = L.marker([center.latitude, center.longitude])
+                                                .bindPopup('<div class="marker-popup">' + label + '</div>');
+                                            marker.addTo(map);
+                                            bounds.extend([center.latitude, center.longitude]);
+                                        } else if (type === 'linestring') {
+                                            // Line - use polyline
+                                            var latlngs = coord.coordinates.map(function(c) { return [c[0], c[1]]; });
+                                            var line = L.polyline(latlngs, {color: 'blue'})
+                                                .bindPopup('<div class="marker-popup">' + label + '</div>');
+                                            line.addTo(map);
+                                            latlngs.forEach(function(ll) { bounds.extend(ll); });
+                                        } else if (type === 'multilinestring') {
+                                            // Multiple lines - render each as a polyline
+                                            coord.lines.forEach(function(linePts) {
+                                                var latlngs = linePts.map(function(c) { return [c[0], c[1]]; });
+                                                var line = L.polyline(latlngs, {color: 'blue'})
+                                                    .bindPopup('<div class="marker-popup">' + label + '</div>');
+                                                line.addTo(map);
+                                                latlngs.forEach(function(ll) { bounds.extend(ll); });
+                                            });
+                                        } else if (type === 'polygon') {
+                                            // Polygon - use polygon
+                                            var latlngs = coord.coordinates.map(function(c) { return [c[0], c[1]]; });
+                                            // Close the polygon if needed
+                                            if (latlngs.length > 2) {
+                                                var first = latlngs[0];
+                                                var last = latlngs[latlngs.length - 1];
+                                                if (first[0] !== last[0] || first[1] !== last[1]) {
+                                                    latlngs.push(first);
+                                                }
+                                            }
+                                            var poly = L.polygon(latlngs, {color: 'blue', fillOpacity: 0.2})
+                                                .bindPopup('<div class="marker-popup">' + label + '</div>');
+                                            poly.addTo(map);
+                                            latlngs.forEach(function(ll) { bounds.extend(ll); });
+                                        } else if (type === 'multipolygon') {
+                                            // MultiPolygon - render each polygon
+                                            coord.polygons.forEach(function(polygon) {
+                                                var latlngs = polygon.map(function(c) { return [c[0], c[1]]; });
+                                                // Close the polygon if needed
+                                                if (latlngs.length > 2) {
+                                                    var first = latlngs[0];
+                                                    var last = latlngs[latlngs.length - 1];
+                                                    if (first[0] !== last[0] || first[1] !== last[1]) {
+                                                        latlngs.push(first);
+                                                    }
+                                                }
+                                                var poly = L.polygon(latlngs, {color: 'blue', fillOpacity: 0.2})
+                                                    .bindPopup('<div class="marker-popup">' + label + '</div>');
+                                                poly.addTo(map);
+                                                latlngs.forEach(function(ll) { bounds.extend(ll); });
+                                            });
+                                        }
+                                    });
+
+                                    // Set view based on geometries
+                                    if (coordinates.length === 1 && coordinates[0].type === 'point') {
+                                        // Single point: use fixed zoom level
+                                        var center = coordinates[0].center || coordinates[0];
+                                        map.setView([center.latitude, center.longitude], {{ settings.default_map_zoom_level }});
+                                    } else if (bounds.isValid()) {
+                                        // Multiple geometries or single polygon/line: fit to bounds
+                                        // No maxZoom limit so small polygons/lines are zoomed in properly
+                                        map.fitBounds(bounds, {padding: [50, 50]});
+                                    }
+
+                                    // Recalculate tile layout after container has settled
+                                    setTimeout(function() { map.invalidateSize(); }, 0);
+                                </script>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+
+                    {{ render_predicate_table(main_subject.predicate_groups) }}
+                </div>
+            {% endif %}
+
+            {# Toon andere URI subjects #}
+            {% for subject in subjects[1:] %}
+                {% if not subject.is_blank %}
+                    <div class="blank-node">
+                        <div class="uri-line">
+                            <h3>
+                                <a href="{{ uri_href(subject.subject) }}" class="uri-object">&lt;{{ subject.subject|zwsp }}&gt;</a>
+                                {% if subject.relation_to_main %} 
+                                    (<span class="predicate">
+                                        <a href="{{ uri_href(subject.relation_uri) }}" class="predicate-link">
+                                            <span class="prefix">{{ subject.relation_to_main.prefix }}</span><span class="local">{{ subject.relation_to_main.local }}</span>
+                                        </a>
+                                    </span>)
+                                {% endif %}
+                            </h3>
+                            {% if subject.types %}
+                                <div class="types">
+                                    {% for type in subject.types %}
+                                        <a href="{{ uri_href(type.uri) }}" class="type-badge" title="{{ type.uri }}">
+                                            <span class="prefix">{{ type.prefix }}</span><span class="local">{{ type.local }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {{ render_predicate_table(subject.predicate_groups) }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Toon blank nodes #}
+            {% set blank_node_subjects = subjects[1:]|selectattr('is_blank')|list %}
+            {% if blank_node_subjects %}
+                <div class="blank-nodes-section">
+                {% for subject in blank_node_subjects %}
+                    <div class="blank-node" id="{{ subject.anchor }}">
+                        <div class="uri-line">
+                            <h3>{% if subject.predicate_chain %}<span class="predicate-chain-context">{% for step in subject.predicate_chain %}{% if not loop.first %} :: {% endif %}<span class="predicate"><a href="{{ uri_href(step.pred_uri) }}" class="predicate-link"><span class="prefix">{{ step.pred_short.prefix }}</span><span class="local">{{ step.pred_short.local }}</span></a></span>{% endfor %} →</span><br>{% endif %}{% if subject.predicate_chain %}{% set last_step = subject.predicate_chain[-1] %}{% if last_step.node_label %}{{ last_step.node_label }}{% else %}[{{ last_step.node_uri|blank_node_display(skolem_pattern)|zwsp }}]{% endif %}{% else %}{% if subject.main_label %}{{ subject.main_label }}{% else %}[{{ subject.subject|blank_node_display(skolem_pattern)|zwsp }}]{% endif %}{% endif %}</h3>
+                            {% if subject.types %}
+                                <div class="types">
+                                    {% for type in subject.types %}
+                                        <a href="{{ uri_href(type.uri) }}" class="type-badge" title="{{ type.uri }}">
+                                            <span class="prefix">{{ type.prefix }}</span><span class="local">{{ type.local }}</span>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {{ render_predicate_table(subject.predicate_groups) }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if inverse_relations %}
+                <h2 class="inverse-relations-heading">{{ _('inverse_relations.heading') }}</h2>
+            {% endif %}
+            {% for _key, data in inverse_relations.items() %}
+                <div class="blank-node inverse-relation-box">
+                    <h3><span class="predicate-chain-context">[ .. ] → {% for hop in data.via_chain %}<span class="predicate"><a href="{{ uri_href(hop.pred) }}" class="predicate-link"><span class="prefix">{{ hop.pred_short.prefix }}</span><span class="local">{{ hop.pred_short.local|camel_wbr }}</span></a></span> :: {% endfor %}<span class="predicate"><a href="{{ uri_href(data.final_pred) }}" class="predicate-link"><span class="prefix">{{ data.final_pred_short.prefix }}</span><span class="local">{{ data.final_pred_short.local|camel_wbr }}</span></a></span> → {% if main_subject.main_label %}{{ main_subject.main_label }}{% else %}&lt;{{ query_uri|zwsp }}&gt;{% endif %}</span></h3>
+                    <div class="inverse-subjects-flow">
+                        {% for subject in data.subjects %}
+                            <span class="inverse-subject-wrapper"><a href="{{ uri_href(subject.uri) }}" class="uri-object inverse-subject-item" title="{{ subject.uri }}">{% if subject.label %}{{ subject.label }}{% else %}&lt;{{ subject.uri|zwsp }}&gt;{% endif %}</a>{% if subject.type_local %}<a href="{{ uri_href(subject.type_uri) }}" class="type-badge" title="{{ subject.type_uri }}">{% if subject.type_prefix %}<span class="prefix">{{ subject.type_prefix }}:</span>{% endif %}<span class="local">{{ subject.type_local }}</span></a>{% endif %}</span>
+                        {% endfor %}
+                        {% if data.total_count > settings.max_inverse_subjects and data.query_url %}
+                            <span class="more-results">... <a href="{{ data.query_url }}">{{ _('inverse_relations.all', count=data.total_count) }}</a></span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+
+        {% endwith %}
+    </div>
+    <!-- END content div -->
+{% endblock %}
+
+{% block formats %}
+    <div class="ldview"><div class="formats">
+        <div class="formats-row">
+            <div class="formats-label">{{ _('download.label') }}</div>
+            <div class="formats-buttons">
+                {% for name, href in format_links %}<a href="{{ href }}">{{ name }}</a>{% endfor %}
+                <div class="data-source">{{ _('data_source.label') }} <a href="/query?profile={{ profile.key }}">{{ profile.title }}</a></div>
+            </div>
+        </div>
+    </div></div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/static/js/langtabs.js"></script>
+{% endblock %}

@@ -1,0 +1,35 @@
+schemaVersion: 1
+
+contributors:
+  enabled: true
+  defaultRole: author
+  defaultIdentifierType: ORCID
+  roles:
+    author:
+      labelKey: metadataPanel.contributors.roles.author
+      schemaOrgProperty: author
+    editor:
+      labelKey: metadataPanel.contributors.roles.editor
+      schemaOrgProperty: editor
+    translator:
+      labelKey: metadataPanel.contributors.roles.translator
+      schemaOrgProperty: translator
+
+fields:
+  description:
+    enabled: true
+  keywords:
+    enabled: true
+  language:
+    enabled: true
+    default: en
+  license:
+    enabled: true
+  persistentIdentifiers:
+    enabled: true
+    defaultType: DOI
+  slug:
+    enabled: true
+  publishStoryZip:
+    enabled: true
+    default: false

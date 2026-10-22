@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('menu.editor') }} – {{ site_title }}{% endblock %}
+
+{# The editor's CSS goes before shmarql.css so the site header and footer keep their look. #}
+{% block head_first %}
+    {% for href in editor.styles %}<link rel="stylesheet" crossorigin href="{{ href }}">
+    {% endfor %}
+    {% for href in editor.preloads %}<link rel="modulepreload" crossorigin href="{{ href }}">
+    {% endfor %}
+{% endblock %}
+
+{% block body_class %}page-editor{% endblock %}
+{% block container_class %} container--editor{% endblock %}
+
+{% block content %}
+    {% if editor.scripts %}
+    <div id="app" class="lodeon-editor-app"></div>
+    {% else %}
+    <p class="notice">The story editor is not built. Run <code>npm ci &amp;&amp; npm run build</code> in <code>editor/</code>.</p>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    {% for src in editor.scripts %}<script type="module" crossorigin src="{{ src }}"></script>
+    {% endfor %}
+{% endblock %}

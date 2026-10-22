@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('menu.query') }} – {{ site_title }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="/static/codemirror/codemirror.css">
+{% endblock %}
+
+{% block container_class %} container--wide{% endblock %}
+
+{% block content %}
+<div class="query-page">
+    {% if not profiles %}
+        <p class="notice">{{ _('query.no_profiles') }}</p>
+    {% endif %}
+    <form id="query-form" class="query-form" autocomplete="off">
+        <div class="profile-picker">
+            <label for="profile-input">{{ _('query.profile') }}</label>
+            <div class="autocomplete">
+                <input type="text" id="profile-input" class="profile-input"
+                       role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-options"
+                       placeholder="{{ _('query.profile_placeholder') }}"
+                       value="{{ selected.title if selected else '' }}">
+                <input type="hidden" id="profile-key" name="profile" value="{{ selected.key if selected else '' }}">
+                <ul id="profile-options" class="autocomplete-options" role="listbox" hidden></ul>
+            </div>
+            <code id="profile-endpoint" class="profile-endpoint">{{ selected.sparql if selected else '' }}</code>
+        </div>
+
+        <textarea id="query-editor" name="query">{{ query }}</textarea>
+
+        <div class="query-actions">
+            <button type="submit" id="run-query" class="button-primary">{{ _('query.run') }}</button>
+            <span class="hint">Ctrl/⌘ + Enter</span>
+            <span id="query-status" class="query-status" aria-live="polite"></span>
+        </div>
+    </form>
+
+    <section id="query-results" class="query-results"></section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script id="profiles-data" type="application/json">{{ profiles|tojson }}</script>
+    <script>
+        window.SHMARQL_I18N = {{ {"running": _('query.running'), "rows": _('query.rows')}|tojson }};
+    </script>
+    <script src="/static/codemirror/codemirror.js"></script>
+    <script src="/static/codemirror/sparql.js"></script>
+    <script src="/static/js/query.js"></script>
+{% endblock %}

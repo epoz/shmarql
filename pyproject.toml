@@ -1,52 +1,62 @@
 [project]
 name = "shmarql"
-version = "0.70"
+version = "0.73"
 description = "A Linked Data publishing platform for semantic web professionals in a hurry."
-authors = [{name = "Etienne Posthumus", email = "ep@epoz.org"}]
-license = "MIT"
 readme = "README.md"
-keywords = ["SPARQL", "search", "RDF", "Linked Data"]
-requires-python = ">=3.10"
+authors = [{ name = "Etienne Posthumus", email = "eposthumus@gmail.com" }]
+license = "MIT"
+requires-python = ">=3.11"
+keywords = ["SPARQL", "RDF", "Linked Data", "FastAPI"]
 dependencies = [
-    "apsw==3.50.3.0",
-    "bcrypt==3.2.0",
-    "click==8.2.1",
-    "fastapi>=0.138.1",
-    "fizzysearch==0.31",
-    "markdown>=3.9",
-    "mkdocs-material>=9.6.21",
-    "pandas>=2.3.3",
-    "passlib>=1.7.4",
-    "plotly>=6.3.1",
-    "pygments>=2.19.2",
-    "pyoxigraph>=0.5.0",
-    "python-fasthtml>=0.12.29",
-    "pyyaml>=6.0.3",
-    "rdflib>=7.2.1",
-    "tree-sitter-sparql==0.1.0",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "httpx>=0.27",
+    "jinja2>=3.1",
+    "pydantic-settings>=2.7",
+    "python-dotenv>=1.0",
+    "python-multipart>=0.0.9",
+    "pyyaml>=6.0",
+    "rdflib>=7.1",
+    "markdown>=3.6",
+    "pymdown-extensions>=10.9",
+    "pygments>=2.18",
+    "nh3>=0.2.18",
 ]
 
-[project.urls]
-Homepage = "https://shmarql.com/"
-Repository = "https://github.com/epoz/shmarql"
-
-[project.entry-points."pygments.lexers"]
-py3 = "shmarql:ShmarqlLexer"
-
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["shmarql*"]
-
-[tool.setuptools.package-data]
-shmarql = ["sample_site.zip"]
+[project.scripts]
+shmarql = "shmarql.__main__:main"
 
 [dependency-groups]
 dev = [
-    "debugpy>=1.8.21",
-    "ipython>=8.37.0",
-    "scriv>=1.8.0",
+    "pytest>=8.3",
+    "ruff>=0.6",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/shmarql"]
+
+[tool.hatch.build.targets.sdist]
+# editor/ is the source of src/shmarql/lodeon_editor/; leave out its npm install
+exclude = ["editor/node_modules", "editor/coverage"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["src/shmarql/lodeon/nodes"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["shmarql"]
+known-local-folder = ["conftest", "fake_endpoint"]

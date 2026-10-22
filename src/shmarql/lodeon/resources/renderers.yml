@@ -1,0 +1,164 @@
+engines:
+  shmarql:
+    templateDirectory: runtime/templates/shmarql
+    requiredMarkdownExtensions:
+      - attr_list
+      - md_in_html
+      - pymdownx.blocks.caption
+      - pymdownx.blocks.details
+      - pymdownx.blocks.html
+      - pymdownx.superfences
+    formatMappings: {}
+    containerMappings: {}
+    metadata:
+      frontMatter:
+        enabled: true
+      htmlMeta:
+        enabled: true
+        fields:
+          description:
+            source: metadata.description
+          keywords:
+            source: metadata.keywords
+          author:
+            source: metadata.contributors[].name
+          language:
+            source: metadata.language
+          license:
+            source: metadata.license
+          identifier:
+            source: metadata.persistentIdentifiers[].url
+      openGraph:
+        enabled: true
+        fields:
+          title:
+            source: title
+          description:
+            source: metadata.description
+          type:
+            value: article
+          url:
+            source: published.url
+      jsonLd:
+        enabled: true
+        context: https://schema.org
+        type: ScholarlyArticle
+        properties:
+          headline:
+            source: title
+          name:
+            source: title
+          description:
+            source: metadata.description
+          keywords:
+            source: metadata.keywords
+          inLanguage:
+            source: metadata.language
+          license:
+            source: metadata.license
+          identifier:
+            source: metadata.persistentIdentifiers[].url
+          url:
+            source: published.url
+          datePublished:
+            source: published.publishedAt
+          dateModified:
+            source: updatedAt
+          author:
+            source: metadata.contributorsBySchemaOrgProperty.author
+            type: Person
+            properties:
+              name:
+                source: name
+              affiliation:
+                source: affiliation
+              sameAs:
+                source: identifiers[].url
+              identifier:
+                source: identifiers[].value
+          editor:
+            source: metadata.contributorsBySchemaOrgProperty.editor
+            type: Person
+            properties:
+              name:
+                source: name
+              affiliation:
+                source: affiliation
+              sameAs:
+                source: identifiers[].url
+              identifier:
+                source: identifiers[].value
+          translator:
+            source: metadata.contributorsBySchemaOrgProperty.translator
+            type: Person
+            properties:
+              name:
+                source: name
+              affiliation:
+                source: affiliation
+              sameAs:
+                source: identifiers[].url
+              identifier:
+                source: identifiers[].value
+    specialNodeMappings:
+      sparqlNode:
+        strategy: fencedCode
+        fence: shmarql
+        contentAttribute: source
+        attributes:
+          title: title
+          kg: knowledgeGraphProfileId
+      sparnaturalNode:
+        strategy: fencedCode
+        fence: shmarql
+        contentAttribute: source
+        attributes:
+          title: title
+          kg: knowledgeGraphProfileId
+      visualizationNode:
+        strategy: fencedCode
+        fence: lodeon-visualization
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      rawgraphsNode:
+        strategy: fencedCode
+        fence: lodeon-rawgraphs
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      embedNode:
+        strategy: fencedCode
+        fence: lodeon-embed
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      iiifNode:
+        strategy: fencedCode
+        fence: lodeon-iiif
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      graphExplorerNode:
+        strategy: fencedCode
+        fence: lodeon-graph-explorer
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      leafletNode:
+        strategy: fencedCode
+        fence: lodeon-leaflet
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      verovioNode:
+        strategy: fencedCode
+        fence: lodeon-verovio
+        contentAttribute: viewConfig
+        attributes:
+          title: title
+      mediaAssetNode:
+        strategy: mediaReference
+      storyMetadataNode:
+        strategy: template
+        template: special-nodes/story-metadata.md.hbs

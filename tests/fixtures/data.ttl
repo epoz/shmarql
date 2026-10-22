@@ -1,0 +1,41 @@
+@prefix ex: <http://example.org/> .
+@prefix schema: <http://schema.org/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:rembrandt a schema:Person ;
+    rdfs:label "Rembrandt"@en, "Rembrandt van Rijn"@nl ;
+    schema:description "Dutch painter"@en, "Nederlandse schilder"@nl ;
+    schema:birthDate "1606-07-15"^^xsd:date ;
+    schema:image <http://images.example.org/rembrandt.jpg> ;
+    schema:knows ex:saskia ;
+    schema:text "<p>Some <b>bold</b> text<script>alert(1)</script></p>"^^rdf:HTML ;
+    schema:birthPlace [
+        a schema:Place ;
+        rdfs:label "Leiden" ;
+        geo:hasGeometry [ geo:asWKT "POINT(4.49 52.16)"^^geo:wktLiteral ]
+    ] ;
+    schema:alumniOf <http://example.org/.well-known/genid/school1> .
+
+<http://example.org/.well-known/genid/school1> rdfs:label "Latin School" ;
+    schema:startDate "1613"^^xsd:gYear .
+
+ex:saskia a schema:Person ; rdfs:label "Saskia van Uylenburgh" .
+
+ex:nightwatch a schema:Painting ;
+    rdfs:label "The Night Watch" ;
+    schema:creator ex:rembrandt .
+
+ex:titus a schema:Person ;
+    rdfs:label "Titus van Rijn" ;
+    schema:parent [ schema:person ex:rembrandt ] .
+
+ex:leiden a schema:Place ;
+    rdfs:label "Leiden"@nl ;
+    geo:hasGeometry [ geo:asWKT "POINT(4.49 52.16)"^^geo:wktLiteral ] .
+
+ex:adams rdfs:label "Douglas Adams"@mul, "Дуглас Адамс"@ru ;
+    schema:knows ex:rembrandt, ex:saskia, ex:titus, ex:leiden .

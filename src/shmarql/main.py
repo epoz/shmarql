@@ -1,284 +1,128 @@
-import csv, io, string, json, os
-from urllib.parse import quote, unquote_plus
-from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import Response, HTMLResponse, FileResponse, RedirectResponse
-from fasthtml.common import Div, to_xml
-import pyoxigraph as px
-from .px_util import OxigraphSerialization, results_to_xml
-from . import config
-from .config import (
-    MOUNT,
-    SPARQL_QUERY_UI,
-    SITEDOCS_PATH,
-    SITE_URI,
-    PROXY_HOST,
-    log,
-)
-from typing import List, Callable, Dict, Any
+"""FastAPI application factory."""
 
-from .qry import do_query, hash_query
-from .fragments import rt as fragments_rt
-from .fragments import fragments_sparql
-from .services import proxy_request
+from __future__ import annotations
 
-# from .am import ar as am_rt
+import logging
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+import httpx
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
-app.include_router(fragments_rt)
-# app.include_router(am_rt)
+from . import __version__
+from .config import Settings, get_settings
+from .docs_site import DocsSite
+from .entity.settings import DisplaySettings
+from .lodeon import StoryRenderer
+from .markdown_render import MarkdownRenderer
+from .profiles import ProfileRegistry
+from .routes import lodeon_api, lodeon_editor, pages, sparql
+from .sparql_client import SparqlClient
+from .web import EDITOR_DIR, STATIC_DIR, AppState, create_templates
+
+log = logging.getLogger("shmarql")
 
 
-@app.on_event("startup")
-async def startup_event():
-    log.debug(f">>>> App started up")
-    await config.init_redis()
+def create_app(
+    settings: Settings | None = None,
+    registry: ProfileRegistry | None = None,
+    transport: httpx.AsyncBaseTransport | None = None,
+) -> FastAPI:
+    """Build the application.
 
-
-@app.get("/favicon.ico")
-def favicon():
-    return FileResponse(f"static/favicon.ico")
-
-
-@app.get("/shmarql/static/{fname:path}")
-@app.get(MOUNT + "shmarql/static/{fname:path}")
-@app.get(MOUNT + "static/{fname:path}")
-def shmarql_get_static(fname: str):
-    return FileResponse(f"static/{fname}")
-
-
-def make_literal_query(some_literal: dict, encode=True, limit=999):
-    txt = some_literal["value"].replace("\n", " ")
-    txt = txt.translate(str.maketrans("", "", string.punctuation))
-    txt = [x for x in txt.split(" ") if len(x) > 1][:10]
-    txt = " ".join(txt).strip(" ")
-
-    Q = f"""select ?s ?p ?o where {{
-        ?s ?p ?o .
-        ?s fizzy:fts "{txt}" . }} limit {limit}"""
-    if encode:
-        return quote(Q)
-    else:
-        return Q
-
-
-def json_results_to_csv(results: dict):
-    output = io.StringIO()
-    writer = csv.writer(output)
-
-    # Write header
-    writer.writerow([var for var in results.get("head", {}).get("vars", [])])
-    for row in results.get("results", {}).get("bindings", []):
-        writer.writerow(
-            [
-                row.get(var, {"value": ""})["value"]
-                for var in results.get("head", {}).get("vars", [])
-            ]
+    ``registry`` and ``transport`` are injectable for tests; by default the profiles
+    are read from ``settings.profiles_path`` and real HTTP is used.
+    """
+    settings = settings or get_settings()
+    if registry is None:
+        registry = ProfileRegistry.from_yaml(settings.profiles_path, settings.default_profile)
+    elif settings.default_profile:
+        registry = ProfileRegistry(
+            list(registry), settings.default_profile, display=registry.display
         )
-    return output.getvalue()
+    client = SparqlClient(
+        timeout=settings.sparql_timeout,
+        user_agent=settings.sparql_user_agent,
+        transport=transport,
+    )
+    http = httpx.AsyncClient(transport=transport)
 
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        yield
+        await client.aclose()
+        await http.aclose()
 
-def accept_header_to_format(request: Request) -> str:
-    accept_header = request.headers.get("accept")
-    accept_headers_incoming = []
-    if accept_header:
-        accept_headers_incoming = [ah.strip() for ah in accept_header.split(",")]
-    accept_headers = {}
-    for ah in accept_headers_incoming:
-        ql = ah.split(";")
-        ql_val = 1
-        if len(ql) > 1:
-            ah_left = ql[0]
-            ql = ql[1].split("=")
-            if len(ql) > 1 and ql[0] == "q":
-                try:
-                    ql_val = float(ql[1])
-                except ValueError:
-                    ql_val = 0
-        else:
-            ah_left = ql[0]
-            ql_val = 1
-        accept_headers[ah_left] = ql_val
+    app = FastAPI(
+        title=settings.site_title,
+        version=__version__,
+        debug=settings.debug,
+        lifespan=lifespan,
+        docs_url="/api/docs",
+        redoc_url=None,
+        openapi_url="/api/openapi.json",
+    )
+    app.state.shmarql = AppState(
+        settings=settings,
+        registry=registry,
+        client=client,
+        docs=DocsSite(settings.docs_path),
+        markdown=MarkdownRenderer(StoryRenderer(settings.lodeon_config_path)),
+        display=DisplaySettings().merged(registry.display),
+        http=http,
+    )
+    app.state.templates = create_templates()
 
-    for ah, _ in sorted(accept_headers.items(), reverse=True, key=lambda x: x[1]):
-        if ah.startswith("application/sparql-results+json"):
-            return "json"
-        if ah.startswith("application/json"):
-            return "json"
-        if ah.startswith("text/turtle"):
-            return "turtle"
-        if ah.startswith("application/sparql-results+xml"):
-            return "xml"
-        if ah.startswith("application/xml"):
-            return "xml"
-
-    return "html"
-
-
-@app.options(f"{MOUNT}sparql")
-def handle_options():
-    headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    }
-    return Response(status_code=204, headers=headers)
-
-
-@app.api_route(f"{MOUNT}sparql", methods=["GET", "POST"])
-async def sparql(request: Request):
-    if request.headers.get("content-type") == "application/sparql-query":
-        query = await request.body()
-        query = query.decode("utf-8")
-    elif request.headers.get("content-type") == "application/x-www-form-urlencoded":
-        body = await request.body()
-        body = body.decode("utf-8")
-        params = dict(param.split("=") for param in body.split("&"))
-        query = params.get("query")
-        # this should also be unescaped before passing on
-        if query:
-            query = unquote_plus(query)
-    else:
-        query = request.query_params.get("query")
-    if not query or len(query.strip()) < 2:
-        return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
-    return await shmarql_get(request, query)
-
-
-@app.get(f"{MOUNT}shmarql")
-def shmarql_redir():
-    return RedirectResponse(f"{MOUNT}shmarql/", status_code=303)
-
-
-@app.get(f"{MOUNT}shmarql/")
-async def shmarql_get(
-    request: Request,
-    query: str = "select * where {?s ?p ?o} limit 10",
-    format: str = None,
-):
-
-    if format is None:
-        format = accept_header_to_format(request)
-    results = await do_query(query)
-    if format in ("csv", "json", "turtle", "xml"):
-        if "data" in results:
-            if format == "turtle":
-                return Response(
-                    results["data"],
-                    headers={
-                        "Content-Type": "text/turtle",
-                        "Access-Control-Allow-Origin": "*",
-                    },
-                )
-            try:
-                # if format is not turtle, but the results are bytes, try to parse it and return as json
-                tmp_store = px.Store()
-                tmp_store.bulk_load(results["data"], "text/turtle")
-                r = tmp_store.query("select * where {?s ?p ?o}")
-                results["results"] = {"bindings": OxigraphSerialization(r).json()}
-            except Exception as e:
-                results = {
-                    "error": f"{e} Query returned non-parsable data: {repr(results)[:500]}"
-                }
-
-        if format == "xml":
-            xml_data = results_to_xml(results)
-            return Response(
-                xml_data,
-                headers={
-                    "Content-Type": "application/sparql-results+xml",
-                    "Content-Disposition": f"attachment; filename={hash_query(query)}.xml",
-                    "Access-Control-Allow-Origin": "*",
-                },
-            )
-
-        if format == "csv":
-            csv_data = json_results_to_csv(results)
-
-            return Response(
-                csv_data,
-                headers={
-                    "Content-Type": "text/csv",
-                    "Content-Disposition": f"attachment; filename={hash_query(query)}.csv",
-                    "Access-Control-Allow-Origin": "*",
-                },
-            )
-        if format == "json":
-            if "endpoint" in results:
-                del results["endpoint"]
-            return Response(
-                json.dumps(results, indent=2),
-                headers={
-                    "Content-Type": "application/sparql-results+json",
-                    "Access-Control-Allow-Origin": "*",
-                },
-            )
-
-    if not SPARQL_QUERY_UI:
-        return HTMLResponse(
-            "<div>There is currently no SPARQL query form to be found here, call it from a command line via a POST request.</div>"
+    if settings.cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.cors_origins,
+            allow_methods=["GET", "POST", "OPTIONS"],
+            allow_headers=["*"],
         )
 
-    sui = await fragments_sparql(query, results)
+    # LODEON assets: a configured directory replaces the bundled copy.
+    if settings.lodeon_assets_path:
+        app.mount(
+            "/static/lodeon",
+            StaticFiles(directory=settings.lodeon_assets_path),
+            name="lodeon_assets",
+        )
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-    return HTMLResponse(to_xml(Div(sui, cls="mt-4")))
-
-
-from .biki import *
-
-
-async def entity_check(iri: str):
-    q = f"SELECT * WHERE {{ <{iri}> ?p ?o }}"
-    res = await do_query(q)
-    return len(res.get("results", {}).get("bindings", [])) > 0
-
-
-@app.get(MOUNT + "{fname:path}")
-@app.get("/{fname:path}")
-async def getter(request: Request, fname: str):
-    if PROXY_HOST:
-        try:
-            log.debug(f"Proxying request for {fname} to {PROXY_HOST.rstrip('/')}")
-            return await proxy_request(request, PROXY_HOST.rstrip("/"))
-        except Exception as e:
-            log.debug(f"Error proxying request for {fname}: {e}")
-
-    log.debug(f"Getter on {repr(fname)}")
-    new_name = fname
-    if fname.startswith("/"):
-        new_name = fname[1:]
-    if fname == "" or fname.endswith("/"):
-        new_name += "index.html"
-
-    path_to_try = os.path.join(SITEDOCS_PATH, new_name)
-    if MOUNT:
-        path_to_try = os.path.join(SITEDOCS_PATH, new_name.replace(MOUNT[1:], "", 1))
-    else:
-        path_to_try = os.path.join(SITEDOCS_PATH, new_name)
-
-    log.debug(f"Trying {path_to_try}")
-    if os.path.exists(path_to_try):
-        return FileResponse(path_to_try)
-
-    iri = SITE_URI + fname
-    log.debug(f"Entity Checking {iri}")
-    if SITE_URI and await entity_check(iri):
-        format = accept_header_to_format(request)
-        if format == "html":
-            q = f"""
-# shmarql-view: resource
-# shmarql-editor: hide
-
-SELECT ?p ?o ?pp ?oo WHERE {{
-  <{iri}> ?p ?o .
-  OPTIONAL {{
-    ?o ?pp ?oo .
-  }}
-}}"""
+    app.include_router(sparql.router)
+    app.include_router(lodeon_api.router)
+    if settings.lodeon_editor_enabled:
+        # /lodeon/ itself is rendered in the site template by lodeon_editor.editor_page.
+        app.include_router(lodeon_editor.router)
+        app.add_api_route("/lodeon", _editor_redirect, methods=["GET"], include_in_schema=False)
+        if (EDITOR_DIR / "index.html").is_file():
+            app.mount("/lodeon", StaticFiles(directory=EDITOR_DIR), name="lodeon_editor")
         else:
-            q = f"CONSTRUCT {{ <{iri}> ?p ?o }} WHERE {{ <{iri}> ?p ?o }}"
+            log.warning("LODEON editor is not built (run `npm run build` in editor/)")
+        if not settings.lodeon_editor_token:
+            log.info("LODEON editor: set LODEON_EDITOR_TOKEN to enable publishing stories")
+    app.include_router(pages.router)
+    # The documentation catch-all must come last.
+    app.add_api_route("/", pages.docs_page, methods=["GET"], include_in_schema=False)
+    app.add_api_route("/{path:path}", pages.docs_page, methods=["GET"], include_in_schema=False)
 
-        return RedirectResponse(f"{MOUNT}shmarql/?query={quote(q)}")
+    log.info(
+        "%s ready: %d profile(s), default=%s, docs=%s",
+        settings.site_title,
+        len(registry),
+        registry.default.name if registry.default else None,
+        settings.docs_path,
+    )
+    return app
 
-    # The default 404 from FileResponse leaks the path, make it simpler:
-    raise HTTPException(404, f"File not found {fname}")
+
+async def _editor_redirect() -> RedirectResponse:
+    return RedirectResponse("/lodeon/", status_code=307)
+
+
+def app_factory() -> FastAPI:
+    """Entry point for ``uvicorn --factory shmarql.main:app_factory``."""
+    return create_app()

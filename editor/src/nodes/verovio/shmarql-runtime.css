@@ -1,0 +1,10 @@
+@import "./presentation";
+
+.lodeon-verovio {
+  --ld-verovio-ui-accent: var(--md-accent-fg-color, #e25a5a);
+  --ld-verovio-ui-bg: var(--md-default-bg-color, #fff);
+  --ld-verovio-ui-surface: var(--md-code-bg-color, #fafafa);
+  --ld-verovio-ui-border: var(--md-default-fg-color--lightest, #d6d6d6);
+  --ld-verovio-ui-text: var(--md-default-fg-color, #111);
+  --ld-verovio-ui-muted: var(--md-default-fg-color--light, #767676);
+}

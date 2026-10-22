@@ -1,0 +1,344 @@
+.ld-verovio-presentation {
+  --ld-verovio-ui-accent: var(--lodeon-accent, var(--md-accent-fg-color, #e25a5a));
+  --ld-verovio-ui-bg: var(--lodeon-panel, var(--md-default-bg-color, #fff));
+  --ld-verovio-ui-surface: var(--lodeon-surface, var(--md-code-bg-color, #fafafa));
+  --ld-verovio-ui-border: var(--lodeon-border, var(--md-default-fg-color--lightest, #d6d6d6));
+  --ld-verovio-ui-text: var(--lodeon-text, var(--md-default-fg-color, #111));
+  --ld-verovio-ui-muted: var(--lodeon-muted, var(--md-default-fg-color--light, #767676));
+  --ld-verovio-ui-focus: var(
+    --lodeon-focus,
+    color-mix(in srgb, var(--ld-verovio-ui-accent) 35%, transparent)
+  );
+  color: var(--ld-verovio-ui-text);
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.ld-verovio-presentation button,
+.ld-verovio-presentation select,
+.ld-verovio-presentation summary {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.ld-verovio-presentation button,
+.ld-verovio-presentation summary {
+  align-items: center;
+  background: var(--ld-verovio-ui-bg);
+  border: 1px solid var(--ld-verovio-ui-border);
+  color: var(--ld-verovio-ui-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.4rem 0.75rem;
+  text-decoration: none;
+}
+
+.ld-verovio-presentation button:hover,
+.ld-verovio-presentation summary:hover {
+  border-color: var(--ld-verovio-ui-accent);
+  color: var(--ld-verovio-ui-accent);
+}
+
+.ld-verovio-presentation button:focus-visible,
+.ld-verovio-presentation select:focus-visible,
+.ld-verovio-presentation input:focus-visible,
+.ld-verovio-presentation summary:focus-visible {
+  outline: 2px solid var(--ld-verovio-ui-focus);
+  outline-offset: 2px;
+}
+
+.ld-verovio-presentation button:disabled,
+.ld-verovio-presentation select:disabled,
+.ld-verovio-presentation input:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ld-verovio-presentation select {
+  background: var(--ld-verovio-ui-bg);
+  border: 1px solid var(--ld-verovio-ui-border);
+  color: var(--ld-verovio-ui-text);
+  min-height: 2.25rem;
+  min-width: 0;
+  padding: 0.35rem 2rem 0.35rem 0.6rem;
+}
+
+.ld-verovio-presentation input[type="range"] {
+  accent-color: var(--ld-verovio-ui-accent);
+  min-width: 8rem;
+}
+.ld-verovio-presentation input[type="checkbox"] {
+  accent-color: var(--ld-verovio-ui-accent);
+  height: 1rem;
+  width: 1rem;
+}
+
+.ld-verovio-single-view,
+.ld-verovio-active-item,
+.ld-verovio-item-details,
+.ld-verovio-presentation-viewport,
+.ld-verovio-list-view,
+.ld-verovio-grouped-view,
+.ld-verovio-group-items,
+.ld-verovio-resource-group {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.ld-verovio-view-switcher {
+  display: inline-flex;
+  gap: 0;
+  width: fit-content;
+}
+.ld-verovio-view-switcher button + button {
+  border-left: 0;
+}
+.ld-verovio-view-switcher button[aria-pressed="true"] {
+  background: var(--ld-verovio-ui-accent);
+  border-color: var(--ld-verovio-ui-accent);
+  color: #fff;
+}
+
+.ld-verovio-presentation-summary,
+.ld-verovio-item-navigation,
+.ld-verovio-page-navigation,
+.ld-verovio-viewer-controls,
+.ld-verovio-playback-controls,
+.ld-verovio-compare-bar,
+.ld-verovio-compare-controls {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.ld-verovio-presentation-summary > span,
+.ld-verovio-item-status,
+.ld-verovio-playback-status,
+.ld-verovio-compare-status {
+  background: var(--ld-verovio-ui-surface);
+  border: 1px solid var(--ld-verovio-ui-border);
+  color: var(--ld-verovio-ui-muted);
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+}
+
+.ld-verovio-control,
+.ld-verovio-compare-bar label,
+.ld-verovio-compare-controls label {
+  color: var(--ld-verovio-ui-muted);
+  display: grid;
+  font-size: 0.75rem;
+  font-weight: 700;
+  gap: 0.2rem;
+}
+
+.ld-verovio-item-position,
+.ld-verovio-page-position {
+  font-variant-numeric: tabular-nums;
+  min-width: 7rem;
+  text-align: center;
+}
+.ld-verovio-playback-position {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+.ld-verovio-playback-position output:empty {
+  display: none;
+}
+
+.ld-verovio-item-selector {
+  border-top: 1px solid var(--ld-verovio-ui-border);
+  display: flex;
+  gap: 0.5rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.75rem;
+}
+.ld-verovio-item-selector-item {
+  align-items: stretch;
+  display: grid !important;
+  flex: 0 0 min(18rem, 72vw);
+  gap: 0.25rem;
+  justify-content: stretch !important;
+  max-width: 18rem;
+  min-width: 13rem;
+  text-align: left;
+}
+.ld-verovio-item-selector-item[data-active="true"] {
+  border-color: var(--ld-verovio-ui-accent);
+  background: var(--ld-verovio-ui-surface);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--ld-verovio-ui-text) 12%, transparent);
+}
+.ld-verovio-item-selector-item .ld-embed-selector-title,
+.ld-verovio-item-selector-item .ld-embed-selector-meta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ld-verovio-item-selector-item .ld-embed-selector-title {
+  font-weight: 700;
+}
+.ld-verovio-item-selector-item .ld-embed-selector-meta {
+  color: var(--ld-verovio-ui-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.ld-verovio-active-item,
+.ld-verovio-resource-group {
+  background: var(--ld-verovio-ui-bg);
+  border: 1px solid var(--ld-verovio-ui-border);
+  padding: 1rem;
+}
+
+.ld-verovio-item-header,
+.ld-verovio-resource-group > header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-width: 0;
+}
+.ld-verovio-item-title {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ld-verovio-rendering {
+  background: var(--ld-verovio-ui-bg);
+  max-width: 100%;
+  min-height: 8rem;
+  overflow: auto;
+}
+.ld-verovio-rendering svg {
+  display: block;
+  height: auto;
+  max-width: none;
+}
+.ld-verovio-rendering[data-state="deferred"] {
+  align-items: center;
+  background: var(--ld-verovio-ui-surface);
+  border: 1px dashed var(--ld-verovio-ui-border);
+  color: var(--ld-verovio-ui-muted);
+  display: flex;
+  font-size: 0.85rem;
+  justify-content: center;
+  min-height: 4rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.ld-verovio-metadata-row {
+  display: grid;
+  gap: 0.2rem 0.75rem;
+  grid-template-columns: minmax(7rem, max-content) minmax(0, 1fr);
+  margin: 0;
+}
+.ld-verovio-metadata-row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ld-verovio-metadata-row a,
+.ld-verovio-resource-row a {
+  color: var(--ld-verovio-ui-accent);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
+.ld-verovio-playback-highlight,
+.ld-verovio-playback-highlight * {
+  color: var(--ld-verovio-highlight, #d55e00) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+.ld-verovio-source {
+  border-top: 1px solid var(--ld-verovio-ui-border);
+  padding-top: 0.75rem;
+}
+.ld-verovio-source summary {
+  width: fit-content;
+}
+.ld-verovio-source pre {
+  background: var(--ld-verovio-ui-surface);
+  max-height: 18rem;
+  overflow: auto;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+}
+.ld-verovio-source button {
+  margin: 0 0.4rem 0.4rem 0;
+}
+
+.ld-verovio-list-view,
+.ld-verovio-group-items {
+  margin: 0;
+  padding: 0;
+}
+.ld-verovio-collection-item {
+  min-width: 0;
+}
+.ld-verovio-resource-group > header .ld-verovio-resource-row {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+.ld-verovio-resource-count {
+  color: var(--ld-verovio-ui-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.ld-verovio-playback-controls > label {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.ld-verovio-compare-panes {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ld-verovio-compare-pane {
+  min-width: 0;
+}
+.ld-verovio-compare-status {
+  width: fit-content;
+}
+.ld-verovio-caption {
+  border-top: 1px solid var(--ld-verovio-ui-border);
+  color: var(--ld-verovio-ui-muted);
+  font-size: 0.9rem;
+  margin: 0;
+  padding-top: 0.75rem;
+}
+.ld-verovio-presentation [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .ld-verovio-compare-panes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ld-verovio-active-item,
+  .ld-verovio-resource-group {
+    padding: 0.75rem;
+  }
+  .ld-verovio-metadata-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
