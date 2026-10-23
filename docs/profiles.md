@@ -4,7 +4,7 @@ Backend triplestores are listed in the YAML file named by `PROFILES_PATH`. Each
 entry is a *profile*:
 
 ```yaml
-default: wikidata              # served at /sparql (name or key)
+default: wikidata              # served at /sparql (name, key or endpoint address)
 display: {}                    # global entity-viewer settings, optional
 profiles:
   - name: wikidata             # used in the UI and in data stories (kg="wikidata")
@@ -36,8 +36,19 @@ List the keys with `uv run shmarql profiles` or `GET /api/profiles`.
 
 ## The default endpoint
 
-`/sparql` proxies to the default profile: `DEFAULT_PROFILE` if set, otherwise the
-`default:` entry of the YAML file, otherwise the first profile.
+`/sparql` proxies to the default profile: `ENDPOINT` if set, otherwise the `default:`
+entry of the YAML file, otherwise the first profile.
+
+With `ENDPOINT` set to a profile address — e.g.
+
+```shell
+ENDPOINT=https://query.wikidata.org/sparql
+```
+
+the profile with that endpoint address becomes the default served at `/sparql` and
+the default used for queries. Because every query without an explicit profile — the
+`/sparql` proxy itself, the query editor, the entity viewer and the data stories — goes
+through the default profile, this is all it takes to point a site at one backend.
 
 ## Entity viewer settings
 

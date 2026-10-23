@@ -59,7 +59,7 @@ environment variables win over the file. See [`.env.example`](.env.example).
 | `HOST`, `PORT`              | `127.0.0.1`, `8000` | Bind address for `uv run shmarql`                                          |
 | `DEBUG`                     | `0`                 | Verbose logging                                                            |
 | `PROFILES_PATH`             | `profiles.yaml`     | YAML file with the SPARQL profiles                                         |
-| `DEFAULT_PROFILE`           | –                   | Profile name or key served at `/sparql` (overrides `default:` in the YAML) |
+| `ENDPOINT`                  | –                   | Endpoint address of the profile served at `/sparql` (e.g. `https://query.wikidata.org/sparql`); overrides the YAML `default`, and becomes the default used for queries |
 | `SPARQL_TIMEOUT`            | `30`                | Upstream timeout in seconds                                                |
 | `SPARQL_USER_AGENT`         | `shmarql/0.1 …`     | User-Agent sent upstream                                                   |
 | `CORS_ORIGINS`              | –                   | Comma separated origins allowed to call the API (`*` = all)                |
@@ -80,7 +80,7 @@ environment variables win over the file. See [`.env.example`](.env.example).
 
 ```yaml
 # profiles.yaml
-default: wikidata # the profile behind /sparql (name or key)
+default: wikidata # the profile behind /sparql (name, key or endpoint address)
 display: {} # optional global entity-viewer settings
 profiles:
   - name: wikidata # also usable as kg="wikidata" in data stories

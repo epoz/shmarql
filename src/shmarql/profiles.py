@@ -2,7 +2,7 @@
 
 Example ``profiles.yaml``::
 
-    default: wikidata            # profile served at /sparql
+    default: wikidata            # profile served at /sparql (name or endpoint address)
     display: {}                  # optional global entity-viewer overrides
     profiles:
       - name: wikidata
@@ -138,7 +138,7 @@ class Profile:
 
 
 class ProfileRegistry:
-    """All configured profiles, addressable by hash key or by name."""
+    """All configured profiles, addressable by hash key, name or endpoint address."""
 
     def __init__(
         self,
@@ -148,6 +148,7 @@ class ProfileRegistry:
     ):
         self._by_key: dict[str, Profile] = {}
         self._by_name: dict[str, Profile] = {}
+        self._by_endpoint: dict[str, Profile] = {}
         for profile in profiles:
             if profile.key in self._by_key:
                 other = self._by_key[profile.key]
@@ -159,6 +160,7 @@ class ProfileRegistry:
                 raise ProfileError(f"Duplicate profile name {profile.name!r}")
             self._by_key[profile.key] = profile
             self._by_name[profile.name] = profile
+            self._by_endpoint[normalise_endpoint(profile.endpoint)] = profile
         self.display: dict[str, Any] = dict(display or {})
         self._default: Profile | None = None
         if default:
@@ -212,10 +214,11 @@ class ProfileRegistry:
         return self._by_key.get(key)
 
     def get(self, ref: str | None) -> Profile | None:
-        """Resolve a hash key or a profile name."""
+        """Resolve a hash key, profile name or endpoint address."""
         if not ref:
             return None
-        return self._by_key.get(ref) or self._by_name.get(ref)
+        ref = normalise_endpoint(ref)
+        return self._by_key.get(ref) or self._by_name.get(ref) or self._by_endpoint.get(ref)
 
     def for_uri(self, uri: str) -> Profile | None:
         """Return the profile whose ``uri_prefixes`` best (longest) matches ``uri``."""

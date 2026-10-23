@@ -36,12 +36,13 @@ def create_app(
     are read from ``settings.profiles_path`` and real HTTP is used.
     """
     settings = settings or get_settings()
+    # The ENDPOINT setting overrides the default profile (the ``default:`` entry of the
+    # profiles YAML file) when set; the YAML default applies otherwise.
+    default_ref = settings.endpoint
     if registry is None:
-        registry = ProfileRegistry.from_yaml(settings.profiles_path, settings.default_profile)
-    elif settings.default_profile:
-        registry = ProfileRegistry(
-            list(registry), settings.default_profile, display=registry.display
-        )
+        registry = ProfileRegistry.from_yaml(settings.profiles_path, default_ref)
+    elif default_ref:
+        registry = ProfileRegistry(list(registry), default_ref, display=registry.display)
     client = SparqlClient(
         timeout=settings.sparql_timeout,
         user_agent=settings.sparql_user_agent,

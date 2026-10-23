@@ -44,9 +44,10 @@ class Settings(BaseSettings):
     # --- SPARQL profiles -------------------------------------------------------
     # YAML file describing the backend triplestores ("profiles").
     profiles_path: Path = Path("profiles.yaml")
-    # Name (or hash key) of the profile served at /sparql. Overrides the
-    # ``default`` entry in the profiles YAML file when set.
-    default_profile: str = ""
+    # Endpoint address of the profile served at /sparql (e.g. https://query.wikidata.org/sparql).
+    # When set, it overrides the ``default`` entry of the profiles YAML file and becomes
+    # the default used for queries.
+    endpoint: str = ""
     # Default timeout (seconds) for upstream SPARQL requests.
     sparql_timeout: float = 30.0
     # Send this User-Agent upstream unless a profile overrides it.

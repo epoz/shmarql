@@ -4,7 +4,13 @@ from shmarql.config import Settings
 
 
 def test_defaults(monkeypatch):
-    for name in ("SITE_TITLE", "DOCS_PATH", "PROFILES_PATH", "CORS_ORIGINS"):
+    for name in (
+        "SITE_TITLE",
+        "DOCS_PATH",
+        "PROFILES_PATH",
+        "CORS_ORIGINS",
+        "ENDPOINT",
+    ):
         monkeypatch.delenv(name, raising=False)
     settings = Settings(_env_file=None)
     assert settings.site_title == "SHMARQL"
@@ -12,6 +18,7 @@ def test_defaults(monkeypatch):
     assert settings.profiles_path == Path("profiles.yaml")
     assert settings.cors_origins == []
     assert settings.lodeon_config_path is None
+    assert settings.endpoint == ""
 
 
 def test_environment_variables(monkeypatch):
@@ -21,6 +28,7 @@ def test_environment_variables(monkeypatch):
     monkeypatch.setenv("CORS_ORIGINS", "https://a.example, https://b.example")
     monkeypatch.setenv("SUPPORTED_LANGUAGES", '["de", "en"]')
     monkeypatch.setenv("LODEON_CONFIG_PATH", "")
+    monkeypatch.setenv("ENDPOINT", "https://query.wikidata.org/sparql")
     settings = Settings(_env_file=None)
     assert settings.site_title == "My KG"
     assert settings.docs_path == Path("/srv/docs")
@@ -28,16 +36,17 @@ def test_environment_variables(monkeypatch):
     assert settings.cors_origins == ["https://a.example", "https://b.example"]
     assert settings.supported_languages == ["de", "en"]
     assert settings.lodeon_config_path is None
+    assert settings.endpoint == "https://query.wikidata.org/sparql"
 
 
 def test_dotenv_file(tmp_path, monkeypatch):
     monkeypatch.delenv("SITE_TITLE", raising=False)
-    monkeypatch.delenv("DEFAULT_PROFILE", raising=False)
+    monkeypatch.delenv("ENDPOINT", raising=False)
     env = tmp_path / ".env"
-    env.write_text("SITE_TITLE=From dotenv\nDEFAULT_PROFILE=dbpedia\nDEBUG=1\n")
+    env.write_text("SITE_TITLE=From dotenv\nENDPOINT=http://override.test/sparql\nDEBUG=1\n")
     settings = Settings(_env_file=env)
     assert settings.site_title == "From dotenv"
-    assert settings.default_profile == "dbpedia"
+    assert settings.endpoint == "http://override.test/sparql"
     assert settings.debug is True
 
 

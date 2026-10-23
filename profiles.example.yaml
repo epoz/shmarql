@@ -2,6 +2,7 @@
 # list them with `uv run shmarql profiles` or GET /api/profiles.
 
 # The profile served at /sparql (name or key). Defaults to the first profile.
+# Can also be given as an endpoint address, or overridden with the ENDPOINT setting.
 default: wikidata
 
 # Optional global overrides for the entity viewer (see src/shmarql/entity/settings.py)

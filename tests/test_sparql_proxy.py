@@ -113,3 +113,28 @@ def test_cors(settings, registry, endpoint):
     with TestClient(app) as c:
         r = c.get("/sparql", params={"query": SELECT}, headers={"Origin": "https://app.example"})
     assert r.headers["access-control-allow-origin"] == "https://app.example"
+
+
+def test_endpoint_setting_overrides_default_profile(settings, registry, endpoint):
+    settings.endpoint = MAIN_ENDPOINT
+    app = create_app(settings, registry, transport=endpoint.transport)
+    with TestClient(app) as c:
+        r = c.get("/sparql", params={"query": SELECT}, headers={"Accept": JSON})
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith(JSON)
+        assert endpoint.requests[-1]["url"].startswith(MAIN_ENDPOINT)
+        profiles = c.get("/api/profiles").json()
+        assert [p["name"] for p in profiles] == ["main", "other"]
+        assert profiles[0]["default"] is True
+        assert profiles[1]["default"] is False
+
+
+def test_query_page_uses_endpoint_setting_as_default(settings, registry, endpoint):
+    settings.endpoint = OTHER_ENDPOINT
+    app = create_app(settings, registry, transport=endpoint.transport)
+    with TestClient(app) as c:
+        r = c.get("/query")
+        assert r.status_code == 200
+        # The endpoint override becomes the default pre-selected in the query page.
+        assert f'value="{profile_key(OTHER_ENDPOINT)}"' in r.text
+        assert 'value="Other store"' in r.text

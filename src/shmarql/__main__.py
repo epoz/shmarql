@@ -31,7 +31,7 @@ def _serve(args: argparse.Namespace) -> None:
 def _profiles(_args: argparse.Namespace) -> None:
     settings = get_settings()
     try:
-        registry = ProfileRegistry.from_yaml(settings.profiles_path, settings.default_profile)
+        registry = ProfileRegistry.from_yaml(settings.profiles_path, settings.endpoint)
     except ProfileError as exc:
         sys.exit(f"Invalid profiles configuration: {exc}")
     if not len(registry):

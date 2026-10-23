@@ -49,6 +49,10 @@ def test_default_override_and_fallback(tmp_path):
     path = tmp_path / "profiles.yaml"
     path.write_text(YAML)
     assert ProfileRegistry.from_yaml(path, default_override="first").default.name == "first"
+    assert (
+        ProfileRegistry.from_yaml(path, default_override="http://two.test/sparql").default.name
+        == "second"
+    )
     data = {
         "profiles": [{"name": "a", "endpoint": "http://a/"}, {"name": "b", "endpoint": "http://b/"}]
     }
@@ -57,10 +61,30 @@ def test_default_override_and_fallback(tmp_path):
     assert ProfileRegistry.from_data(data).default.name == "b"
 
 
+def test_default_override_by_endpoint(tmp_path):
+    path = tmp_path / "profiles.yaml"
+    path.write_text(YAML)
+    registry = ProfileRegistry.from_yaml(path, default_override="http://one.test/sparql")
+    assert registry.default.name == "first"
+    # Endpoint addresses resolve like profile names and hash keys.
+    assert registry.get("http://one.test/sparql").name == "first"
+    assert registry.get(" http://one.test/sparql ").name == "first"
+
+
 def test_unknown_default_is_an_error():
     with pytest.raises(ProfileError):
         ProfileRegistry.from_data(
             {"default": "nope", "profiles": [{"name": "a", "endpoint": "http://a/"}]}
+        )
+
+
+def test_unknown_default_endpoint_is_an_error():
+    with pytest.raises(ProfileError):
+        ProfileRegistry.from_data(
+            {
+                "default": "http://nope.test/sparql",
+                "profiles": [{"name": "a", "endpoint": "http://a/"}],
+            }
         )
 
 
