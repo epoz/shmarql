@@ -1,0 +1,24 @@
+# VCS / CI
+.git
+.github
+
+# Python
+.venv
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+
+# Local configuration
+.env
+
+# Not needed inside the image (source is copied selectively)
+tests/
+editor/
+changelog.d/
+overview.md

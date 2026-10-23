@@ -46,6 +46,27 @@ Then open:
 Development server with auto-reload: `uv run shmarql serve --reload`.
 Or run uvicorn directly: `uv run uvicorn --factory shmarql.main:app_factory`.
 
+## Docker
+
+Build the container image (it installs the locked dependencies with [uv](https://docs.astral.sh/uv/) and serves on `0.0.0.0:8000`):
+
+```shell
+docker build -t shmarql .
+docker run --rm -p 8000:8000 \
+  -v "$PWD/profiles.yaml:/data/profiles.yaml:ro" \
+  -e PROFILES_PATH=/data/profiles.yaml \
+  -e ENDPOINT=https://query.wikidata.org/sparql \
+  shmarql
+```
+
+Then open http://127.0.0.1:8000.
+
+The image serves the Markdown docs from `/app/docs` and the API on port 8000
+(override with `-e HOST=… -e PORT=…`).
+
+A container image is built and pushed to the [GitHub Container Registry](https://github.com/epoz/shmarql/pkgs/container/shmarql)
+by the [Docker workflow](.github/workflows/docker.yml) on every push to `main`.
+
 ## Configuration
 
 Everything is configured through environment variables, read at startup by
@@ -59,7 +80,7 @@ environment variables win over the file. See [`.env.example`](.env.example).
 | `HOST`, `PORT`              | `127.0.0.1`, `8000` | Bind address for `uv run shmarql`                                          |
 | `DEBUG`                     | `0`                 | Verbose logging                                                            |
 | `PROFILES_PATH`             | `profiles.yaml`     | YAML file with the SPARQL profiles                                         |
-| `ENDPOINT`                  | –                   | Endpoint address of the profile served at `/sparql` (e.g. `https://query.wikidata.org/sparql`); overrides the YAML `default`, and becomes the default used for queries |
+| `ENDPOINT`                  | –                   | Endpoint address of the profile served at `/sparql` (e.g. `https://query.wikidata.org/sparql`); overrides the YAML `default`, and becomes the default used for queries. When no profiles are configured, it adds a single new profile for that backend |
 | `SPARQL_TIMEOUT`            | `30`                | Upstream timeout in seconds                                                |
 | `SPARQL_USER_AGENT`         | `shmarql/0.1 …`     | User-Agent sent upstream                                                   |
 | `CORS_ORIGINS`              | –                   | Comma separated origins allowed to call the API (`*` = all)                |
