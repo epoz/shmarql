@@ -50,6 +50,11 @@ the default used for queries. Because every query without an explicit profile â€
 `/sparql` proxy itself, the query editor, the entity viewer and the data stories â€” goes
 through the default profile, this is all it takes to point a site at one backend.
 
+When no profiles are configured at all (no `profiles:` entries in the profiles file, or no
+file at all), setting `ENDPOINT` adds a single new profile for that backend, as if it was
+declared in the profiles YAML file, and makes it the default. The query window then works
+out of the box.
+
 ## Entity viewer settings
 
 The `display` mappings accept the settings of

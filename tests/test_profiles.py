@@ -88,6 +88,43 @@ def test_unknown_default_endpoint_is_an_error():
         )
 
 
+def test_endpoint_override_adds_single_profile_when_no_profiles_configured(tmp_path):
+    # The ENDPOINT setting names a backend; without any profile declared in the YAML file
+    # it should become a single new profile, as if it was declared there.
+    registry = ProfileRegistry.from_yaml(
+        tmp_path / "nope.yaml", default_override="http://triplestore.test/sparql"
+    )
+    assert len(registry) == 1
+    profile = registry.default
+    assert profile is not None
+    assert profile.endpoint == "http://triplestore.test/sparql"
+    assert registry.public_list() == [
+        {
+            "key": profile.key,
+            "name": "triplestore.test",
+            "title": "triplestore.test",
+            "description": "",
+            "sparql": f"/sparql/{profile.key}",
+            "default": True,
+        }
+    ]
+    assert registry.get("http://triplestore.test/sparql") is profile
+
+
+def test_endpoint_override_adds_single_profile_from_empty_config():
+    registry = ProfileRegistry.from_data(
+        {"profiles": []}, default_override="http://triplestore.test/sparql"
+    )
+    assert len(registry) == 1
+    assert registry.default is not None
+    assert registry.default.endpoint == "http://triplestore.test/sparql"
+
+
+def test_default_name_without_profiles_is_still_an_error():
+    with pytest.raises(ProfileError):
+        ProfileRegistry.from_data({"default": "wikidata"})
+
+
 def test_duplicate_addresses_are_rejected():
     with pytest.raises(ProfileError, match="same endpoint"):
         ProfileRegistry.from_data(

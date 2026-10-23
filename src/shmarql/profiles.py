@@ -28,6 +28,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import yaml
 
@@ -43,6 +44,21 @@ class ProfileError(ValueError):
 def normalise_endpoint(endpoint: str) -> str:
     """Normalise an endpoint address so trivially different spellings hash the same."""
     return endpoint.strip()
+
+
+def is_endpoint_address(ref: str) -> bool:
+    """Whether ``ref`` names an endpoint address (e.g. ``https://query.wikidata.org/sparql``)
+    instead of a bare profile name."""
+    return "://" in ref
+
+
+def endpoint_name(endpoint: str) -> str:
+    """Derive a profile name from an endpoint address, e.g. ``https://query.wikidata.org/sparql`` -> ``query.wikidata.org``."""
+    host = urlparse(str(endpoint).strip()).netloc or str(endpoint).strip()
+    host = host.lower()
+    if host.startswith("www."):
+        host = host[len("www.") :]
+    return host or "endpoint"
 
 
 def profile_key(endpoint: str) -> str:
@@ -149,7 +165,15 @@ class ProfileRegistry:
         self._by_key: dict[str, Profile] = {}
         self._by_name: dict[str, Profile] = {}
         self._by_endpoint: dict[str, Profile] = {}
-        for profile in profiles:
+        entries = list(profiles)
+        if default and not entries and is_endpoint_address(str(default)):
+            # No profiles are configured at all, while a default is given: the default names
+            # a backend that was never declared in the YAML file (e.g. an ``ENDPOINT`` setting).
+            # Create it as a single new profile, as if it was declared there.
+            entries = [
+                Profile(name=endpoint_name(str(default)), endpoint=normalise_endpoint(str(default)))
+            ]
+        for profile in entries:
             if profile.key in self._by_key:
                 other = self._by_key[profile.key]
                 raise ProfileError(
@@ -168,8 +192,8 @@ class ProfileRegistry:
             if found is None:
                 raise ProfileError(f"Default profile {default!r} is not defined")
             self._default = found
-        elif profiles:
-            self._default = profiles[0]
+        elif entries:
+            self._default = entries[0]
 
     # -- construction -----------------------------------------------------------
     @classmethod
@@ -177,7 +201,8 @@ class ProfileRegistry:
         path = Path(path)
         if not path.exists():
             log.warning("Profiles file %s not found; no SPARQL backends configured", path)
-            return cls([], None)
+            # A default override (e.g. the ENDPOINT setting) may name the backend to use.
+            return cls([], default_override or None)
         with path.open(encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
         return cls.from_data(data, default_override=default_override, base_dir=path.parent)

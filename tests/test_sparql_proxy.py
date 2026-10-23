@@ -2,7 +2,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 from shmarql.main import create_app
-from shmarql.profiles import profile_key
+from shmarql.profiles import ProfileRegistry, profile_key
 
 from conftest import MAIN_ENDPOINT, OTHER_ENDPOINT
 
@@ -138,3 +138,25 @@ def test_query_page_uses_endpoint_setting_as_default(settings, registry, endpoin
         # The endpoint override becomes the default pre-selected in the query page.
         assert f'value="{profile_key(OTHER_ENDPOINT)}"' in r.text
         assert 'value="Other store"' in r.text
+
+
+def test_endpoint_setting_adds_single_profile_when_no_profiles_configured(settings, endpoint):
+    # No profiles are configured at all: the ENDPOINT setting should add a single new
+    # profile, as if it was declared in the profiles YAML file, so that queries work.
+    settings.endpoint = MAIN_ENDPOINT
+    app = create_app(
+        settings, registry=ProfileRegistry([], MAIN_ENDPOINT), transport=endpoint.transport
+    )
+    with TestClient(app) as c:
+        r = c.get("/query")
+        assert r.status_code == 200
+        assert "No SPARQL profiles are configured." not in r.text
+        profiles = c.get("/api/profiles").json()
+        assert len(profiles) == 1
+        assert profiles[0]["default"] is True
+        assert profiles[0]["name"] == "triplestore.test"
+        # The query window runs against the endpoint named by the ENDPOINT setting.
+        r = c.get("/sparql", params={"query": SELECT}, headers={"Accept": JSON})
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith(JSON)
+        assert endpoint.requests[-1]["url"].startswith(MAIN_ENDPOINT)
