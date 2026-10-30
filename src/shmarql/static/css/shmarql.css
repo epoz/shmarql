@@ -99,7 +99,7 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .docs-content .highlight { position: relative; }
 .run-sparql { position: absolute; top: 0.35rem; right: 0.6rem; font-size: 0.8rem; }
 
-/* admonitions / details (pymdownx.blocks) */
+/* admonitions / details (pymdownx.blocks, Material for MkDocs admonitions) */
 .admonition, details {
     border-left: 4px solid var(--accent); background: #f3f6fc; padding: 0.4rem 1rem;
     margin: 1rem 0; border-radius: 3px;
@@ -108,6 +108,7 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .admonition.warning, details.warning { border-color: #e0a100; background: #fff8e6; }
 .admonition.danger, .admonition.error { border-color: #c62828; background: #fdecea; }
 .admonition.tip, .admonition.success { border-color: #2e7d32; background: #edf7ed; }
+.admonition.inline, .admonition.inline-end { margin: 0.4rem 0; }
 details > summary { cursor: pointer; font-weight: 600; }
 
 /* tabs (pymdownx.blocks.tab, alternate style) */

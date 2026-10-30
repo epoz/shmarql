@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 
 from shmarql.docs_site import DocsSite
 from shmarql.main import create_app
-from shmarql.markdown_render import rewrite_md_link
+from shmarql.markdown_render import MarkdownRenderer, rewrite_md_link
 
 from conftest import FIXTURES
 
@@ -64,6 +64,53 @@ def test_docs_site_nav_opens_current_path():
     nav = site.nav("/story/demo/")
     assert nav[2].is_open is True
     assert nav[2].children[0].is_open is True
+
+
+# -- admonitions ---------------------------------------------------------------------------------
+def test_admonition_renders_static_block():
+    page = MarkdownRenderer().render("!!! note\n    This is a note.\n")
+    assert '<div class="admonition note">' in page.html
+    assert '<p class="admonition-title">Note</p>' in page.html
+    assert "<p>This is a note.</p>" in page.html
+
+
+def test_admonition_renders_custom_title():
+    page = MarkdownRenderer().render('!!! abstract "Custom Title"\n    Content here.\n')
+    assert '<div class="admonition abstract">' in page.html
+    assert '<p class="admonition-title">Custom Title</p>' in page.html
+
+
+def test_admonition_without_title():
+    page = MarkdownRenderer().render('!!! warning ""\n    No title.\n')
+    assert '<div class="admonition warning">' in page.html
+    assert "admonition-title" not in page.html
+    assert "<p>No title.</p>" in page.html
+
+
+def test_admonition_multiparagraph_content():
+    page = MarkdownRenderer().render("!!! note\n    First para.\n\n    Second para.\n")
+    assert page.html.count("<p>") >= 2
+    assert "First para." in page.html
+    assert "Second para." in page.html
+
+
+def test_admonition_renders_collapsible():
+    page = MarkdownRenderer().render("??? tip\n    Collapsible tip.\n")
+    assert '<details class="admonition tip">' in page.html
+    assert '<summary class="admonition-title">Tip</summary>' in page.html
+    assert "<p>Collapsible tip.</p>" in page.html
+
+
+def test_admonition_renders_expanded_collapsible():
+    page = MarkdownRenderer().render("???+ danger\n    Expanded danger.\n")
+    assert '<details class="admonition danger" open="open">' in page.html
+    assert "<p>Expanded danger.</p>" in page.html
+
+
+def test_admonition_unknown_type_falls_back_to_note():
+    page = MarkdownRenderer().render("!!! futuristic\n    Falls back to note.\n")
+    assert '<div class="admonition note">' in page.html
+    assert '<p class="admonition-title">Note</p>' in page.html
 
 
 def test_redirects(client):

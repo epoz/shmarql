@@ -1,4 +1,4 @@
-# 2026-10-26
+# 2026-10-30
 
 ## Changed
 
@@ -11,6 +11,8 @@
 
 - When the page being viewed is inside a hierarchy of notes, the left-hand navigation shows
   the path to the current page as a chain of opened tree nodes.
+
+- Admonition blocks support in mkdocs-material style
 
 
 # ......oO Major change, re-booting with help from clankers Oo........
