@@ -28,6 +28,44 @@ def test_navigation_sidebar(client):
     assert '<a href="#install">Install</a>' in r.text
 
 
+def test_navigation_tree_is_collapsible(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert '<button class="nav-toggle"' in r.text
+    assert 'aria-expanded="false"' in r.text
+    assert '<span class="nav-toggle-icon" aria-hidden="true">▸</span>' in r.text
+    # nothing is expanded automatically on the home page
+    assert '<li class=" open">' not in r.text
+
+
+def test_navigation_tree_opens_current_path(client):
+    r = client.get("/guide/setup")
+    assert r.status_code == 200
+    # the branch leading to the current page is open ...
+    assert '<li class="nav-section open">' in r.text
+    assert 'aria-expanded="true"' in r.text
+    assert '<span class="nav-toggle-icon" aria-hidden="true">▾</span>' in r.text
+    # ... and the current page is highlighted
+    assert '<li class=" active open">' in r.text
+
+
+def test_navigation_tree_opens_current_path_for_deep_pages(client):
+    r = client.get("/story/demo/")
+    assert r.status_code == 200
+    assert '<li class="nav-section open">' in r.text
+
+
+def test_docs_site_nav_opens_current_path():
+    site = DocsSite(FIXTURES / "docs")
+    assert site.nav()[0].is_open is False
+    nav = site.nav("/guide/setup")
+    assert nav[1].is_open is True
+    assert nav[1].children[0].is_open is True
+    nav = site.nav("/story/demo/")
+    assert nav[2].is_open is True
+    assert nav[2].children[0].is_open is True
+
+
 def test_redirects(client):
     r = client.get("/guide", follow_redirects=False)
     assert r.status_code == 301 and r.headers["location"] == "/guide/"

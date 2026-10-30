@@ -121,13 +121,14 @@ async def docs_page(request: Request, path: str = ""):
     if resolution.kind == "markdown" and resolution.path:
         text = resolution.path.read_text(encoding="utf-8")
         page = state.markdown.render(text, fallback_title=resolution.path.stem)
+        current_url = state.docs.url_of(resolution.path)
         return render(
             request,
             "doc.html",
             {
                 "page": page,
-                "nav": state.docs.nav(),
-                "current_url": state.docs.url_of(resolution.path),
+                "nav": state.docs.nav(current_url),
+                "current_url": current_url,
             },
         )
     if path in ("", "/"):

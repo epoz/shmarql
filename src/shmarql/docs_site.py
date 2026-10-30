@@ -36,6 +36,7 @@ class NavItem:
     url: str
     children: list[NavItem] = field(default_factory=list)
     is_section: bool = False
+    is_open: bool = False  # whether the branch is expanded in the navigation tree
 
 
 class DocsSite:
@@ -125,10 +126,38 @@ class DocsSite:
             return "/" + parent
         return "/" + rel[: -len(".md")]
 
-    def nav(self) -> list[NavItem]:
+    def nav(self, current_url: str | None = None) -> list[NavItem]:
+        """Return the documentation tree, optionally opening the path to ``current_url``."""
         if not self.exists:
             return []
-        return self._nav_dir(self.root)
+        items = self._nav_dir(self.root)
+        if current_url:
+            self._open_path(items, current_url)
+        return items
+
+    def _open_path(self, items: list[NavItem], current_url: str) -> None:
+        """Mark the tree nodes on the path to ``current_url`` (inclusive) as open."""
+        for item in items:
+            if self._is_on_path(item, current_url):
+                item.is_open = True
+                if item.children:
+                    self._open_path(item.children, current_url)
+
+    def _is_on_path(self, item: NavItem, current_url: str) -> bool:
+        if not item.children:
+            return item.url == current_url
+        if not item.url:
+            # A pure grouping without its own page: relevant when a child is.
+            return any(self._is_on_path(child, current_url) for child in item.children)
+        return self._url_covers(item.url, current_url)
+
+    @staticmethod
+    def _url_covers(url: str, current_url: str) -> bool:
+        """Whether ``url`` is ``current_url`` itself or one of its ancestor directories."""
+        if url == "/":
+            return True
+        prefix = url if url.endswith("/") else url + "/"
+        return current_url == url or current_url.startswith(prefix)
 
     def _nav_dir(self, directory: Path) -> list[NavItem]:
         items: list[NavItem] = []
