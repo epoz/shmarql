@@ -68,6 +68,16 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .docs-nav > ul, .docs-toc > ul { padding-left: 0; }
 .docs-nav li.active > a { font-weight: 700; }
 .docs-nav .nav-section > a, .docs-nav .nav-section > span { font-weight: 600; color: var(--text); }
+.docs-nav li > .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1rem; height: 1.25rem; margin: 0 0.2rem 0 0; padding: 0;
+    border: 0; border-radius: 2px; background: none;
+    color: var(--muted); font-size: 0.75rem; line-height: 1;
+    vertical-align: middle; cursor: pointer;
+}
+.docs-nav li > .nav-toggle:hover { color: var(--accent); }
+.docs-nav ul ul { display: none; }
+.docs-nav li.open ul { display: block; }
 .docs-toc { border-left: 1px solid var(--border); padding-left: 1rem; }
 @media (max-width: 1000px) {
     .docs-layout { grid-template-columns: 1fr; }
@@ -89,7 +99,7 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .docs-content .highlight { position: relative; }
 .run-sparql { position: absolute; top: 0.35rem; right: 0.6rem; font-size: 0.8rem; }
 
-/* admonitions / details (pymdownx.blocks) */
+/* admonitions / details (pymdownx.blocks, Material for MkDocs admonitions) */
 .admonition, details {
     border-left: 4px solid var(--accent); background: #f3f6fc; padding: 0.4rem 1rem;
     margin: 1rem 0; border-radius: 3px;
@@ -98,6 +108,7 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .admonition.warning, details.warning { border-color: #e0a100; background: #fff8e6; }
 .admonition.danger, .admonition.error { border-color: #c62828; background: #fdecea; }
 .admonition.tip, .admonition.success { border-color: #2e7d32; background: #edf7ed; }
+.admonition.inline, .admonition.inline-end { margin: 0.4rem 0; }
 details > summary { cursor: pointer; font-weight: 600; }
 
 /* tabs (pymdownx.blocks.tab, alternate style) */

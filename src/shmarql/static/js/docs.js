@@ -11,4 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
     block.style.position = "relative";
     block.appendChild(link);
   });
+
+  /* Documentation tree: collapsible navigation. */
+  document.querySelectorAll(".docs-nav .nav-toggle").forEach(function (toggle) {
+    toggle.addEventListener("click", function () {
+      var item = toggle.parentElement;
+      var open = item.classList.toggle("open");
+      var icon = toggle.querySelector(".nav-toggle-icon");
+      if (icon) icon.textContent = open ? "▾" : "▸";
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
 });

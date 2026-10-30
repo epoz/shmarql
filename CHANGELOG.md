@@ -1,4 +1,25 @@
-# Major change, re-booting with help from clankers
+# 2026-10-30
+
+## Changed
+
+- The documentation navigation tree no longer expands all of its nodes automatically.
+- Tree nodes that are not leaf nodes now show an open/close icon; the user can expand or
+  collapse branches by clicking the icon, and browse the tree by clicking the nodes
+  themselves.
+
+## Added
+
+- When the page being viewed is inside a hierarchy of notes, the left-hand navigation shows
+  the path to the current page as a chain of opened tree nodes.
+
+- Admonition blocks support in mkdocs-material style
+
+
+# ......oO Major change, re-booting with help from clankers Oo........
+
+# 2026-10-12
+
+# ......oO Major change, re-booting with help from clankers Oo........
 
 # 2026-07-03
 
