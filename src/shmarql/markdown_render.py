@@ -105,6 +105,10 @@ class AdmonitionProcessor(BlockProcessor):
             if line.strip():
                 content_indent = len(line) - len(line.lstrip(" "))
                 break
+        if not content_indent:
+            # A bare "!!! type" block may be followed by the (indented) content in a
+            # separate block, since blocks are split on blank lines.
+            content_indent = 4
         content_text = self._dedent("\n".join(content_lines))
         parts: list[str] = [content_text] if content_text.strip() else []
         if content_indent:

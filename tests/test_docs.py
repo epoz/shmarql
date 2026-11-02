@@ -107,6 +107,14 @@ def test_admonition_renders_expanded_collapsible():
     assert "<p>Expanded danger.</p>" in page.html
 
 
+def test_admonition_allows_blank_line_before_content():
+    page = MarkdownRenderer().render("!!! note\n\n    This is a note.\n")
+    assert '<div class="admonition note">' in page.html
+    assert '<p class="admonition-title">Note</p>' in page.html
+    assert "<p>This is a note.</p>" in page.html
+    assert "<pre" not in page.html
+
+
 def test_admonition_unknown_type_falls_back_to_note():
     page = MarkdownRenderer().render("!!! futuristic\n    Falls back to note.\n")
     assert '<div class="admonition note">' in page.html

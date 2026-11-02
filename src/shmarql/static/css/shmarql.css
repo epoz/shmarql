@@ -101,10 +101,13 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 
 /* admonitions / details (pymdownx.blocks, Material for MkDocs admonitions) */
 .admonition, details {
-    border-left: 4px solid var(--accent); background: #f3f6fc; padding: 0.4rem 1rem;
-    margin: 1rem 0; border-radius: 3px;
+    border-left: 4px solid var(--accent); background: #f3f6fc; padding: 0.6rem 1rem;
+    margin: 1rem 0; border-radius: 4px;
 }
 .admonition-title { font-weight: 700; margin: 0.2rem 0; }
+.admonition > .admonition-title { margin-bottom: 0; }
+.docs-content .admonition > p:not(.admonition-title) { margin-top: 0; margin-bottom: 0.6rem; }
+.docs-content .admonition pre { overflow-x: auto; }
 .admonition.warning, details.warning { border-color: #e0a100; background: #fff8e6; }
 .admonition.danger, .admonition.error { border-color: #c62828; background: #fdecea; }
 .admonition.tip, .admonition.success { border-color: #2e7d32; background: #edf7ed; }
