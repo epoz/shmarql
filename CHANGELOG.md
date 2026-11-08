@@ -1,3 +1,15 @@
+# 2026-11-05
+
+## Added
+
+- New graph browser route `/spo?s=…&p=…&o=…&profile=…`: browse the knowledge graph as one
+  table of subject-predicate-object triples, with an optional filter per position that is
+  turned into a SPARQL BGP with one `FILTER` per position.
+- The knowledge graph browser (`/spo`) has a profile picker like the query page: pick the
+  SPARQL profile to browse through the autocomplete, and the chosen profile is used for the
+  browse query.
+
+
 # 2026-10-30
 
 ## Changed

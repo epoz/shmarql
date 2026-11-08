@@ -1,14 +1,30 @@
-{%- macro cell(b) -%}
+{%- macro spo_cell(value) -%}
+<span class="spo-cell">
+{%- for pos in ("s", "p", "o") -%}
+<a class="spo-link spo-{{ pos }}" href="{{ spo_href(pos, value) }}" title="{% if pos == 's' %}{{ _('spo.as_subject') }}{% elif pos == 'p' %}{{ _('spo.as_predicate') }}{% else %}{{ _('spo.as_object') }}{% endif %}">{{ pos|upper }}</a>
+{%- endfor -%}
+</span>
+{%- endmacro -%}
+{%- macro cell(b, var_name=none) -%}
 {%- if b is none -%}
 {%- elif b.type == "uri" -%}
 <a href="{{ entity_href(b.value) }}" title="{{ b.value }}">{% set s = shorten(b.value) %}{% if s.prefix %}<span class="prefix">{{ s.prefix }}</span>{{ s.local }}{% else %}{{ b.value }}{% endif %}</a>
+{%- if spo_links and var_name in ("s", "p", "o") -%}
+{{ spo_cell(b.value) }}
+{%- endif -%}
 {%- elif b.type == "bnode" -%}
 <span class="bnode">_:{{ b.value }}</span>
+{%- if spo_links and var_name in ("s", "p", "o") -%}
+{{ spo_cell("_:" ~ b.value) }}
+{%- endif -%}
 {%- else -%}
 {{ b.value }}{% if b["xml:lang"] %}<span class="language-tag">@{{ b["xml:lang"] }}</span>{% endif %}
+{%- if spo_links and var_name in ("s", "p", "o") -%}
+{{ spo_cell(b.value) }}
+{%- endif -%}
 {%- endif -%}
 {%- endmacro -%}
-{%- if results.boolean is defined -%}
+{% if results.boolean is defined -%}
 <p class="sparql-boolean">{{ "true" if results.boolean else "false" }}</p>
 {%- else -%}
 {%- set vars = results.head.vars if results.head and results.head.vars else [] -%}
@@ -16,7 +32,7 @@
     <thead><tr>{% for v in vars %}<th>{{ v }}</th>{% endfor %}</tr></thead>
     <tbody>
     {%- for row in results.results.bindings %}
-        <tr>{% for v in vars %}<td>{{ cell(row.get(v)) }}</td>{% endfor %}</tr>
+        <tr>{% for v in vars %}<td>{{ cell(row.get(v), v) }}</td>{% endfor %}</tr>
     {%- endfor %}
     </tbody>
 </table>

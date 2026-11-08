@@ -29,8 +29,9 @@ characters of the SHA-256 of the URL). The key is stable as long as the address
 doesn't change, does not reveal the upstream address, and is used in URLs:
 
 - `/sparql/<key>` — SPARQL 1.1 protocol endpoint (GET and POST) proxied to the profile
-- `/query?profile=<key>` — the query editor with that profile selected
+- `/query?profile=<key>` — the query editor with that profile selected, with a profile picker
 - `/entity?uri=…&profile=<key>` — the entity viewer
+- `/spo?s=…&p=…&o=…&profile=<key>` — the knowledge graph browser, with a profile picker
 
 List the keys with `uv run shmarql profiles` or `GET /api/profiles`.
 

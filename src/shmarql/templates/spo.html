@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('menu.spo') }} – {{ site_title }}{% endblock %}
+
+{% block container_class %} container--wide{% endblock %}
+
+{% block content %}
+<div class="spo-page">
+    {% if not profiles %}
+        <p class="notice">{{ _('query.no_profiles') }}</p>
+    {% endif %}
+    <div class="profile-picker">
+        <label for="profile-input">{{ _('query.profile') }}</label>
+        <div class="autocomplete">
+            <input type="text" id="profile-input" class="profile-input"
+                   role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-options"
+                   placeholder="{{ _('query.profile_placeholder') }}"
+                   value="{{ selected.title if selected else '' }}">
+            <ul id="profile-options" class="autocomplete-options" role="listbox" hidden></ul>
+        </div>
+        <code id="profile-endpoint" class="profile-endpoint">{{ selected.sparql if selected else '' }}</code>
+    </div>
+    <form class="spo-form" action="/spo" method="get">
+        <input id="spo-s" type="text" name="s" value="{{ s }}" placeholder="{{ _('spo.subject') }} (IRI)…" />
+        <input id="spo-p" type="text" name="p" value="{{ p }}" placeholder="{{ _('spo.predicate') }} (IRI)…" />
+        <input id="spo-o" type="text" name="o" value="{{ o }}" placeholder="{{ _('spo.object') }} (IRI / literal)…" />
+        {% if selected %}
+        <input type="hidden" name="profile" id="profile-key" value="{{ selected.key }}" />
+        {% endif %}
+        <button type="submit" class="button-primary">{{ _('query.run') }}</button>
+    </form>
+    <section id="spo-results" class="query-results">
+        {% if results.results and results.results.bindings %}
+            {% include "fragments/results_table.html" %}
+        {% else %}
+            <p class="notice">{{ _('spo.no_results') }}</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script id="profiles-data" type="application/json">{{ profiles|tojson }}</script>
+    <script src="/static/js/profile-picker.js"></script>
+    <script src="/static/js/spo.js"></script>
+{% endblock %}

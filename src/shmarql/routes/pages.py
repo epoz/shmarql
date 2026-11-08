@@ -1,8 +1,9 @@
-"""HTML pages: the query editor, the entity viewer, and Markdown documentation."""
+"""HTML pages: the query editor, the entity viewer, the graph browser, and Markdown documentation."""
 
 from __future__ import annotations
 
 import logging
+import re
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Query, Request
@@ -13,6 +14,7 @@ from ..entity.negotiation import negotiate, serialize
 from ..entity.source import EntitySource, ResourceNotFound
 from ..entity.uri_utils import shorten_uri
 from ..entity.view import build_entity_view
+from ..sparql_client import SparqlError
 from ..web import get_state, render
 
 log = logging.getLogger("shmarql.pages")
@@ -20,6 +22,43 @@ log = logging.getLogger("shmarql.pages")
 router = APIRouter()
 
 DEFAULT_QUERY = "SELECT * WHERE {\n  ?s ?p ?o .\n}\nLIMIT 10\n"
+
+# The positions of a subject-predicate-object triple, as used by the graph browser.
+SPO_POSITIONS = ("s", "p", "o")
+
+
+def _sparql_term(value: str) -> str | None:
+    """Render a user-supplied value as a SPARQL term usable in a FILTER; ``None`` if not expressible."""
+    text = value.strip()
+    if not text or text.startswith("_:"):
+        # Blank node labels are document-scoped, so they cannot be filtered cross-query.
+        return None
+    if text.startswith('"'):
+        # Already a SPARQL literal (with optional language tag or datatype).
+        return text
+    if not re.match(r"^[a-zA-Z][a-zA-Z0-9+.\-]*:", text):
+        # A bare word: treat it as a plain string literal.
+        return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    if any(ch in text for ch in '<>"{}|^`\\ \n\r\t'):
+        return None
+    return f"<{text}>"
+
+
+def build_spo_query(s: str = "", p: str = "", o: str = "") -> str:
+    """Build the browse query: a BGP ``?s ?p ?o`` with one FILTER per provided position."""
+    filters: list[str] = []
+    values: dict[str, str] = {"s": s, "p": p, "o": o}
+    for var in SPO_POSITIONS:
+        term = _sparql_term(values[var]) if (values[var] or "").strip() else None
+        if term is None:
+            continue
+        filters.append(f"FILTER(?{var} = {term})")
+    lines = ["SELECT ?s ?p ?o", "WHERE {"]
+    lines.append("  ?s ?p ?o .")
+    lines.extend(f"  {filter_}" for filter_ in filters)
+    lines.append("}")
+    lines.append("ORDER BY ?s ?p ?o LIMIT 999")
+    return "\n".join(lines) + "\n"
 
 
 # -- Query editor ---------------------------------------------------------------------------
@@ -108,6 +147,47 @@ async def entity_page(
         }
     )
     return render(request, "entity.html", view)
+
+
+# -- Graph browser (/spo) ---------------------------------------------------------------------
+@router.get("/spo", name="spo")
+async def spo_page(
+    request: Request,
+    s: str = Query(""),
+    p: str = Query(""),
+    o: str = Query(""),
+    profile: str = Query(""),
+) -> Response:
+    """Browse the knowledge graph: one table of ``?s ?p ?o`` triples, filtered per position."""
+    state = get_state(request)
+    target = state.registry.get(profile) if profile else None
+    target = target or state.registry.default
+    if target is None:
+        return render(request, "error.html", {"message_key": "error.no_profile", "uri": ""}, 404)
+
+    query = build_spo_query(s, p, o)
+    try:
+        results = await state.client.select(target, query)
+    except SparqlError as exc:
+        return render(request, "error.html", {"message": str(exc), "uri": ""}, exc.status_code)
+
+    display = state.display_for(target)
+    return render(
+        request,
+        "spo.html",
+        {
+            "results": results,
+            "shorten": lambda uri: shorten_uri(uri, display.namespaces),
+            "entity_href": lambda uri: state.entity_href(uri, target),
+            "spo_href": lambda position, value: state.spo_href(position, value, target),
+            "spo_links": True,
+            "s": s,
+            "p": p,
+            "o": o,
+            "profiles": state.registry.public_list(),
+            "selected": target.public_dict(target is state.registry.default) if target else None,
+        },
+    )
 
 
 # -- Documentation (catch-all, registered last) ----------------------------------------------

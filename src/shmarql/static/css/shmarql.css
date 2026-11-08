@@ -181,6 +181,24 @@ table.sparql-results tbody tr:nth-child(even) { background: #fafbfc; }
 .sparql-error { color: #b00020; white-space: pre-wrap; }
 .sparql-text-result { background: var(--code-bg); padding: 0.8rem; overflow: auto; }
 
+/* --- graph browser (/spo) ------------------------------------------------------------------ */
+.spo-page .profile-picker { margin-bottom: 1.2rem; }
+.spo-form { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.2rem; }
+.spo-form label { font-weight: 600; }
+.spo-form input[type="text"] {
+    padding: 0.45rem 0.7rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 4px;
+    min-width: 16rem; flex: 1 1 16rem;
+}
+.spo-form input[type="text"]:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.spo-form .button-primary { align-self: flex-end; }
+.spo-cell { display: inline-flex; gap: 0.15rem; margin-left: 0.4rem; white-space: nowrap; }
+.spo-link {
+    display: inline-block; min-width: 1.3rem; padding: 0.05rem 0.3rem; text-align: center;
+    border: 1px solid var(--border); border-radius: 3px; color: var(--accent);
+    font-size: 0.75rem; font-weight: 600; text-decoration: none; background: #fff;
+}
+.spo-link:hover { background: #e7ecf8; border-color: var(--accent); text-decoration: none; }
+
 /* --- entity lookup ------------------------------------------------------------------- */
 .entity-lookup { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .entity-uri-input { flex: 1 1 30rem; padding: 0.45rem 0.7rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 4px; }

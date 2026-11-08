@@ -9,6 +9,9 @@ Documentation here: https://shmarql.com/
   `/sparql/<key>`; one profile is also the default `/sparql` endpoint.
 - **Query page** (`/query`) with a [CodeMirror](https://codemirror.net/5/) SPARQL
   editor and an autocomplete text box to pick the profile to query.
+- **Graph browser** (`/spo?s=…&p=…&o=…`): browse the knowledge graph as one table of
+  subject-predicate-object triples, with an optional filter per position, and an autocomplete
+  text box to pick the profile to browse.
 - **Documentation**: a directory of Markdown files rendered off the root URL.
 - **Entity viewer** (`/entity?uri=…`): a human-friendly, tabular view of an RDF
   resource including its blank nodes, inverse relations, images and map — ported
@@ -36,6 +39,7 @@ Then open:
 | --------------------------------------------------- | -------------------------------------------------------------- |
 | `/`                                                 | the Markdown docs in `docs/` (including an example data story) |
 | `/query`                                            | the SPARQL editor                                              |
+| `/spo?s=http://dbpedia.org/resource/Rembrandt&...`  | the knowledge graph browser                                    |
 | `/entity?uri=http://dbpedia.org/resource/Rembrandt` | the entity viewer                                              |
 | `/lodeon/`                                          | the story editor                                               |
 | `/sparql?query=…`                                   | the default SPARQL endpoint                                    |
@@ -258,7 +262,7 @@ src/shmarql/
   sparql_client.py     async upstream SPARQL client (httpx)
   main.py              FastAPI app factory
   routes/sparql.py     /sparql, /sparql/{key}, /api/profiles
-  routes/pages.py      /query, /entity and the docs catch-all
+  routes/pages.py      /query, /spo and the docs catch-all
   routes/lodeon_api.py API used by the LODEON runtime on story pages
   routes/lodeon_editor.py API of the story editor (config, auth, preview, publish)
   docs_site.py         Markdown directory -> URLs and navigation

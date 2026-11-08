@@ -59,6 +59,16 @@ class AppState:
             params["profile"] = profile.key
         return "/query?" + urlencode(params)
 
+    def spo_href(self, position: str, value: str, profile: Profile | None = None) -> str:
+        """Build an ``/spo`` link that chooses ``value`` for ``position`` (``s``, ``p`` or ``o``)."""
+        params: dict[str, str] = {}
+        if position in ("s", "p", "o") and value:
+            params[position] = value
+        target = self.registry.for_uri(value) or profile or self.registry.default
+        if target is not None:
+            params["profile"] = target.key
+        return "/spo?" + urlencode(params)
+
 
 def get_state(request: Request) -> AppState:
     return request.app.state.shmarql

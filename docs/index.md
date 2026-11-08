@@ -9,6 +9,8 @@ Welcome! This site is rendered from the Markdown files in the `docs/` directory
 What you can do here:
 
 - **[Query](/query)** any of the configured SPARQL profiles with a CodeMirror editor.
+- **[Browse the knowledge graph](/spo)** as subject-predicate-object triples, with optional
+  subject/predicate/object filters, of the selected SPARQL profile.
 - **[Look up an entity](/entity)** and see it as a readable table, including blank nodes and
   inverse relations.
 - Use **`/sparql`** (default profile) or **`/sparql/<key>`** as standard SPARQL endpoints.
