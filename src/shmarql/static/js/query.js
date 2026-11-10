@@ -2,8 +2,17 @@
 (function () {
   "use strict";
 
-  const i18n = window.SHMARQL_I18N || { running: "Running…", rows: "{count} rows" };
+  const i18n =
+    window.SHMARQL_I18N || {
+      running: "Running…",
+      rows: "{count} rows",
+      as_subject: "Show as subject",
+      as_predicate: "Show as predicate",
+      as_object: "Show as object",
+    };
   const profiles = JSON.parse(document.getElementById("profiles-data").textContent || "[]");
+  const namespacesScript = document.getElementById("shmarql-namespaces");
+  const namespaces = namespacesScript ? JSON.parse(namespacesScript.textContent || "{}") : {};
   const form = document.getElementById("query-form");
   const input = document.getElementById("profile-input");
   const keyField = document.getElementById("profile-key");
@@ -56,6 +65,36 @@
     return value.length > 200 ? value.slice(0, 200) + "…" : value;
   }
 
+  function shortenUri(uri, namespaces) {
+    if (!uri || uri.startsWith("_:")) return { prefix: "", local: uri, uri };
+    let best = null;
+    for (const prefix of Object.keys(namespaces || {})) {
+      const namespace = namespaces[prefix];
+      if (uri.startsWith(namespace) && (best === null || namespace.length >= best[1].length)) {
+        best = [prefix, namespace];
+      }
+    }
+    if (best) return { prefix: best[0] + ":", local: uri.slice(best[1].length), uri };
+    return { prefix: "", local: uri, uri };
+  }
+
+  function spoCell(value) {
+    const span = document.createElement("span");
+    span.className = "spo-cell";
+    for (const pos of ["s", "p", "o"]) {
+      const a = document.createElement("a");
+      a.className = "spo-link spo-" + pos;
+      const params = new URLSearchParams();
+      params.set(pos, value);
+      if (selected) params.set("profile", selected.key);
+      a.href = "/spo?" + params.toString();
+      a.textContent = pos.toUpperCase();
+      a.title = i18n["as_" + pos];
+      span.appendChild(a);
+    }
+    return span;
+  }
+
   function renderCell(binding) {
     const td = document.createElement("td");
     if (!binding) return td;
@@ -64,9 +103,17 @@
       const params = new URLSearchParams({ uri: binding.value });
       if (selected) params.set("profile", selected.key);
       a.href = "/entity?" + params.toString();
-      a.textContent = binding.value;
+      const short = shortenUri(binding.value, namespaces);
+      if (short.prefix) {
+        const prefix = document.createElement("span");
+        prefix.className = "prefix";
+        prefix.textContent = short.prefix;
+        a.appendChild(prefix);
+      }
+      a.appendChild(document.createTextNode(short.local));
       a.title = binding.value;
       td.appendChild(a);
+      td.appendChild(spoCell(binding.value));
     } else if (binding.type === "bnode") {
       td.textContent = "_:" + binding.value;
       td.className = "bnode";

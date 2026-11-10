@@ -14,6 +14,14 @@ def _profiles_json(html: str) -> list[dict]:
     return json.loads(match.group(1))
 
 
+def _namespaces_json(html: str) -> dict:
+    match = re.search(
+        r'<script id="shmarql-namespaces" type="application/json">(.*?)</script>', html, re.S
+    )
+    assert match
+    return json.loads(match.group(1))
+
+
 def test_query_page_has_codemirror_and_profile_autocomplete(client):
     r = client.get("/query")
     assert r.status_code == 200
@@ -40,8 +48,19 @@ def test_query_page_escapes_query(client):
     assert "<script>alert(1)</script>" not in r.text
 
 
+def test_query_page_renders_the_namespaces_for_shortened_iris(client):
+    # the result table shows prefixed IRIs (e.g. schema:knows) via the namespaces of the profile
+    r = client.get("/query")
+    assert r.status_code == 200
+    namespaces = _namespaces_json(r.text)
+    assert namespaces.get("schema") == "http://schema.org/"
+    assert namespaces.get("rdf") == "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+
+
 def test_static_assets_are_served(client):
     for path in (
+        "/static/js/profile-picker.js",
+        "/static/js/spo.js",
         "/static/js/query.js",
         "/static/codemirror/codemirror.js",
         "/static/css/shmarql.css",

@@ -43,8 +43,9 @@
 {% block scripts %}
     <script id="profiles-data" type="application/json">{{ profiles|tojson }}</script>
     <script>
-        window.SHMARQL_I18N = {{ {"running": _('query.running'), "rows": _('query.rows')}|tojson }};
+        window.SHMARQL_I18N = {{ {"running": _('query.running'), "rows": _('query.rows'), "as_subject": _('spo.as_subject'), "as_predicate": _('spo.as_predicate'), "as_object": _('spo.as_object')}|tojson }};
     </script>
+    <script id="shmarql-namespaces" type="application/json">{{ namespaces|tojson }}</script>
     <script src="/static/codemirror/codemirror.js"></script>
     <script src="/static/codemirror/sparql.js"></script>
     <script src="/static/js/profile-picker.js"></script>

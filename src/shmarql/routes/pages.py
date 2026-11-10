@@ -70,6 +70,7 @@ async def query_page(
 ):
     state = get_state(request)
     selected = state.registry.get(profile) or state.registry.default
+    display = state.display_for(selected) if selected is not None else None
     return render(
         request,
         "query.html",
@@ -79,6 +80,7 @@ async def query_page(
             "selected": selected.public_dict(selected is state.registry.default)
             if selected
             else None,
+            "namespaces": display.namespaces if display else {},
         },
     )
 

@@ -1,3 +1,10 @@
+# 2026-11-10
+
+## Changed
+
+- The query results table shows IRIs in their shortened form (e.g. `schema:knows`) and offers
+  SPO links next to them that open the value in the `/spo` graph browser.
+
 # 2026-11-05
 
 ## Added

@@ -170,6 +170,9 @@ pre.shmarql-source::before, pre[class^="lodeon-"]::before {
 .query-actions { display: flex; align-items: center; gap: 1rem; }
 .hint, .query-status { color: var(--muted); font-size: 0.9rem; }
 .query-results { margin-top: 1.2rem; overflow-x: auto; }
+/* shortened IRIs in query results: prefix (e.g. schema:) + local part */
+.query-results .prefix { color: #2980b9; }
+.query-results .local { color: #333; font-weight: 600; }
 
 table.sparql-results { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
 table.sparql-results th { text-align: left; background: #eef1f6; position: sticky; top: 0; }
