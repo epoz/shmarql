@@ -57,7 +57,7 @@ def build_spo_query(s: str = "", p: str = "", o: str = "") -> str:
     lines.append("  ?s ?p ?o .")
     lines.extend(f"  {filter_}" for filter_ in filters)
     lines.append("}")
-    lines.append("ORDER BY ?s ?p ?o LIMIT 999")
+    lines.append("LIMIT 999")
     return "\n".join(lines) + "\n"
 
 
@@ -166,6 +166,7 @@ async def spo_page(
         return render(request, "error.html", {"message_key": "error.no_profile", "uri": ""}, 404)
 
     query = build_spo_query(s, p, o)
+    log.debug(query)
     try:
         results = await state.client.select(target, query)
     except SparqlError as exc:
