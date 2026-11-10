@@ -4,6 +4,8 @@
 
 - The query results table shows IRIs in their shortened form (e.g. `schema:knows`) and offers
   SPO links next to them that open the value in the `/spo` graph browser.
+- The query results table has an extra leading column with a running row number (starting at 1,
+  in a smaller, lighter font than the results).
 
 # 2026-11-05
 

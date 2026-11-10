@@ -138,14 +138,21 @@
     const table = document.createElement("table");
     table.className = "sparql-results";
     const thead = table.createTHead().insertRow();
+    const rowTh = document.createElement("th");
+    rowTh.className = "rownum";
+    rowTh.textContent = "\u00A0";
+    thead.appendChild(rowTh);
     vars.forEach((v) => {
       const th = document.createElement("th");
       th.textContent = v;
       thead.appendChild(th);
     });
     const tbody = table.createTBody();
-    bindings.forEach((row) => {
+    bindings.forEach((row, index) => {
       const tr = tbody.insertRow();
+      const rowTd = tr.insertCell();
+      rowTd.className = "rownum";
+      rowTd.textContent = String(index + 1);
       vars.forEach((v) => tr.appendChild(renderCell(row[v])));
     });
     statusEl.textContent = i18n.rows.replace("{count}", bindings.length);
