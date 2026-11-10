@@ -4,8 +4,8 @@
 <ul>
     {% for item in items %}
     <li class="{% if item.is_section %}nav-section{% endif %}{% if item.url and item.url == current_url %} active{% endif %}{% if item.is_open %} open{% endif %}">
-        {% if item.children %}<button class="nav-toggle" type="button" aria-expanded="{{ 'true' if item.is_open else 'false' }}"><span class="nav-toggle-icon" aria-hidden="true">{{ '▾' if item.is_open else '▸' }}</span></button>{% endif %}
         {% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}<span>{{ item.title }}</span>{% endif %}
+        {% if item.children %}<button class="nav-toggle" type="button" aria-expanded="{{ 'true' if item.is_open else 'false' }}"><span class="nav-toggle-icon" aria-hidden="true">{{ '▾' if item.is_open else '▸' }}</span></button>{% endif %}
         {% if item.children %}<ul class="nav-children">{{ render_nav(item.children) }}</ul>{% endif %}
     </li>
     {% endfor %}
