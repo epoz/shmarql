@@ -179,7 +179,7 @@ table.sparql-results th { text-align: left; background: #eef1f6; position: stick
 table.sparql-results th, table.sparql-results td {
     border: 1px solid var(--border); padding: 0.3rem 0.5rem; vertical-align: top; overflow-wrap: anywhere;
 }
-table.sparql-results th.rownum, table.sparql-results td.rownum { color: #999; font-size: 0.85em; }
+table.sparql-results th.rownum, table.sparql-results td.rownum { color: #999; font-size: 0.5em; }
 table.sparql-results tbody tr:nth-child(even) { background: #fafbfc; }
 .language-tag { color: #27ae60; font-size: 0.8em; margin-left: 0.3em; font-family: monospace; }
 .sparql-error { color: #b00020; white-space: pre-wrap; }
