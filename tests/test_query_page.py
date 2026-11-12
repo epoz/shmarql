@@ -27,6 +27,9 @@ def test_query_page_has_codemirror_and_profile_autocomplete(client):
     assert r.status_code == 200
     assert "/static/codemirror/codemirror.js" in r.text
     assert "/static/codemirror/sparql.js" in r.text
+    # PREFIX namespace auto-suggest uses the vendored show-hint module
+    assert "/static/codemirror/show-hint.js" in r.text
+    assert "/static/codemirror/show-hint.css" in r.text
     assert '<textarea id="query-editor"' in r.text
     assert 'id="profile-input"' in r.text and 'role="combobox"' in r.text
     # the default profile is pre-selected
@@ -63,6 +66,8 @@ def test_static_assets_are_served(client):
         "/static/js/spo.js",
         "/static/js/query.js",
         "/static/codemirror/codemirror.js",
+        "/static/codemirror/show-hint.js",
+        "/static/codemirror/show-hint.css",
         "/static/css/shmarql.css",
         "/static/css/entity.css",
         "/static/lodeon/scripts/runtime.js",

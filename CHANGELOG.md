@@ -1,3 +1,9 @@
+# 2026-11-12
+
+## Added
+
+- Add pop-up hints to choose prefixes in query editor window
+
 # 2026-11-10
 
 ## Changed

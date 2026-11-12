@@ -4,6 +4,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="/static/codemirror/codemirror.css">
+    <link rel="stylesheet" href="/static/codemirror/show-hint.css">
 {% endblock %}
 
 {% block container_class %} container--wide{% endblock %}
@@ -48,6 +49,7 @@
     <script id="shmarql-namespaces" type="application/json">{{ namespaces|tojson }}</script>
     <script src="/static/codemirror/codemirror.js"></script>
     <script src="/static/codemirror/sparql.js"></script>
+    <script src="/static/codemirror/show-hint.js"></script>
     <script src="/static/js/profile-picker.js"></script>
     <script src="/static/js/query.js"></script>
 {% endblock %}
