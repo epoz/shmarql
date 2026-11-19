@@ -12,6 +12,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__
+from .cache import RedisCache
 from .config import Settings, get_settings
 from .docs_site import DocsSite
 from .entity.settings import DisplaySettings
@@ -43,18 +44,27 @@ def create_app(
         registry = ProfileRegistry.from_yaml(settings.profiles_path, default_ref)
     elif default_ref:
         registry = ProfileRegistry(list(registry), default_ref, display=registry.display)
+    http = httpx.AsyncClient(transport=transport)
+    # Redis cache for SPARQL query results; disabled when REDIS_HOST is not set.
+    entity_cache = (
+        RedisCache(f"redis://{settings.redis_host}", ttl=settings.cache_ttl)
+        if settings.redis_host
+        else None
+    )
     client = SparqlClient(
         timeout=settings.sparql_timeout,
         user_agent=settings.sparql_user_agent,
         transport=transport,
+        cache=entity_cache,
     )
-    http = httpx.AsyncClient(transport=transport)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         yield
         await client.aclose()
         await http.aclose()
+        if entity_cache is not None:
+            await entity_cache.close()
 
     app = FastAPI(
         title=settings.site_title,

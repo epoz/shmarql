@@ -88,6 +88,8 @@ environment variables win over the file. See [`.env.example`](.env.example).
 | `SPARQL_TIMEOUT`            | `30`                | Upstream timeout in seconds                                                |
 | `SPARQL_USER_AGENT`         | `shmarql/0.1 …`     | User-Agent sent upstream                                                   |
 | `CORS_ORIGINS`              | –                   | Comma separated origins allowed to call the API (`*` = all)                |
+| `REDIS_HOST`                 | –                   | Redis instance used to cache SPARQL query results (e.g. the entity viewer's CONSTRUCT and inverse/label lookups); when empty, no caching backend is used |
+| `CACHE_TTL`                   | `300`               | Time to live of cached query results, in seconds                             |
 | `DOCS_PATH`                 | `docs`              | Directory of Markdown documentation served at `/`                          |
 | `LODEON_CONFIG_PATH`        | –                   | YAML overriding the LODEON renderer config (e.g. embed `allowedOrigins`)   |
 | `LODEON_ASSETS_PATH`        | –                   | Directory replacing the bundled LODEON browser assets                      |

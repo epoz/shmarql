@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 import httpx
 from rdflib import Graph
 
+from .cache import RedisCache, query_cache_key
 from .profiles import Profile
 
 log = logging.getLogger("shmarql.sparql")
@@ -67,9 +68,11 @@ class SparqlClient:
         timeout: float = 30.0,
         user_agent: str = "shmarql",
         transport: httpx.AsyncBaseTransport | None = None,
+        cache: RedisCache | None = None,
     ):
         self.timeout = timeout
         self.user_agent = user_agent
+        self.cache = cache
         self._http = httpx.AsyncClient(transport=transport, follow_redirects=True)
 
     async def aclose(self) -> None:
@@ -138,18 +141,44 @@ class SparqlClient:
         return response
 
     async def select(self, profile: Profile, query: str) -> dict[str, Any]:
-        """Run a SELECT/ASK query and return the parsed SPARQL JSON results."""
+        """Run a SELECT/ASK query and return the parsed SPARQL JSON results.
+
+        Served from the cache when one is configured (``REDIS_HOST``).
+        """
+        key = query_cache_key(profile.key, query)
+        cached: dict[str, Any] | None = None
+        if self.cache is not None:
+            cached = await self.cache.get(key)
+        if cached is not None:
+            return json.loads(cached)
         response = await self._post_query(profile, query, f"{RESULTS_JSON}, application/json;q=0.9")
         try:
-            return json.loads(response.content)
+            result = json.loads(response.content)
         except ValueError as exc:
             raise SparqlError(f"SPARQL endpoint returned invalid JSON: {exc}") from exc
+        if self.cache is not None:
+            await self.cache.set(key, json.dumps(result), ttl=self.cache.ttl)
+        return result
 
     async def bindings(self, profile: Profile, query: str) -> list[dict[str, Any]]:
         return (await self.select(profile, query)).get("results", {}).get("bindings", [])
 
     async def construct(self, profile: Profile, query: str) -> Graph:
-        """Run a CONSTRUCT/DESCRIBE query and parse the response into an rdflib Graph."""
+        """Run a CONSTRUCT/DESCRIBE query and parse the response into an rdflib Graph.
+
+        Served from the cache when one is configured (``REDIS_HOST``).
+        """
+        key = query_cache_key(profile.key, query)
+        cached: str | None = None
+        if self.cache is not None:
+            cached = await self.cache.get(key)
+        if cached is not None:
+            graph = Graph()
+            try:
+                graph.parse(data=cached, format="turtle")
+            except Exception as exc:  # rdflib raises many different exception types
+                raise SparqlError(f"Could not parse cached CONSTRUCT response: {exc}") from exc
+            return graph
         response = await self._post_query(profile, query, GRAPH_ACCEPT)
         content_type = response.headers.get("content-type", "").split(";")[0].strip().lower()
         fmt = _RDF_FORMATS.get(content_type, "turtle")
@@ -158,4 +187,9 @@ class SparqlClient:
             graph.parse(data=response.content, format=fmt)
         except Exception as exc:  # rdflib raises many different exception types
             raise SparqlError(f"Could not parse {content_type or 'RDF'} response: {exc}") from exc
+        if self.cache is not None:
+            value = graph.serialize(format="turtle")
+            if isinstance(value, bytes):
+                value = value.decode("utf-8")
+            await self.cache.set(key, value, ttl=self.cache.ttl)
         return graph

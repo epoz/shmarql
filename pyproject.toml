@@ -21,6 +21,7 @@ dependencies = [
     "pymdown-extensions>=10.9",
     "pygments>=2.18",
     "nh3>=0.2.18",
+    "redis>=8.1.0",
 ]
 
 [project.scripts]

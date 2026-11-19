@@ -166,6 +166,78 @@ def test_construct_fallbacks(settings, registry, data_graph):
     assert constructs[2].startswith("CONSTRUCT { <http://example.org/rembrandt> ?p ?o")
 
 
+def test_construct_query_omits_dead_label_path_branch():
+    """Without blank-node label paths the final UNION branch can never match ...
+
+    ...and worse, it makes the query engine pick a pathological join plan: a CONSTRUCT that
+    returns a handful of triples took ~40s. The branch is therefore dropped from the default
+    construct query.
+    """
+    from shmarql.entity.source import _build_construct_query
+
+    query = _build_construct_query(DisplaySettings(), "<http://example.org/rembrandt>")
+    # The blank-node traversal branches are kept ...
+    assert "UNION" in query
+    assert "?o ?p2 ?o2" in query
+    # ... but the (dead) blank-node label path branch is not.
+    assert "?o ?pathPred ?target" not in query
+    assert "VALUES ?pathPred" not in query
+    assert query.lstrip().startswith("CONSTRUCT {")
+
+
+def test_construct_query_keeps_label_path_branch_when_configured():
+    from dataclasses import replace
+
+    from shmarql.entity.source import _build_construct_query
+
+    s = replace(DisplaySettings(), bn_label_predicate_paths=["http://example.org/labelPath"])
+    query = _build_construct_query(s, "<http://example.org/rembrandt>")
+    assert "UNION" in query
+    assert "?pathPred ?target" in query
+    assert "http://example.org/labelPath" in query
+
+
+class FakeQueryCache:
+    """Minimal stand-in for the Redis SPARQL query cache."""
+
+    def __init__(self):
+        self.store: dict[str, str] = {}
+        self.keys: list[str] = []
+        self.ttl = 300.0
+
+    async def get(self, key: str) -> str | None:
+        self.keys.append(key)
+        return self.store.get(key)
+
+    async def set(self, key: str, value: str, ttl: float | None = None) -> None:
+        self.store[key] = value
+
+    async def close(self) -> None:
+        return None
+
+
+def test_entity_queries_are_cached(settings, registry, data_graph):
+    """With a query cache configured, repeat entity pages reuse the cached SPARQL results."""
+    from fastapi.testclient import TestClient
+
+    from shmarql.main import create_app
+
+    endpoint = FakeSparqlEndpoint(data_graph)
+    app = create_app(settings, registry, transport=endpoint.transport)
+    cache = FakeQueryCache()
+    app.state.shmarql.client.cache = cache  # type: ignore[attr-defined]
+    with TestClient(app) as c:
+        r1 = entity(c)
+        assert r1.status_code == 200
+        n_queries = len(endpoint.requests)
+
+        r2 = entity(c)
+        assert r2.status_code == 200
+        # The second page reused the cached CONSTRUCT instead of querying again.
+        assert len(endpoint.requests) == n_queries
+        assert cache.keys
+
+
 def test_per_profile_display_overrides(settings, registry, endpoint):
     from fastapi.testclient import TestClient
 

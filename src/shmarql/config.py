@@ -56,6 +56,13 @@ class Settings(BaseSettings):
     # Use "*" to allow all.
     cors_origins: Annotated[list[str], NoDecode] = Field(default_factory=list)
 
+    # --- Caching ----------------------------------------------------------------
+    # Redis instance used to cache SPARQL query results (e.g. the entity viewer's
+    # CONSTRUCT and inverse/label lookups). When empty, no caching backend is used.
+    redis_host: str = ""
+    # Time to live of cached query results, in seconds.
+    cache_ttl: float = 300.0
+
     # --- Documentation ---------------------------------------------------------
     # Directory containing the Markdown documentation rendered off the root URL.
     docs_path: Path = Path("docs")

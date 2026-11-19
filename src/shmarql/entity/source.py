@@ -40,6 +40,28 @@ def _iri(uri: str) -> str:
     return f"<{uri}>"
 
 
+def _build_construct_query(s: DisplaySettings, subject: str) -> str:
+    """The CONSTRUCT query for ``subject``, dropping branches that cannot match.
+
+    The default query ends with a UNION branch that follows blank-node label paths. When no
+    ``bn_label_predicate_paths`` are configured that branch can never match -- but it still
+    makes the query engine pick a pathological join plan, turning a CONSTRUCT that returns a
+    handful of triples into a query that takes tens of seconds. The branch is therefore left
+    out unless label paths are configured.
+    """
+    query = s.construct_query
+    if not s.bn_label_predicate_paths:
+        parts = query.split("\n    UNION\n")
+        if len(parts) > 1 and "{bn_label_path_preds}" in parts[-1]:
+            query = "\n    UNION\n".join(parts[:-1]) + "\n}\n"
+    return (
+        query.replace("{subject_uris}", subject)
+        .replace("{bn_label_path_preds}", _values(s.bn_label_predicate_paths))
+        .replace("{label_preds}", _values(s.label_predicates))
+        .replace("{skolem_pattern}", s.skolem_uri_pattern)
+    )
+
+
 class EntitySource:
     def __init__(self, client: SparqlClient, profile: Profile, settings: DisplaySettings):
         self.client = client
@@ -50,12 +72,7 @@ class EntitySource:
     async def get_rdf_for_uri(self, id_uri: str) -> Graph:
         s = self.settings
         subject = _iri(id_uri)
-        query = (
-            s.construct_query.replace("{subject_uris}", subject)
-            .replace("{bn_label_path_preds}", _values(s.bn_label_predicate_paths))
-            .replace("{label_preds}", _values(s.label_predicates))
-            .replace("{skolem_pattern}", s.skolem_uri_pattern)
-        )
+        query = _build_construct_query(s, subject)
         attempts = [
             ("full", query),
             ("simple", s.construct_query_simple.format(id_uri=id_uri)),
