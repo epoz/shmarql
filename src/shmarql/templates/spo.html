@@ -39,6 +39,18 @@
 </div>
 {% endblock %}
 
+{% block formats %}
+    <div class="ldview"><div class="formats">
+        <div class="formats-row">
+            <div class="formats-label">{{ _('download.label') }}</div>
+            <div class="formats-buttons">
+                {% for name, href in format_links %}<a href="{{ href }}">{{ name }}</a>{% endfor %}
+                <div class="data-source">{{ _('data_source.label') }} <a href="/query?profile={{ selected.key }}">{{ selected.title }}</a></div>
+            </div>
+        </div>
+    </div></div>
+{% endblock %}
+
 {% block scripts %}
     <script id="profiles-data" type="application/json">{{ profiles|tojson }}</script>
     <script src="/static/js/profile-picker.js"></script>

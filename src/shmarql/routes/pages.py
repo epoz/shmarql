@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse, Response
+from rdflib import BNode, Graph, Literal, URIRef
 
 from ..entity.i18n import preferred_language
 from ..entity.negotiation import negotiate, serialize
@@ -59,6 +60,38 @@ def build_spo_query(s: str = "", p: str = "", o: str = "") -> str:
     lines.append("}")
     lines.append("LIMIT 999")
     return "\n".join(lines) + "\n"
+
+
+def _results_graph(results: dict) -> Graph:
+    """Collect the ``?s ?p ?o`` triples of a SPARQL SELECT result into an RDF graph."""
+    graph = Graph()
+    for row in (results.get("results") or {}).get("bindings") or []:
+        terms: list = []
+        for var in SPO_POSITIONS:
+            cell = row.get(var) or {}
+            value = cell.get("value")
+            if cell.get("type") == "uri":
+                terms.append(URIRef(value))
+            elif cell.get("type") == "bnode":
+                terms.append(BNode(value))
+            elif value is not None:
+                terms.append(
+                    Literal(
+                        value,
+                        lang=cell.get("xml:lang"),
+                        datatype=URIRef(cell["datatype"]) if cell.get("datatype") else None,
+                    )
+                )
+        if len(terms) == len(SPO_POSITIONS) and all(term is not None for term in terms):
+            graph.add((terms[0], terms[1], terms[2]))
+    return graph
+
+
+def _bind_namespaces(graph: Graph, namespaces: dict[str, str] | None) -> Graph:
+    """Bind the display namespaces on the graph so RDF serializations use their prefixes."""
+    for prefix, namespace in (namespaces or {}).items():
+        graph.bind(str(prefix), URIRef(str(namespace)), replace=True)
+    return graph
 
 
 # -- Query editor ---------------------------------------------------------------------------
@@ -119,6 +152,7 @@ async def entity_page(
 
     rdf_format = negotiate(format, request.headers.get("accept"))
     if rdf_format:
+        _bind_namespaces(graph, display.namespaces)
         content, content_type = serialize(graph, rdf_format)
         return Response(content, media_type=None, headers={"content-type": content_type})
 
@@ -159,6 +193,7 @@ async def spo_page(
     p: str = Query(""),
     o: str = Query(""),
     profile: str = Query(""),
+    format: str = Query(""),  # noqa: A002 - mirrors ldview's ?format= parameter
 ) -> Response:
     """Browse the knowledge graph: one table of ``?s ?p ?o`` triples, filtered per position."""
     state = get_state(request)
@@ -175,6 +210,12 @@ async def spo_page(
         return render(request, "error.html", {"message": str(exc), "uri": ""}, exc.status_code)
 
     display = state.display_for(target)
+    rdf_format = negotiate(format, request.headers.get("accept"))
+    if rdf_format:
+        graph = _bind_namespaces(_results_graph(results), display.namespaces)
+        content, content_type = serialize(graph, rdf_format)
+        return Response(content, media_type=None, headers={"content-type": content_type})
+
     return render(
         request,
         "spo.html",
@@ -189,6 +230,10 @@ async def spo_page(
             "o": o,
             "profiles": state.registry.public_list(),
             "selected": target.public_dict(target is state.registry.default) if target else None,
+            "format_links": [
+                (name, "/spo?" + urlencode({**request.query_params, "format": key}))
+                for key, name in (("turtle", "Turtle"), ("json-ld", "JSON-LD"), ("xml", "RDF/XML"))
+            ],
         },
     )
 

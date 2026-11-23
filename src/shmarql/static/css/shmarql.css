@@ -204,6 +204,71 @@ table.sparql-results tbody tr:nth-child(even) { background: #fafbfc; }
 }
 .spo-link:hover { background: #e7ecf8; border-color: var(--accent); text-decoration: none; }
 
+/* --- RDF download formats (entity viewer and /spo graph browser) ---------------------- */
+.ldview .formats {
+    margin-top: 2rem;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ldview .formats-row {
+    display: flex;
+    align-items: baseline;
+}
+
+.ldview .formats-label {
+    flex: 0 0 var(--pred-col-width, 30%);
+    font-weight: normal;
+    color: #555;
+    padding-right: 1em;
+    box-sizing: border-box;
+}
+
+.ldview .formats-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.ldview .formats a {
+    color: #3498db;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+}
+
+.ldview .formats a:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+.ldview .formats .data-source {
+    flex-basis: 100%;
+    margin-top: 0.5rem;
+    font-size: 0.85em;
+    color: #666;
+}
+
+.ldview .formats .data-source a {
+    color: #666;
+    text-decoration: none;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+}
+
+.ldview .formats .data-source a:hover {
+    background-color: transparent;
+    color: #3498db;
+    text-decoration: underline;
+}
+
 /* --- entity lookup ------------------------------------------------------------------- */
 .entity-lookup { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .entity-uri-input { flex: 1 1 30rem; padding: 0.45rem 0.7rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 4px; }
