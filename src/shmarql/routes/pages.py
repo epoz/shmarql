@@ -87,6 +87,13 @@ def _results_graph(results: dict) -> Graph:
     return graph
 
 
+def _bind_namespaces(graph: Graph, namespaces: dict[str, str] | None) -> Graph:
+    """Bind the display namespaces on the graph so RDF serializations use their prefixes."""
+    for prefix, namespace in (namespaces or {}).items():
+        graph.bind(str(prefix), URIRef(str(namespace)), replace=True)
+    return graph
+
+
 # -- Query editor ---------------------------------------------------------------------------
 @router.get("/query", name="query_page")
 async def query_page(
@@ -145,6 +152,7 @@ async def entity_page(
 
     rdf_format = negotiate(format, request.headers.get("accept"))
     if rdf_format:
+        _bind_namespaces(graph, display.namespaces)
         content, content_type = serialize(graph, rdf_format)
         return Response(content, media_type=None, headers={"content-type": content_type})
 
@@ -201,12 +209,13 @@ async def spo_page(
     except SparqlError as exc:
         return render(request, "error.html", {"message": str(exc), "uri": ""}, exc.status_code)
 
+    display = state.display_for(target)
     rdf_format = negotiate(format, request.headers.get("accept"))
     if rdf_format:
-        content, content_type = serialize(_results_graph(results), rdf_format)
+        graph = _bind_namespaces(_results_graph(results), display.namespaces)
+        content, content_type = serialize(graph, rdf_format)
         return Response(content, media_type=None, headers={"content-type": content_type})
 
-    display = state.display_for(target)
     return render(
         request,
         "spo.html",

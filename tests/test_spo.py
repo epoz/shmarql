@@ -100,6 +100,7 @@ def test_spo_download_as_rdf_serializes_the_browsed_triples(client):
     r = spo(client, s=REMBRANDT, format="turtle")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/turtle")
+    assert "@prefix schema:" in r.text
     g = Graph().parse(data=r.text, format="turtle")
     assert (URIRef(REMBRANDT), URIRef(RDFS.label), Literal("Rembrandt", lang="en")) in g
 

@@ -4,6 +4,7 @@
 
 - The graph browser (`/spo?s=…&p=…&o=…`) has the "Download as" links of the entity viewer:
   the browsed triples can be downloaded as Turtle, JSON-LD or RDF/XML via `?format=turtle|json-ld|xml`.
+  The Turtle serialization uses the namespace prefixes defined for the profile.
 
 # 2026-11-12
 

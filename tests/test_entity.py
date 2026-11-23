@@ -126,6 +126,8 @@ def test_map_for_coordinates(client):
 def test_content_negotiation(client):
     r = entity(client, params={"format": "turtle"})
     assert r.headers["content-type"].startswith("text/turtle")
+    # the profile's namespaces are used for the prefixes of the serialization
+    assert "@prefix schema:" in r.text
     g = Graph().parse(data=r.text, format="turtle")
     assert (URIRef(REMBRANDT), RDFS.label, Literal("Rembrandt", lang="en")) in g
     r = entity(client, headers={"Accept": "application/ld+json"})
