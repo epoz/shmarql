@@ -7,10 +7,11 @@ import { problemFromResponse } from "../errors/problem-details";
 export type AuthStatus = {
   authEnabled: boolean;
   authenticated: boolean;
-  loginMethod?: "token" | "oidc" | "oauth2";
+  loginMethod?: "token" | "credentials" | "oidc" | "oauth2";
   loginProvider?: string;
   methods: {
     token: boolean;
+    credentials: boolean;
     externalProviders: Array<{
       id: string;
       label: string;
@@ -31,11 +32,12 @@ const authStatusSchema = z
   .object({
     authEnabled: z.boolean(),
     authenticated: z.boolean(),
-    loginMethod: z.enum(["token", "oidc", "oauth2"]).optional(),
+    loginMethod: z.enum(["token", "credentials", "oidc", "oauth2"]).optional(),
     loginProvider: z.string().min(1).optional(),
     methods: z
       .object({
         token: z.boolean(),
+        credentials: z.boolean(),
         externalProviders: z.array(
           z
             .object({
@@ -56,6 +58,7 @@ const authSessionSchema = authStatusSchema.extend({ session: z.string().optional
 const authSessionStorageKey = "lodeon.auth.session";
 const authStatusUrl = "/api/auth/status";
 const authLoginUrl = "/api/auth/login";
+const authTokenUrl = "/token";
 const authLogoutUrl = "/api/auth/logout";
 const authExternalExchangeUrl = "/api/auth/external/exchange";
 
@@ -95,7 +98,7 @@ function failClosedAuthStatus(): AuthStatus {
   return {
     authEnabled: true,
     authenticated: false,
-    methods: { token: false, externalProviders: [] },
+    methods: { token: false, credentials: false, externalProviders: [] },
     capabilities: { publish: false }
   };
 }
@@ -125,6 +128,46 @@ export async function loginWithToken(token: string, fetcher: typeof fetch = fetc
   }
 
   return payload;
+}
+
+/**
+ * Exchanges username/password credentials for a LODEON session and persists the returned
+ * JWT access token in browser session storage.
+ */
+export async function loginWithCredentials(
+  username: string,
+  password: string,
+  fetcher: typeof fetch = fetch
+): Promise<AuthSession> {
+  const response = await fetcher(authTokenUrl, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+  });
+
+  if (!response.ok) {
+    throw await problemFromResponse(response, "auth.login_failed");
+  }
+
+  const payload = (await response.json()) as { access_token?: unknown };
+  const accessToken = typeof payload?.access_token === "string" ? payload.access_token : "";
+  if (!accessToken) {
+    throw new LodeonClientError("auth.login_failed");
+  }
+
+  writeAuthSession(accessToken);
+
+  return {
+    authEnabled: true,
+    authenticated: true,
+    loginMethod: "credentials",
+    methods: { token: false, credentials: true, externalProviders: [] },
+    capabilities: { publish: true },
+    session: accessToken
+  };
 }
 
 /** Exchanges one callback code and persists only the returned LODEON session. */

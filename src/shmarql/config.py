@@ -76,9 +76,15 @@ class Settings(BaseSettings):
     lodeon_assets_path: Path | None = None
 
     # --- LODEON story editor (served at /lodeon/) ------------------------------
+    # Secret key for signing editor access tokens (JWTs, HS256).
+    secret_key: str = "shmarql-dev-secret"
+    # Lifetime of an editor access token, in days.
+    access_token_expire_days: int = 30
+    # SQLite database with the editor users (username, name, bcrypt password, activation date).
+    users_db_path: Path = Path("editor_users.sqlite")
     lodeon_editor_enabled: bool = True
-    # Access token for the editor. When set, Preview and Publish require a login
-    # with this token; when empty, Preview is open and Publish is disabled.
+    # Access token for the editor. When set, Preview and Publish require a login with it
+    # (POST /api/auth/login with that token); when empty, Preview is open and Publish is disabled.
     lodeon_editor_token: str = ""
     # Lifetime of an editor login, in seconds.
     lodeon_editor_session_ttl: int = 8 * 3600

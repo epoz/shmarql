@@ -18,7 +18,7 @@ describe("auth controller", () => {
     expect(controller.getSession()).toEqual({
       authEnabled: true,
       authenticated: false,
-      methods: { token: false, externalProviders: [] },
+      methods: { token: false, credentials: false, externalProviders: [] },
       capabilities: { publish: false }
     });
     expect(controller.isAuthorized()).toBe(false);
@@ -70,7 +70,7 @@ describe("auth controller", () => {
       {
         authEnabled: true,
         authenticated: false,
-        methods: { token: true, externalProviders: [] },
+        methods: { token: true, credentials: true, externalProviders: [] },
         capabilities: { publish: false }
       },
       createLocalization(defaultConfig),
@@ -95,7 +95,7 @@ describe("auth controller", () => {
       {
         authEnabled: true,
         authenticated: true,
-        methods: { token: true, externalProviders: [] },
+        methods: { token: true, credentials: true, externalProviders: [] },
         capabilities: { publish: false }
       },
       createLocalization(defaultConfig),

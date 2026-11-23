@@ -6,15 +6,18 @@ import json
 import re
 import shutil
 import zipfile
+from datetime import timedelta
 
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from jose import jwt
 
+from shmarql.auth import create_access_token, create_user
 from shmarql.lodeon.publishing import PreviewStore, StoryPayload, is_allowed_asset_path
 from shmarql.main import create_app
 from shmarql.profiles import ProfileRegistry
-from shmarql.routes.lodeon_editor import create_session, valid_session
+from shmarql.routes.auth import create_session, valid_session
 
 from conftest import FIXTURES, MAIN_ENDPOINT
 
@@ -62,6 +65,27 @@ def editor_settings(settings, docs, tmp_path):
 @pytest.fixture
 def editor(editor_settings, registry, endpoint):
     app = create_app(settings=editor_settings, registry=registry, transport=endpoint.transport)
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture
+def editor_user_settings(settings, docs, tmp_path):
+    return settings.model_copy(
+        update={
+            "docs_path": docs,
+            "lodeon_editor_token": "",
+            "users_db_path": tmp_path / "editor_users.sqlite",
+            "lodeon_preview_path": tmp_path / "previews",
+        }
+    )
+
+
+@pytest.fixture
+def editor_user(editor_user_settings, registry, endpoint):
+    """Editor app with username/password login enabled (no static token)."""
+    create_user("editor", "editor-password", editor_user_settings.users_db_path)
+    app = create_app(settings=editor_user_settings, registry=registry, transport=endpoint.transport)
     with TestClient(app) as c:
         yield c
 
@@ -166,24 +190,116 @@ def test_without_token_preview_is_open_and_publish_disabled(client):
     assert status == {
         "authEnabled": False,
         "authenticated": False,
-        "methods": {"token": False, "externalProviders": []},
+        "methods": {"token": False, "credentials": False, "externalProviders": []},
         "capabilities": {"publish": False},
     }
     assert client.post("/api/auth/login", json={"token": "x"}).status_code == 404
+    assert (
+        client.post(
+            "/token", data={"username": "editor", "password": "editor-password"}
+        ).status_code
+        == 404
+    )
     assert client.post("/api/publish", json=story_json()).status_code == 403
     assert client.post("/api/preview", json=story_json()).status_code == 200
 
 
 def test_token_login(editor):
-    assert editor.get("/api/auth/status").json()["authEnabled"] is True
+    status = editor.get("/api/auth/status").json()
+    assert status["authEnabled"] is True
+    assert status["methods"]["token"] is True
     assert editor.post("/api/auth/login", json={"token": "wrong"}).status_code == 401
     assert editor.post("/api/auth/login", json={}).status_code == 400
     headers = login(editor)
     status = editor.get("/api/auth/status", headers=headers).json()
     assert status["authenticated"] is True
+    assert status["loginMethod"] == "token"
     assert status["capabilities"]["publish"] is True
     bad = {"Authorization": "Bearer 99999999999.deadbeef"}
     assert editor.get("/api/auth/status", headers=bad).json()["authenticated"] is False
+
+
+def test_username_password_login_returns_jwt_access_token(editor_user, editor_user_settings):
+    status = editor_user.get("/api/auth/status").json()
+    assert status["authEnabled"] is True
+    assert status["authenticated"] is False
+    assert status["methods"] == {"token": False, "credentials": True, "externalProviders": []}
+    # Without a static token, the token login is not configured.
+    assert editor_user.post("/api/auth/login", json={"token": "s3cret-token"}).status_code == 404
+
+    r = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
+    assert r.status_code == 200, r.text
+    assert r.json()["token_type"] == "bearer"
+    access_token = r.json()["access_token"]
+    assert (
+        jwt.decode(access_token, editor_user_settings.secret_key, algorithms=["HS256"])["sub"]
+        == "editor"
+    )
+
+    assert (
+        editor_user.post("/token", data={"username": "editor", "password": "wrong"}).status_code
+        == 401
+    )
+    assert (
+        editor_user.post(
+            "/token", data={"username": "nobody", "password": "editor-password"}
+        ).status_code
+        == 401
+    )
+    assert editor_user.post("/token", data={}).status_code == 422
+
+
+def test_jwt_access_token_grants_editor_access(editor_user, editor_user_settings):
+    r = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
+    assert r.status_code == 200, r.text
+    headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+    status = editor_user.get("/api/auth/status", headers=headers).json()
+    assert status["authenticated"] is True
+    assert status["loginMethod"] == "credentials"
+    assert status["capabilities"]["publish"] is True
+
+    assert editor_user.post("/api/preview", json=story_json(), headers=headers).status_code == 200
+    assert editor_user.post("/api/publish", json=story_json()).status_code == 401
+    assert editor_user.post("/api/publish", json=story_json(), headers=headers).status_code == 200
+
+
+def test_expired_jwt_access_token_is_rejected(editor_user, editor_user_settings):
+    token = create_access_token(
+        {"sub": "editor"},
+        secret_key=editor_user_settings.secret_key,
+        expires_delta=timedelta(days=-1),
+    )
+    assert (
+        editor_user.get("/api/auth/status", headers={"Authorization": f"Bearer {token}"}).json()[
+            "authenticated"
+        ]
+        is False
+    )
+    assert (
+        editor_user.post(
+            "/api/preview", json=story_json(), headers={"Authorization": f"Bearer {token}"}
+        ).status_code
+        == 401
+    )
+
+
+def test_unknown_user_jwt_access_token_is_rejected(editor_user, editor_user_settings):
+    token = create_access_token({"sub": "nobody"}, secret_key=editor_user_settings.secret_key)
+    assert (
+        editor_user.get("/api/auth/status", headers={"Authorization": f"Bearer {token}"}).json()[
+            "authenticated"
+        ]
+        is False
+    )
+
+
+def test_access_token_cookie_grants_editor_access(editor_user, editor_user_settings):
+    r = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
+    assert r.status_code == 200, r.text
+    editor_user.cookies.set("access_token", r.json()["access_token"])
+    assert editor_user.get("/api/auth/status").json()["authenticated"] is True
+    assert editor_user.post("/api/preview", json=story_json()).status_code == 200
 
 
 def test_sessions_expire_and_are_bound_to_the_token():

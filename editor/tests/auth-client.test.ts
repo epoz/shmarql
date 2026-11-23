@@ -3,6 +3,7 @@ import {
   completeExternalAuthReturn,
   exchangeExternalAuthCode,
   loadAuthSession,
+  loginWithCredentials,
   loginWithToken,
   logout,
   validateLoginToken
@@ -20,7 +21,7 @@ describe("auth client", () => {
     await expect(loadAuthSession(fetcher as unknown as typeof fetch)).resolves.toEqual({
       authEnabled: true,
       authenticated: false,
-      methods: { token: false, externalProviders: [] },
+      methods: { token: false, credentials: false, externalProviders: [] },
       capabilities: { publish: false }
     });
   });
@@ -32,7 +33,7 @@ describe("auth client", () => {
     await expect(loadAuthSession(fetcher as unknown as typeof fetch)).resolves.toEqual({
       authEnabled: true,
       authenticated: false,
-      methods: { token: false, externalProviders: [] },
+      methods: { token: false, credentials: false, externalProviders: [] },
       capabilities: { publish: false }
     });
     expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
@@ -44,7 +45,7 @@ describe("auth client", () => {
         JSON.stringify({
           authEnabled: false,
           authenticated: true,
-          methods: { token: false, externalProviders: [] },
+          methods: { token: false, credentials: false, externalProviders: [] },
           capabilities: { publish: true }
         }),
         { status: 200, headers: { "content-type": "application/json" } }
@@ -54,7 +55,7 @@ describe("auth client", () => {
     await expect(loadAuthSession(fetcher as unknown as typeof fetch)).resolves.toEqual({
       authEnabled: false,
       authenticated: true,
-      methods: { token: false, externalProviders: [] },
+      methods: { token: false, credentials: false, externalProviders: [] },
       capabilities: { publish: true },
       session: undefined
     });
@@ -68,7 +69,7 @@ describe("auth client", () => {
           authEnabled: true,
           authenticated: true,
           loginMethod: "token",
-          methods: { token: true, externalProviders: [] },
+          methods: { token: true, credentials: true, externalProviders: [] },
           capabilities: { publish: false }
         }),
         { status: 200, headers: { "content-type": "application/json" } }
@@ -91,7 +92,7 @@ describe("auth client", () => {
           authEnabled: true,
           authenticated: true,
           loginMethod: "token",
-          methods: { token: true, externalProviders: [] },
+          methods: { token: true, credentials: true, externalProviders: [] },
           capabilities: { publish: false },
           session: "session-2"
         }),
@@ -105,6 +106,56 @@ describe("auth client", () => {
     expect(sessionStorage.getItem("lodeon.auth.session")).toBe("session-2");
   });
 
+  it("stores the JWT session after username/password login", async () => {
+    const fetcher = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          access_token: "jwt-session-1",
+          token_type: "bearer"
+        }),
+        { status: 200, headers: { "content-type": "application/json" } }
+      )
+    );
+
+    const session = await loginWithCredentials("editor", "editor-password", fetcher as unknown as typeof fetch);
+
+    expect(session.authenticated).toBe(true);
+    expect(session.loginMethod).toBe("credentials");
+    expect(session.session).toBe("jwt-session-1");
+    expect(sessionStorage.getItem("lodeon.auth.session")).toBe("jwt-session-1");
+    expect(fetcher).toHaveBeenCalledWith("/token", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: "username=editor&password=editor-password"
+    });
+  });
+
+  it("preserves auth Problem Detail codes on username/password login failure", async () => {
+    sessionStorage.removeItem("lodeon.auth.session");
+    const fetcher = vi.fn(async () =>
+      new Response(
+        JSON.stringify({
+          code: "auth.invalid_token",
+          detail: "invalid token"
+        }),
+        {
+          status: 401,
+          headers: { "content-type": "application/problem+json" }
+        }
+      )
+    );
+
+    await expect(loginWithCredentials("editor", "wrong", fetcher as unknown as typeof fetch)).rejects.toMatchObject(
+      {
+        code: "auth.invalid_token"
+      }
+    );
+    expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
+  });
+
   it("removes and exchanges one external callback code before discovery", async () => {
     const replacements: string[] = [];
     const fetcher = vi.fn(async () =>
@@ -116,6 +167,7 @@ describe("auth client", () => {
           loginProvider: "institution",
           methods: {
             token: true,
+            credentials: true,
             externalProviders: [
               {
                 id: "institution",
@@ -217,7 +269,7 @@ describe("auth client", () => {
             : {
                 authEnabled: true,
                 authenticated: false,
-                methods: { token: true, externalProviders: [] },
+                methods: { token: true, credentials: true, externalProviders: [] },
                 capabilities: { publish: false }
               }
         ),

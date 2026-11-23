@@ -53,7 +53,7 @@ describe("LODEON app shell", () => {
             ...(headers.Authorization === "Bearer session-1"
               ? { loginMethod: "token" }
               : {}),
-            methods: { token: true, externalProviders: [] },
+            methods: { token: true, credentials: true, externalProviders: [] },
             capabilities: { publish: headers.Authorization === "Bearer session-1" }
           }),
           { status: 200, headers: { "content-type": "application/json" } }
@@ -66,7 +66,7 @@ describe("LODEON app shell", () => {
             authEnabled: true,
             authenticated: true,
             loginMethod: "token",
-            methods: { token: true, externalProviders: [] },
+            methods: { token: true, credentials: true, externalProviders: [] },
             capabilities: { publish: true },
             session: "session-1"
           }),
@@ -171,6 +171,7 @@ describe("LODEON app shell", () => {
             authenticated: false,
             methods: {
               token: true,
+              credentials: true,
               externalProviders: [
                 {
                   id: "institution",
@@ -277,7 +278,7 @@ describe("LODEON app shell", () => {
         JSON.stringify({
           authEnabled: false,
           authenticated: false,
-          methods: { token: false, externalProviders: [] },
+          methods: { token: false, credentials: false, externalProviders: [] },
           capabilities: { publish: false }
         }),
         { status: 200, headers: { "content-type": "application/json" } }

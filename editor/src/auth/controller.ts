@@ -1,12 +1,20 @@
 /** Owns the stateful auth controller lifecycle and presentation coordination. */
 
 import type { LodeonLocalization } from "../localization/runtime";
-import { loadAuthSession, loginWithToken, logout, validateLoginToken, type AuthSession } from "./api-client";
+import {
+  loadAuthSession,
+  loginWithCredentials,
+  loginWithToken,
+  logout,
+  validateLoginToken,
+  type AuthSession
+} from "./api-client";
 
 export type AuthControllerOptions = {
   onSessionChange?: (session: AuthSession) => void | Promise<void>;
   loadSession?: typeof loadAuthSession;
-  login?: typeof loginWithToken;
+  login?: (token: string) => Promise<AuthSession>;
+  loginWithCredentials?: (username: string, password: string) => Promise<AuthSession>;
   logoutSession?: typeof logout;
 };
 
@@ -16,6 +24,7 @@ export type AuthController = {
   getSessionToken: () => string | undefined;
   isAuthorized: () => boolean;
   login: (token: string) => Promise<AuthSession>;
+  loginWithCredentials: (username: string, password: string) => Promise<AuthSession>;
   logout: () => Promise<AuthSession>;
 };
 
@@ -24,12 +33,13 @@ export function createAuthController({
   onSessionChange,
   loadSession = loadAuthSession,
   login = loginWithToken,
+  loginWithCredentials: loginWithCredentialsImpl = loginWithCredentials,
   logoutSession = logout
 }: AuthControllerOptions = {}): AuthController {
   let session: AuthSession = {
     authEnabled: true,
     authenticated: false,
-    methods: { token: false, externalProviders: [] },
+    methods: { token: false, credentials: false, externalProviders: [] },
     capabilities: { publish: false }
   };
 
@@ -48,6 +58,8 @@ export function createAuthController({
       validateLoginToken(token);
       return setSession(await login(token));
     },
+    loginWithCredentials: async (username, password) =>
+      setSession(await loginWithCredentialsImpl(username, password)),
     logout: async () => setSession(await logoutSession(session.session))
   };
 }

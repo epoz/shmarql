@@ -94,6 +94,9 @@ environment variables win over the file. See [`.env.example`](.env.example).
 | `LODEON_CONFIG_PATH`        | –                   | YAML overriding the LODEON renderer config (e.g. embed `allowedOrigins`)   |
 | `LODEON_ASSETS_PATH`        | –                   | Directory replacing the bundled LODEON browser assets                      |
 | `LODEON_EDITOR_ENABLED`     | `1`                 | Serve the story editor at `/lodeon/` and its API                           |
+| `SECRET_KEY`                | `shmarql-dev-secret` | Secret key used to sign the editor access tokens (JWTs, HS256)          |
+| `ACCESS_TOKEN_EXPIRE_DAYS` | `30`                | Lifetime of an editor access token, in days                              |
+| `USERS_DB_PATH`             | `editor_users.sqlite` | SQLite database with the editor users (username, bcrypt password)     |
 | `LODEON_EDITOR_TOKEN`       | –                   | Access token for the editor; required to publish (see below)               |
 | `LODEON_EDITOR_SESSION_TTL` | `28800`             | Lifetime of an editor login, in seconds                                    |
 | `LODEON_STORY_DIR`          | `story`             | Published stories go to `DOCS_PATH/<dir>/<slug>/index.md`                  |
@@ -215,15 +218,19 @@ this site (profile _names_ are the knowledge-graph ids of the editor).
   `DOCS_PATH/LODEON_STORY_DIR/<slug>/` (replacing an earlier version atomically);
   the story then appears at `/story/<slug>/` and in the navigation.
 
-Publishing writes into the site, so it needs `LODEON_EDITOR_TOKEN`: authors log in
-with that token in the editor, after which Preview and Publish are available for
-the browser session. Without a token the editor and Preview are open to everyone
-and Publish is disabled. Embed metadata is only fetched for
+Publishing writes into the site, so it needs `LODEON_EDITOR_TOKEN` (or editor users):
+authors log in with that token in the editor, after which Preview and Publish are
+available for the browser session. Without a token the editor and Preview are open to
+everyone and Publish is disabled. Editors can log in with a username/password (against
+the editor user database configured with `USERS_DB_PATH`) or with the static editor
+token; the editor login issues a signed, expiring access token that the Preview and
+Publish endpoints accept as a bearer token. See the
+[configuration](docs/configuration.md). Embed metadata is only fetched for
 `nodes.embed.allowedOrigins` (set with `LODEON_CONFIG_PATH`). The visual query
 builder is offered for profiles with a `sparnatural` (SHACL, Turtle) file.
 
 The editor's API, next to `/api/sparql/<profile>` and `/api/explorer/<profile>/expand`:
-`GET /api/config`, `GET /api/auth/status`, `POST /api/auth/login|logout`,
+`GET /api/config`, `GET /api/auth/status`, `POST /api/auth/login|logout`, `POST /token`,
 `GET /api/welcome-story`, `GET /api/knowledge-graphs/<profile>/sparnatural`,
 `POST /api/embed/metadata`, `POST /api/preview`, `GET|DELETE /api/artefacts/<id>`
 and `POST /api/publish`.

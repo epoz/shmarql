@@ -1,3 +1,13 @@
+# 2026-11-19
+
+## Added
+
+- The LODEON story editor login now also supports username/password (editor user database with
+  bcrypt-hashed passwords; `POST /token` returns a signed, expiring JWT access token that the
+  Preview and Publish endpoints accept as a bearer token). This mirrors the login handling of the
+  IC server; the static editor token login (`LODEON_EDITOR_TOKEN` via `POST /api/auth/login`)
+  keeps working.
+
 # 2026-11-12
 
 ## Added

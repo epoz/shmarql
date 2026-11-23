@@ -67,6 +67,8 @@ export const defaultConfig: LodeonConfig = {
             auth: {
               title: "Login",
               closeAria: "Close login modal",
+              username: "Username",
+              password: "Password",
               accessToken: "Access token",
               or: "Or"
             },
