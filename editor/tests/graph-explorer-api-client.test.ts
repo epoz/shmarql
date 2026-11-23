@@ -1,6 +1,21 @@
 import { describe, expect, it, vi } from "vitest";
 import { expandGraphExplorer } from "@lodeon/nodes/graph-explorer/api-client";
 
+function setAuthCookie(value: string): void {
+  document.cookie = `access_token=${encodeURIComponent(value)}; path=/; max-age=604800; samesite=lax`;
+}
+function clearAuthCookie(): void {
+  document.cookie = `access_token=; path=/; max-age=0; samesite=lax`;
+}
+function getAuthCookie(): string | undefined {
+  const prefix = "access_token=";
+  const found = (document.cookie || "")
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(prefix));
+  return found ? decodeURIComponent(found.slice(prefix.length)) : undefined;
+}
+
 type GraphExplorerProfile = Parameters<typeof expandGraphExplorer>[0];
 
 const profile = {
@@ -20,7 +35,7 @@ const request = {
 
 describe("Graph Explorer API client", () => {
   it("validates and returns a successful graph envelope", async () => {
-    sessionStorage.setItem("lodeon.auth.session", "restricted-session");
+    setAuthCookie("restricted-session");
     const fetcher = vi.fn(async () =>
       new Response(
         JSON.stringify({
@@ -47,7 +62,7 @@ describe("Graph Explorer API client", () => {
         }
       })
     );
-    sessionStorage.removeItem("lodeon.auth.session");
+    clearAuthCookie();
   });
 
   it("rejects malformed successful graph envelopes before viewer use", async () => {

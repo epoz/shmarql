@@ -115,9 +115,7 @@ describe("LODEON app shell", () => {
     expect(root.querySelector(".ld-topbar [data-theme-toggle]")).toBeNull();
     expect(view.getByLabelText("Resize metadata panel")).toBeTruthy();
     expect(view.queryByLabelText("Resize assistant panel")).toBeNull();
-    expect(root.querySelector<HTMLButtonElement>("[data-auth-button]")?.hidden).toBe(
-      true
-    );
+    expect(root.querySelector("[data-auth-button]")).toBeNull();
     expect(view.getByRole("button", { name: "Undo" })).toBeTruthy();
     expect(view.getByRole("button", { name: "Redo" })).toBeTruthy();
     expect(view.getByRole("button", { name: "Bold" })).toBeTruthy();

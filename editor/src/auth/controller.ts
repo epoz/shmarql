@@ -68,32 +68,11 @@ export function createAuthController({
 export function renderAuthControlState(
   root: HTMLElement,
   session: AuthSession,
-  i18n: LodeonLocalization,
-  icons: {
-    login: () => string;
-    logout: () => string;
-  }
+  i18n: LodeonLocalization
 ): void {
-  const button = root.querySelector<HTMLButtonElement>("[data-auth-button]");
-  const label = root.querySelector<HTMLElement>("[data-auth-button-label]");
-  const icon = root.querySelector<HTMLElement>("[data-auth-button-icon]");
   const protectedButtons = root.querySelectorAll<HTMLButtonElement>(
     '[data-action="preview.open"], [data-action="render.html"]'
   );
-  const labelText = session.authenticated ? i18n.t("editor", "auth.logout") : i18n.t("editor", "auth.login");
-
-  if (button) {
-    button.hidden = !session.authEnabled;
-    button.dataset.authenticated = session.authenticated ? "true" : "false";
-    button.setAttribute("aria-label", labelText);
-    button.title = labelText;
-  }
-  if (label) {
-    label.textContent = labelText;
-  }
-  if (icon) {
-    icon.innerHTML = session.authenticated ? icons.logout() : icons.login();
-  }
 
   protectedButtons.forEach((protectedButton) => {
     const requiresLogin = session.authEnabled && !session.authenticated;

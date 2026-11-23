@@ -114,22 +114,16 @@ describe("LODEON app shell", () => {
 
     document.body.append(root);
     const view = within(root);
-    const loginButton = view.getByRole("button", {
-      name: "Login"
-    }) as HTMLButtonElement;
 
     expect(view.queryByRole("button", { name: "Preview" })).toBeNull();
     expect(view.queryByRole("button", { name: "Publish" })).toBeNull();
-    expect(loginButton.hidden).toBe(false);
 
-    loginButton.click();
     fireEvent.input(view.getByLabelText("Access token"), {
       target: { value: "secret" }
     });
     fireEvent.submit(root.querySelector<HTMLFormElement>("[data-auth-form]")!);
 
     await waitFor(() => {
-      expect(view.getByRole("button", { name: "Logout" })).toBeTruthy();
       expect(view.getByRole("button", { name: "Preview" })).toBeTruthy();
       expect(view.getByRole("button", { name: "Publish" })).toBeTruthy();
     });
@@ -147,14 +141,6 @@ describe("LODEON app shell", () => {
     expect(publishXhr.url).toBe("/api/publish");
     expect(publishXhr.headers).toMatchObject({
       Authorization: "Bearer session-1"
-    });
-
-    view.getByRole("button", { name: "Logout" }).click();
-
-    await waitFor(() => {
-      expect(view.getByRole("button", { name: "Login" })).toBeTruthy();
-      expect(view.queryByRole("button", { name: "Preview" })).toBeNull();
-      expect(view.queryByRole("button", { name: "Publish" })).toBeNull();
     });
 
     app.destroy();

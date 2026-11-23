@@ -20,6 +20,23 @@
                 <a href="/entity" class="nav-item">{{ _('menu.entity') }}</a>
                 {% if has_editor %}<a href="/lodeon/" class="nav-item">{{ _('menu.editor') }}</a>{% endif %}
             </nav>
+            {% if auth_enabled and has_editor %}
+            <div class="site-header-auth">
+                <form class="auth-form auth-form-logout" method="post" action="/api/auth/logout" data-auth-logout-form{% if not authenticated %} hidden{% endif %}>
+                    <button type="submit" class="auth-button auth-logout-button" data-auth-logout>
+                        <span data-auth-logout-label>{{ _('auth.logout') }}</span>
+                    </button>
+                    <span class="auth-person" title="{{ username or '' }}">
+                        <svg class="auth-person-icon" viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true">
+                            <title>{{ username }}</title>
+                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                </form>
+                <a class="auth-login-link" href="/login"{% if authenticated %} hidden{% endif %}>{{ _('auth.login') }}</a>
+            </div>
+            {% endif %}
         </div>
     </header>
     <main class="container{% block container_class %}{% endblock %}">
@@ -31,6 +48,7 @@
             {{ site_title }} · powered by <a href="https://github.com/epoz/shmarql">shmarql</a> {{ version }}
         </div>
     </footer>
+    <script src="/static/js/auth.js"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -9,6 +9,7 @@ export type AuthStatus = {
   authenticated: boolean;
   loginMethod?: "token" | "credentials" | "oidc" | "oauth2";
   loginProvider?: string;
+  username?: string;
   methods: {
     token: boolean;
     credentials: boolean;
@@ -34,6 +35,7 @@ const authStatusSchema = z
     authenticated: z.boolean(),
     loginMethod: z.enum(["token", "credentials", "oidc", "oauth2"]).optional(),
     loginProvider: z.string().min(1).optional(),
+    username: z.string().min(1).optional(),
     methods: z
       .object({
         token: z.boolean(),
@@ -55,7 +57,7 @@ const authStatusSchema = z
   .strict();
 const authSessionSchema = authStatusSchema.extend({ session: z.string().optional() }).strict();
 
-const authSessionStorageKey = "lodeon.auth.session";
+const authSessionCookieName = "access_token";
 const authStatusUrl = "/api/auth/status";
 const authLoginUrl = "/api/auth/login";
 const authTokenUrl = "/token";
@@ -233,27 +235,20 @@ export async function logout(
 }
 
 export function readAuthSession(): string | undefined {
-  try {
-    return sessionStorage.getItem(authSessionStorageKey) ?? undefined;
-  } catch {
-    return undefined;
-  }
+  const prefix = authSessionCookieName + "=";
+  const cookie = (document.cookie || "")
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(prefix));
+  return cookie ? decodeURIComponent(cookie.slice(prefix.length)) || undefined : undefined;
 }
 
 function writeAuthSession(session: string): void {
-  try {
-    sessionStorage.setItem(authSessionStorageKey, session);
-  } catch {
-    // Auth session storage is best effort; the server remains authoritative.
-  }
+  document.cookie = `${authSessionCookieName}=${encodeURIComponent(session)}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
 }
 
 function clearAuthSession(): void {
-  try {
-    sessionStorage.removeItem(authSessionStorageKey);
-  } catch {
-    // Ignored intentionally.
-  }
+  document.cookie = `${authSessionCookieName}=; path=/; max-age=0; samesite=lax`;
 }
 
 export function authHeaders(session: string | undefined): HeadersInit {

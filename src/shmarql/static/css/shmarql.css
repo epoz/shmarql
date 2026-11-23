@@ -37,6 +37,20 @@ code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospac
 .site-nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
 .nav-item { color: #fff; padding: 0.3rem 0.8rem; border-radius: 4px; }
 .nav-item:hover { background: var(--accent-dark); text-decoration: none; }
+.site-header-auth { margin-left: auto; display: flex; align-items: center; }
+.auth-login-link { color: #fff; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 4px; }
+.auth-login-link:hover { background: var(--accent-dark); text-decoration: none; }
+.auth-form { display: flex; align-items: flex-end; gap: 0.45rem; }
+.auth-form[hidden] { display: none; }
+.auth-field { display: flex; flex-direction: column; gap: 0.15rem; }
+.auth-label { font-size: 0.72rem; opacity: 0.85; }
+.auth-form input { border: 0; border-radius: 4px; padding: 0.3rem 0.5rem; font-size: 0.9rem; min-width: 9rem; }
+.auth-error { margin: 0; font-size: 0.8rem; color: #8a6d00; background: #fff7e0; border: 1px solid #f0d58a; padding: 0.4rem 0.6rem; border-radius: 4px; }
+.auth-button { background: #fff; color: var(--accent); border: 0; border-radius: 4px; padding: 0.35rem 0.9rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.auth-button:hover { background: #e8ecf5; }
+.auth-person { display: inline-flex; align-items: center; color: #fff; }
+.auth-person-icon { display: block; }
+.login-page { max-width: 640px; margin: 0 auto; }
 .site-footer { margin-top: auto; background: #e9ecf2; color: var(--muted); font-size: 0.85rem; }
 .site-footer a { color: var(--muted); text-decoration: underline; }
 

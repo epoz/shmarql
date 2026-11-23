@@ -21,13 +21,19 @@ import time
 from datetime import timedelta
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from ..auth import authenticate_user, create_access_token, get_user_from_token, has_editor_users
+from ..auth import (
+    User,
+    authenticate_user,
+    create_access_token,
+    has_editor_users,
+    user_from_bearer,
+)
 from ..config import Settings
-from ..web import get_state
+from ..web import get_state, render
 
 log = logging.getLogger("shmarql.lodeon")
 
@@ -76,51 +82,87 @@ def _bearer(request: Request) -> str:
     return request.cookies.get("access_token", "").strip()
 
 
+def editor_auth_enabled(settings: Settings) -> bool:
+    """Editor login is enabled by a static token or by a user database with users."""
+    return bool(settings.lodeon_editor_token) or has_editor_users(settings)
+
+
 def authenticated_method(request: Request) -> str | None:
     """The editor login method that authenticated the request, or ``None``."""
     settings = get_state(request).settings
-    token = settings.lodeon_editor_token
-    bearer = _bearer(request)
-    if token and valid_session(token, bearer):
-        return "token"
-    if bearer:
-        try:
-            get_user_from_token(
-                bearer, secret_key=settings.secret_key, db_path=settings.users_db_path
-            )
-        except HTTPException:
-            return None
-        return "credentials"
-    return None
+    state = editor_auth_state(settings, _bearer(request))
+    return state["method"] if state["authenticated"] else None
 
 
 def authenticated(request: Request) -> bool:
     return authenticated_method(request) is not None
 
 
-def editor_auth_enabled(settings: Settings) -> bool:
-    """Editor login is enabled by a static token or by a user database with users."""
-    return bool(settings.lodeon_editor_token) or has_editor_users(settings)
+def editor_auth_state(settings: Settings, bearer_token: str) -> dict[str, Any]:
+    """The editor authentication state of a bearer token against the given settings."""
+    enabled = editor_auth_enabled(settings)
+    authenticated = False
+    user: User | None = None
+    method: str | None = None
+    if enabled:
+        token = settings.lodeon_editor_token
+        if token and valid_session(token, bearer_token):
+            authenticated = True
+            method = "token"
+        else:
+            user = user_from_bearer(settings.secret_key, bearer_token, settings.users_db_path)
+            if user is not None:
+                authenticated = True
+                method = "credentials"
+    return {"enabled": enabled, "authenticated": authenticated, "user": user, "method": method}
 
 
 def auth_status(request: Request, is_authenticated: bool | None = None) -> dict[str, Any]:
     settings = get_state(request).settings
-    auth_enabled = editor_auth_enabled(settings)
-    if is_authenticated is None:
-        is_authenticated = authenticated(request)
+    state = editor_auth_state(settings, _bearer(request))
+    is_auth = is_authenticated if is_authenticated is not None else state["authenticated"]
     status_payload: dict[str, Any] = {
-        "authEnabled": auth_enabled,
-        "authenticated": is_authenticated,
+        "authEnabled": state["enabled"],
+        "authenticated": is_auth,
         "methods": {
             "token": bool(settings.lodeon_editor_token),
             "credentials": has_editor_users(settings),
             "externalProviders": [],
         },
-        "capabilities": {"publish": is_authenticated},
+        "capabilities": {"publish": is_auth},
     }
-    if is_authenticated:
-        status_payload["loginMethod"] = authenticated_method(request)
+    if is_auth:
+        status_payload["loginMethod"] = state["method"]
+        if state["user"] is not None:
+            status_payload["username"] = state["user"].username
     return status_payload
+
+
+def auth_context(request: Request) -> dict[str, Any]:
+    """The editor authentication state, for rendering the login/logout UI of the site.
+
+    Returns the values the templates of the main application need: whether the editor login
+    is enabled, whether the current visitor is authenticated, the username of the logged-in
+    user (when known) and which login methods are available.
+    """
+    settings = get_state(request).settings
+    state = editor_auth_state(settings, _bearer(request))
+    return {
+        "auth_enabled": state["enabled"],
+        "authenticated": state["authenticated"],
+        "username": state["user"].username if state["user"] is not None else None,
+        "login_method": state["method"],
+        "auth_token_login": bool(settings.lodeon_editor_token),
+        "auth_credentials_login": has_editor_users(settings),
+    }
+
+
+@router.get("/login")
+async def login_page(request: Request) -> Response:
+    """The site login page with the username/password form (linked from the site header)."""
+    if authenticated(request):
+        return RedirectResponse("/", status_code=307)
+    return render(request, "login.html")
 
 
 @router.get("/api/auth/status")
@@ -159,9 +201,7 @@ async def login_for_access_token(
     settings = get_state(request).settings
     if not editor_auth_enabled(settings):
         return problem("auth.login_failed", 404, "token login is not configured")
-    user = authenticate_user(
-        form_data.username, form_data.password, db_path=settings.users_db_path
-    )
+    user = authenticate_user(form_data.username, form_data.password, db_path=settings.users_db_path)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

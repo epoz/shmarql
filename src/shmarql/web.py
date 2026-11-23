@@ -130,5 +130,20 @@ def render(
         "has_editor": settings.lodeon_editor_enabled,
     }
     ctx.update(context or {})
+    # Editor login state for the site header (the login/logout form is template-driven).
+    # Deferred import: the auth routes import this module for the app state.
+    from .routes.auth import auth_context
+
+    auth = auth_context(request)
+    ctx.update(
+        {
+            "auth_enabled": auth["auth_enabled"],
+            "authenticated": auth["authenticated"],
+            "username": auth["username"],
+            "login_method": auth["login_method"],
+            "auth_token_login": auth["auth_token_login"],
+            "auth_credentials_login": auth["auth_credentials_login"],
+        }
+    )
     templates: Jinja2Templates = request.app.state.templates
     return templates.TemplateResponse(request, template, ctx, status_code=status_code)

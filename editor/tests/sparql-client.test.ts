@@ -5,6 +5,21 @@ import {
   sparqlRowValue
 } from "@lodeon/nodes/sparql/api-client";
 
+function setAuthCookie(value: string): void {
+  document.cookie = `access_token=${encodeURIComponent(value)}; path=/; max-age=604800; samesite=lax`;
+}
+function clearAuthCookie(): void {
+  document.cookie = `access_token=; path=/; max-age=0; samesite=lax`;
+}
+function getAuthCookie(): string | undefined {
+  const prefix = "access_token=";
+  const found = (document.cookie || "")
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(prefix));
+  return found ? decodeURIComponent(found.slice(prefix.length)) : undefined;
+}
+
 describe("SPARQL client", () => {
   it("reads URI and literal bindings while preserving unbound values", () => {
     const row = {
@@ -101,7 +116,7 @@ describe("SPARQL client", () => {
   });
 
   it("posts profile-routed SPARQL queries to the configured broker path", async () => {
-    sessionStorage.setItem("lodeon.auth.session", "restricted-session");
+    setAuthCookie("restricted-session");
     const fetcher = vi.fn(async () =>
       new Response(JSON.stringify({ head: { vars: ["s"] }, results: { bindings: [] } }), {
         status: 200,
@@ -126,7 +141,7 @@ describe("SPARQL client", () => {
       },
       body: "SELECT ?s WHERE { ?s ?p ?o } LIMIT 1"
     });
-    sessionStorage.removeItem("lodeon.auth.session");
+    clearAuthCookie();
   });
 
   it("fails closed when a successful endpoint response violates the SPARQL result envelope", async () => {

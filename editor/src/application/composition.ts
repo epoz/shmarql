@@ -33,7 +33,7 @@ import {
 import { createAssetFromFile } from "../assets/file-import";
 import { LOCAL_ASSET_MIME_TYPES } from "../assets/mime-policy";
 import { updateAssetMetadataField } from "../assets/metadata";
-import { bindTopBar, renderLoginIcon, renderLogoutIcon, renderTopBar } from "../ui/top-bar";
+import { bindTopBar, renderTopBar } from "../ui/top-bar";
 import { renderProjectSidebar } from "../ui/project-sidebar";
 import { renderEditorWorkspace } from "../ui/editor-workspace";
 import { bindEditorToolbar } from "../ui/editor-toolbar";
@@ -185,10 +185,7 @@ export async function renderApp(
   });
   authController = createAuthController({
     onSessionChange: () => {
-      renderAuthControlState(root, authController.getSession(), runtime.i18n, {
-        login: renderLoginIcon,
-        logout: renderLogoutIcon
-      });
+      renderAuthControlState(root, authController.getSession(), runtime.i18n);
     }
   });
 

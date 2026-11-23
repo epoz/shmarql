@@ -1,4 +1,4 @@
-import{g as Ie}from"./index-DKCA0UPR.js";function Fe(le,D){for(var e=0;e<D.length;e++){const t=D[e];if(typeof t!="string"&&!Array.isArray(t)){for(const r in t)if(r!=="default"&&!(r in le)){const a=Object.getOwnPropertyDescriptor(t,r);a&&Object.defineProperty(le,r,a.get?a:{enumerable:!0,get:()=>t[r]})}}}return Object.freeze(Object.defineProperty(le,Symbol.toStringTag,{value:"Module"}))}var Ce={exports:{}},Oe=Ce.exports,Re;function Be(){return Re||(Re=1,(function(le){//! openseadragon 6.0.2
+import{g as Ie}from"./index-C3xhmejI.js";function Fe(le,D){for(var e=0;e<D.length;e++){const t=D[e];if(typeof t!="string"&&!Array.isArray(t)){for(const r in t)if(r!=="default"&&!(r in le)){const a=Object.getOwnPropertyDescriptor(t,r);a&&Object.defineProperty(le,r,a.get?a:{enumerable:!0,get:()=>t[r]})}}}return Object.freeze(Object.defineProperty(le,Symbol.toStringTag,{value:"Module"}))}var Ce={exports:{}},Oe=Ce.exports,Re;function Be(){return Re||(Re=1,(function(le){//! openseadragon 6.0.2
 //! Built on 2026-03-13
 //! Git commit: v6.0.2-0-7842cd92
 //! http://openseadragon.github.io

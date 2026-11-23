@@ -9,6 +9,21 @@ import {
   validateLoginToken
 } from "@lodeon/auth/api-client";
 
+function setAuthCookie(value: string): void {
+  document.cookie = `access_token=${encodeURIComponent(value)}; path=/; max-age=604800; samesite=lax`;
+}
+function clearAuthCookie(): void {
+  document.cookie = `access_token=; path=/; max-age=0; samesite=lax`;
+}
+function getAuthCookie(): string | undefined {
+  const prefix = "access_token=";
+  const found = (document.cookie || "")
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(prefix));
+  return found ? decodeURIComponent(found.slice(prefix.length)) : undefined;
+}
+
 describe("auth client", () => {
   it("fails closed for malformed auth status responses", async () => {
     const fetcher = vi.fn(async () =>
@@ -27,7 +42,7 @@ describe("auth client", () => {
   });
 
   it("fails closed when auth discovery is unavailable", async () => {
-    sessionStorage.setItem("lodeon.auth.session", "stale-session");
+    setAuthCookie("stale-session");
     const fetcher = vi.fn(async () => new Response("Bad Gateway", { status: 502 }));
 
     await expect(loadAuthSession(fetcher as unknown as typeof fetch)).resolves.toEqual({
@@ -36,7 +51,7 @@ describe("auth client", () => {
       methods: { token: false, credentials: false, externalProviders: [] },
       capabilities: { publish: false }
     });
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
+    expect(getAuthCookie()).toBeUndefined();
   });
 
   it("preserves an explicit successful auth-disabled server status", async () => {
@@ -62,7 +77,7 @@ describe("auth client", () => {
   });
 
   it("loads auth status and keeps the stored session", async () => {
-    sessionStorage.setItem("lodeon.auth.session", "session-1");
+    setAuthCookie("session-1");
     const fetcher = vi.fn(async () =>
       new Response(
         JSON.stringify({
@@ -103,7 +118,7 @@ describe("auth client", () => {
     const session = await loginWithToken("secret", fetcher as unknown as typeof fetch);
 
     expect(session.session).toBe("session-2");
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBe("session-2");
+    expect(getAuthCookie()).toBe("session-2");
   });
 
   it("stores the JWT session after username/password login", async () => {
@@ -122,7 +137,7 @@ describe("auth client", () => {
     expect(session.authenticated).toBe(true);
     expect(session.loginMethod).toBe("credentials");
     expect(session.session).toBe("jwt-session-1");
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBe("jwt-session-1");
+    expect(getAuthCookie()).toBe("jwt-session-1");
     expect(fetcher).toHaveBeenCalledWith("/token", {
       method: "POST",
       headers: {
@@ -134,7 +149,7 @@ describe("auth client", () => {
   });
 
   it("preserves auth Problem Detail codes on username/password login failure", async () => {
-    sessionStorage.removeItem("lodeon.auth.session");
+    clearAuthCookie();
     const fetcher = vi.fn(async () =>
       new Response(
         JSON.stringify({
@@ -153,7 +168,7 @@ describe("auth client", () => {
         code: "auth.invalid_token"
       }
     );
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
+    expect(getAuthCookie()).toBeUndefined();
   });
 
   it("removes and exchanges one external callback code before discovery", async () => {
@@ -200,11 +215,11 @@ describe("auth client", () => {
       body: JSON.stringify({ code: "one-time-code" })
     });
     expect(session?.loginMethod).toBe("oidc");
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBe("external-session");
+    expect(getAuthCookie()).toBe("external-session");
   });
 
   it("rejects malformed or unsuccessful external exchanges without storing state", async () => {
-    sessionStorage.removeItem("lodeon.auth.session");
+    clearAuthCookie();
     const replacements: string[] = [];
     await expect(
       completeExternalAuthReturn(
@@ -226,7 +241,7 @@ describe("auth client", () => {
     await expect(
       exchangeExternalAuthCode("expired", fetcher as unknown as typeof fetch)
     ).rejects.toMatchObject({ code: "auth.external.exchange_invalid" });
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
+    expect(getAuthCookie()).toBeUndefined();
   });
 
   it("validates required login tokens with a stable code", () => {
@@ -260,7 +275,7 @@ describe("auth client", () => {
   });
 
   it("clears the local session on logout", async () => {
-    sessionStorage.setItem("lodeon.auth.session", "session-3");
+    setAuthCookie("session-3");
     const fetcher = vi.fn(async (url: string) =>
       new Response(
         JSON.stringify(
@@ -283,7 +298,7 @@ describe("auth client", () => {
       method: "POST",
       headers: { Authorization: "Bearer session-3" }
     });
-    expect(sessionStorage.getItem("lodeon.auth.session")).toBeNull();
+    expect(getAuthCookie()).toBeUndefined();
     expect(session.authenticated).toBe(false);
   });
 });

@@ -1,6 +1,6 @@
 /** Renders and binds the application top bar. */
 
-import { Download, Eye, CircleHelp, LogIn, LogOut, Send, SquarePlus, Trash2, Upload } from "lucide";
+import { Download, Eye, CircleHelp, Send, SquarePlus, Trash2, Upload } from "lucide";
 import type { LodeonRuntime } from "../application/contracts";
 import { renderIcon } from "./icons";
 
@@ -72,10 +72,6 @@ export function renderTopBar(runtime: LodeonRuntime): string {
           ${actionButton("preview.open")}
           ${actionButton("render.html")}
         </div>
-        <button class="ld-button ld-auth-button" type="button" data-auth-button hidden aria-label="${escapeAttribute(t("auth.login"))}" title="${escapeAttribute(t("auth.login"))}">
-          <span data-auth-button-icon>${renderIcon(LogIn)}</span>
-          <span data-auth-button-label>${escapeHtml(t("auth.login"))}</span>
-        </button>
         <div class="ld-action-group ld-utility-actions">
           <button class="ld-icon-button" type="button" data-markdown-modal-trigger="help" aria-label="${escapeAttribute(t("topbar.openHelpAria"))}" title="${escapeAttribute(t("topbar.helpTitle"))}">
             ${renderIcon(CircleHelp)}
@@ -108,14 +104,6 @@ function renderActionIcon(actionId: string): string {
 
 export function renderDeleteIcon(): string {
   return renderIcon(Trash2);
-}
-
-export function renderLoginIcon(): string {
-  return renderIcon(LogIn);
-}
-
-export function renderLogoutIcon(): string {
-  return renderIcon(LogOut);
 }
 
 export function bindTopBar(root: HTMLElement, runtime: LodeonRuntime): void {

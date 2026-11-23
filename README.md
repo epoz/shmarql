@@ -226,8 +226,12 @@ available for the browser session. Without a token the editor and Preview are op
 everyone and Publish is disabled. Editors can log in with a username/password (against
 the editor user database configured with `USERS_DB_PATH`) or with the static editor
 token; the editor login issues a signed, expiring access token that the Preview and
-Publish endpoints accept as a bearer token. See the
-[configuration](docs/configuration.md). Embed metadata is only fetched for
+Publish endpoints accept as a bearer token. The **Login** button of the story editor lives
+in the site header (top right of the navbar): it links to the separate **Login** page (with
+the username/password form when editor users are configured, or the static editor token
+field otherwise), and when a session is active it shows a **Logout** button next to the
+logged-in user name. See the [configuration](docs/configuration.md). Embed metadata is only
+fetched for
 `nodes.embed.allowedOrigins` (set with `LODEON_CONFIG_PATH`). The visual query
 builder is offered for profiles with a `sparnatural` (SHACL, Turtle) file.
 

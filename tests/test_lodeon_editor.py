@@ -302,6 +302,73 @@ def test_access_token_cookie_grants_editor_access(editor_user, editor_user_setti
     assert editor_user.post("/api/preview", json=story_json()).status_code == 200
 
 
+def test_site_header_links_to_the_separate_login_page(editor_user):
+    """The login form lives on its own page; the header only offers the login link."""
+    r = editor_user.get("/")
+    assert r.status_code == 200
+    assert 'href="/login"' in r.text
+    assert 'action="/token"' not in r.text
+    assert 'name="username"' not in r.text
+    assert 'name="password"' not in r.text
+    # logged out: the logout form is hidden, the login link is shown
+    assert "data-auth-logout-form hidden" in r.text
+    assert 'href="/login">' in r.text
+
+
+def test_login_page_renders_the_username_password_form(editor_user):
+    r = editor_user.get("/login")
+    assert r.status_code == 200
+    assert 'action="/token"' in r.text
+    assert "data-auth-form" in r.text
+    assert 'name="username"' in r.text
+    assert 'name="password"' in r.text
+
+    login = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
+    assert login.status_code == 200, login.text
+    headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+    redirect = editor_user.get("/login", headers=headers, follow_redirects=False)
+    assert redirect.status_code == 307
+    assert redirect.headers["location"] == "/"
+
+
+def test_login_page_has_no_form_when_login_is_disabled(client):
+    r = client.get("/login")
+    assert r.status_code == 200
+    assert 'action="/token"' not in r.text
+    assert 'name="username"' not in r.text
+
+
+def test_login_page_renders_the_token_form_for_static_token(editor):
+    """With only a static editor token configured, the login page offers the token login."""
+    r = editor.get("/login")
+    assert r.status_code == 200
+    assert "data-auth-token-form" in r.text
+    assert 'action="/api/auth/login"' in r.text
+    assert 'name="token"' in r.text
+    assert 'action="/token"' not in r.text
+
+
+def test_site_header_renders_the_logout_form_for_authenticated_users(editor_user):
+    login = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
+    assert login.status_code == 200, login.text
+    headers = {"Authorization": f"Bearer {login.json()['access_token']}"}
+    r = editor_user.get("/", headers=headers)
+    assert r.status_code == 200
+    assert 'action="/api/auth/logout"' in r.text
+    assert "auth-person" in r.text
+    assert "editor" in r.text
+    # logged in: the logout form is shown, the login link is hidden
+    assert "data-auth-logout-form>" in r.text
+    assert 'href="/login" hidden' in r.text
+
+
+def test_site_header_has_no_auth_form_when_login_is_disabled(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert 'action="/token"' not in r.text
+    assert 'action="/api/auth/logout"' not in r.text
+
+
 def test_sessions_expire_and_are_bound_to_the_token():
     session = create_session(TOKEN, ttl=60, now=1000)
     assert valid_session(TOKEN, session, now=1059)

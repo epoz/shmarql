@@ -38,6 +38,11 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "spo.as_subject": "Show as subject",
         "spo.as_predicate": "Show as predicate",
         "spo.as_object": "Show as object",
+        "auth.login": "Login",
+        "auth.logout": "Logout",
+        "auth.username": "Username",
+        "auth.password": "Password",
+        "auth.token": "Token",
     },
     "nl": {
         "menu.docs": "Documentatie",
@@ -69,6 +74,11 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "spo.as_subject": "Toon als onderwerp",
         "spo.as_predicate": "Toon als predicaat",
         "spo.as_object": "Toon als object",
+        "auth.login": "Inloggen",
+        "auth.logout": "Uitloggen",
+        "auth.username": "Gebruikersnaam",
+        "auth.password": "Wachtwoord",
+        "auth.token": "Token",
     },
 }
 

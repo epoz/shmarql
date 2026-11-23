@@ -161,3 +161,13 @@ def get_user_from_token(
         raise credentials_exception
     username_out, name, stored_password, activation_date = user_record
     return User(username=username_out, name=name)
+
+
+def user_from_bearer(secret_key: str, bearer_token: str, db_path: Path) -> User | None:
+    """The editor user of a bearer access token, when the token resolves to a user."""
+    if not bearer_token:
+        return None
+    try:
+        return get_user_from_token(bearer_token, secret_key=secret_key, db_path=db_path)
+    except HTTPException:
+        return None

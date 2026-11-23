@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('auth.login') }} – {{ site_title }}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <h1>{{ _('auth.login') }}</h1>
+    {% if auth_enabled and not authenticated %}
+    {% if auth_credentials_login %}
+    <form class="auth-form auth-form-login" method="post" action="/token" data-auth-form>
+        <p class="auth-error" data-auth-error hidden></p>
+        <label class="auth-field" for="auth-username">
+            <span class="auth-label">{{ _('auth.username') }}</span>
+            <input type="text" id="auth-username" name="username" autocomplete="username" required />
+        </label>
+        <label class="auth-field" for="auth-password">
+            <span class="auth-label">{{ _('auth.password') }}</span>
+            <input type="password" id="auth-password" name="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" class="auth-button" data-auth-login>{{ _('auth.login') }}</button>
+    </form>
+    {% elif auth_token_login %}
+    <form class="auth-form auth-form-token" method="post" action="/api/auth/login" data-auth-token-form>
+        <label class="auth-field" for="auth-token">
+            <span class="auth-label">{{ _('auth.token') }}</span>
+            <input type="password" id="auth-token" name="token" autocomplete="off" required />
+        </label>
+        <button type="submit" class="auth-button" data-auth-token-login>{{ _('auth.login') }}</button>
+    </form>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

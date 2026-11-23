@@ -58,10 +58,9 @@ describe("auth controller", () => {
     expect(controller.getSessionToken()).toBeUndefined();
   });
 
-  it("projects one session state onto auth and protected controls", () => {
+  it("projects one session state onto the protected controls", () => {
     const root = document.createElement("div");
     root.innerHTML = `
-      <button data-auth-button><span data-auth-button-icon></span><span data-auth-button-label></span></button>
       <button data-action="preview.open"></button>
       <button data-action="render.html"></button>
     `;
@@ -73,16 +72,9 @@ describe("auth controller", () => {
         methods: { token: true, credentials: true, externalProviders: [] },
         capabilities: { publish: false }
       },
-      createLocalization(defaultConfig),
-      { login: () => "login-icon", logout: () => "logout-icon" }
+      createLocalization(defaultConfig)
     );
 
-    expect(root.querySelector<HTMLButtonElement>("[data-auth-button]")?.title).toBe(
-      "Login"
-    );
-    expect(root.querySelector("[data-auth-button-icon]")?.innerHTML).toBe(
-      "login-icon"
-    );
     expect(
       root.querySelector<HTMLButtonElement>('[data-action="preview.open"]')?.hidden
     ).toBe(true);
@@ -98,8 +90,7 @@ describe("auth controller", () => {
         methods: { token: true, credentials: true, externalProviders: [] },
         capabilities: { publish: false }
       },
-      createLocalization(defaultConfig),
-      { login: () => "login-icon", logout: () => "logout-icon" }
+      createLocalization(defaultConfig)
     );
     expect(
       root.querySelector<HTMLButtonElement>('[data-action="preview.open"]')?.hidden
