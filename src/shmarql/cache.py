@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from datetime import timedelta
 
 from redis import RedisError
 from redis.asyncio import Redis as AsyncRedis
@@ -55,7 +56,11 @@ class RedisCache:
         """Store ``value`` under ``key``; failures are logged and swallowed."""
         client = self._get_client()
         try:
-            await client.set(self.prefix + key, value, ex=ttl if ttl is not None else self.ttl)
+            await client.set(
+                self.prefix + key,
+                value,
+                ex=timedelta(seconds=ttl if ttl is not None else self.ttl),
+            )
         except RedisError as exc:
             log.warning("Redis cache set failed (%s): %s", self.url, exc)
 
