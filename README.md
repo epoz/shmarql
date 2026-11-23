@@ -11,7 +11,8 @@ Documentation here: https://shmarql.com/
   editor and an autocomplete text box to pick the profile to query.
 - **Graph browser** (`/spo?s=…&p=…&o=…`): browse the knowledge graph as one table of
   subject-predicate-object triples, with an optional filter per position, and an autocomplete
-  text box to pick the profile to browse.
+  text box to pick the profile to browse. Like the entity viewer it offers RDF downloads of the
+  browsed triples (`?format=turtle|json-ld|xml`).
 - **Documentation**: a directory of Markdown files rendered off the root URL.
 - **Entity viewer** (`/entity?uri=…`): a human-friendly, tabular view of an RDF
   resource including its blank nodes, inverse relations, images and map — ported
@@ -169,7 +170,8 @@ Like ldview it shows:
   table with the predicate chain leading to it, and links from the parent table;
 - **inverse relations**, also through one or two intermediate blank nodes, with a
   link to the query editor when there are more than `max_inverse_subjects`;
-- RDF downloads: `?format=turtle|json-ld|xml|nt` or an RDF `Accept` header.
+- RDF downloads: `?format=turtle|json-ld|xml|nt` or an RDF `Accept` header; on the graph
+  browser (`/spo`) this downloads the browsed triples.
 
 The CONSTRUCT query falls back to simpler queries for endpoints that can't run it.
 

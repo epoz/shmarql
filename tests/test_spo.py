@@ -1,3 +1,6 @@
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import RDFS
+
 from shmarql.profiles import profile_key
 from shmarql.routes.pages import build_spo_query
 
@@ -71,6 +74,49 @@ def test_spo_page_renders_the_profile_picker(client):
     assert 'name="profile"' in r.text and 'id="profile-key"' in r.text
     # the default profile is pre-selected
     assert f'name="profile" id="profile-key" value="{profile_key(MAIN_ENDPOINT)}"' in r.text
+
+
+def test_spo_page_renders_the_download_formats(client):
+    # like the entity viewer: a "Download as" row with a link per RDF format
+    r = spo(client)
+    assert r.status_code == 200
+    assert "Download as:" in r.text
+    assert 'href="/spo?format=turtle"' in r.text
+    assert 'href="/spo?format=json-ld"' in r.text
+    assert 'href="/spo?format=xml"' in r.text
+    # the data comes from the selected SPARQL profile, like on the entity viewer
+    assert "data from SPARQL profile:" in r.text
+    assert f'href="/query?profile={profile_key(MAIN_ENDPOINT)}"' in r.text
+
+
+def test_spo_download_links_keep_the_browsed_filters(client):
+    # the download links carry the current s/p/o filters along
+    r = spo(client, s=REMBRANDT)
+    assert r.status_code == 200
+    assert 'href="/spo?s=http%3A%2F%2Fexample.org%2Frembrandt&amp;format=turtle"' in r.text
+
+
+def test_spo_download_as_rdf_serializes_the_browsed_triples(client):
+    r = spo(client, s=REMBRANDT, format="turtle")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/turtle")
+    g = Graph().parse(data=r.text, format="turtle")
+    assert (URIRef(REMBRANDT), URIRef(RDFS.label), Literal("Rembrandt", lang="en")) in g
+
+
+def test_spo_download_as_json_ld(client):
+    r = spo(client, format="json-ld")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("application/ld+json")
+    g = Graph().parse(data=r.text, format="json-ld")
+    assert (URIRef(REMBRANDT), URIRef(RDFS.label), Literal("Rembrandt", lang="en")) in g
+
+
+def test_spo_download_as_unknown_format_renders_the_page(client):
+    # an unsupported format falls back to the HTML browse page
+    r = spo(client, format="doesnotexist")
+    assert r.status_code == 200
+    assert '<table class="sparql-results">' in r.text
 
 
 def test_spo_page_preselects_profile_from_query_params(client):

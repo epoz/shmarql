@@ -10,7 +10,8 @@ What you can do here:
 
 - **[Query](/query)** any of the configured SPARQL profiles with a CodeMirror editor.
 - **[Browse the knowledge graph](/spo)** as subject-predicate-object triples, with optional
-  subject/predicate/object filters, of the selected SPARQL profile.
+  subject/predicate/object filters, of the selected SPARQL profile; download the browsed triples
+  as RDF with `?format=turtle|json-ld|xml`.
 - **[Look up an entity](/entity)** and see it as a readable table, including blank nodes and
   inverse relations.
 - Use **`/sparql`** (default profile) or **`/sparql/<key>`** as standard SPARQL endpoints.

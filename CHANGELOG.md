@@ -1,3 +1,10 @@
+# 2026-11-23
+
+## Added
+
+- The graph browser (`/spo?s=…&p=…&o=…`) has the "Download as" links of the entity viewer:
+  the browsed triples can be downloaded as Turtle, JSON-LD or RDF/XML via `?format=turtle|json-ld|xml`.
+
 # 2026-11-12
 
 ## Added
