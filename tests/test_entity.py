@@ -116,6 +116,21 @@ def test_inverse_relations_query_link_when_truncated(settings, registry, data_gr
     assert "/query?query=SELECT" in html and f"profile={MAIN_KEY}" in html
 
 
+def test_inverse_relations_render_shortened_uris(settings, registry, data_graph):
+    # an inverse subject without a label is rendered with its namespace prefix
+    from fastapi.testclient import TestClient
+
+    from shmarql.main import create_app
+
+    data_graph.add(
+        (URIRef("http://schema.org/actor"), URIRef("http://schema.org/knows"), URIRef(REMBRANDT))
+    )
+    app = create_app(settings, registry, transport=FakeSparqlEndpoint(data_graph).transport)
+    with TestClient(app) as c:
+        html = entity(c).text
+    assert '<span class="prefix">schema:</span><span class="local">actor</span>' in html
+
+
 def test_map_for_coordinates(client):
     html = entity(client, uri="http://example.org/leiden").text
     assert 'id="map"' in html
