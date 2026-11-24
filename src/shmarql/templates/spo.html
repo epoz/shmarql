@@ -10,15 +10,19 @@
         <p class="notice">{{ _('query.no_profiles') }}</p>
     {% endif %}
     <div class="profile-picker">
-        <label for="profile-input">{{ _('query.profile') }}</label>
+        {% if profiles|length > 1 %}
+            <label for="profile-input">{{ _('query.profile') }}</label>
+        {% endif %}
         <div class="autocomplete">
-            <input type="text" id="profile-input" class="profile-input"
+            <input type="text" id="profile-input" class="profile-input" {% if profiles|length < 2 %}hidden{% endif %}
                    role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="profile-options"
                    placeholder="{{ _('query.profile_placeholder') }}"
                    value="{{ selected.title if selected else '' }}">
             <ul id="profile-options" class="autocomplete-options" role="listbox" hidden></ul>
         </div>
-        <code id="profile-endpoint" class="profile-endpoint">{{ selected.sparql if selected else '' }}</code>
+        {% if profiles|length > 1 %}
+            <code id="profile-endpoint" class="profile-endpoint">{{ selected.sparql if selected else '' }}</code>
+        {% endif %}
     </div>
     <form class="spo-form" action="/spo" method="get">
         <input id="spo-s" type="text" name="s" value="{{ s }}" placeholder="{{ _('spo.subject') }} (IRI)…" />

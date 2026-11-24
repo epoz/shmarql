@@ -76,6 +76,36 @@ def test_spo_page_renders_the_profile_picker(client):
     assert f'name="profile" id="profile-key" value="{profile_key(MAIN_ENDPOINT)}"' in r.text
 
 
+def test_spo_page_hides_the_profile_picker_with_a_single_profile(settings, endpoint):
+    # with a single profile there is nothing to select: the picker is not shown
+    from fastapi.testclient import TestClient
+
+    from shmarql.main import create_app
+    from shmarql.profiles import ProfileRegistry
+
+    single = ProfileRegistry.from_data(
+        {
+            "default": "main",
+            "profiles": [
+                {
+                    "name": "main",
+                    "title": "Main store",
+                    "description": "The test triplestore",
+                    "endpoint": MAIN_ENDPOINT,
+                    "headers": {"X-Api-Key": "secret"},
+                    "uri_prefixes": ["http://example.org/"],
+                }
+            ],
+        }
+    )
+    app = create_app(settings, single, transport=endpoint.transport)
+    with TestClient(app) as c:
+        r = c.get("/spo")
+        assert r.status_code == 200
+        assert 'for="profile-input"' not in r.text
+        assert 'id="profile-endpoint"' not in r.text
+
+
 def test_spo_page_renders_the_download_formats(client):
     # like the entity viewer: a "Download as" row with a link per RDF format
     r = spo(client)

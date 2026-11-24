@@ -14,6 +14,10 @@
   `access: public` stay publicly accessible; all other documentation redirects to the login
   page.
 
+- When only a single SPARQL profile is configured, the **Profile** selector is no longer shown
+  on the query (`/query`) and knowledge graph browser (`/spo`) pages: it is unnecessary to pick
+  one, and the default profile is used.
+
 # 2026-11-24
 
 ## Changed

@@ -51,6 +51,41 @@ def test_query_page_escapes_query(client):
     assert "<script>alert(1)</script>" not in r.text
 
 
+def test_query_page_hides_the_profile_picker_with_a_single_profile(settings, endpoint):
+    # with a single profile there is nothing to select: the picker is not shown
+    from fastapi.testclient import TestClient
+
+    from shmarql.main import create_app
+    from shmarql.profiles import ProfileRegistry
+
+    single = ProfileRegistry.from_data(
+        {
+            "default": "main",
+            "profiles": [
+                {
+                    "name": "main",
+                    "title": "Main store",
+                    "description": "The test triplestore",
+                    "endpoint": MAIN_ENDPOINT,
+                    "headers": {"X-Api-Key": "secret"},
+                    "uri_prefixes": ["http://example.org/"],
+                }
+            ],
+        }
+    )
+    app = create_app(settings, single, transport=endpoint.transport)
+    with TestClient(app) as c:
+        r = c.get("/query")
+        assert r.status_code == 200
+        assert 'for="profile-input"' not in r.text
+        assert 'id="profile-endpoint"' not in r.text
+        # the profile input stays in the DOM for the runtime, but is hidden
+        assert 'id="profile-input"' in r.text
+        assert 'class="profile-input" hidden' in r.text
+        # the default profile is still submitted with the query
+        assert f'id="profile-key" name="profile" value="{profile_key(MAIN_ENDPOINT)}"' in r.text
+
+
 def test_query_page_renders_the_namespaces_for_shortened_iris(client):
     # the result table shows prefixed IRIs (e.g. schema:knows) via the namespaces of the profile
     r = client.get("/query")
