@@ -9,7 +9,6 @@
   "use strict";
 
   const loginForm = document.querySelector("[data-auth-form]");
-  const tokenForm = document.querySelector("[data-auth-token-form]");
   const logoutForm = document.querySelector("[data-auth-logout-form]");
   const loginLink = document.querySelector(".auth-login-link");
   const personIcon = document.querySelector(".auth-person");
@@ -89,42 +88,6 @@
       });
   }
 
-  function handleTokenSubmit(event) {
-    event.preventDefault();
-    if (!tokenForm) return;
-    const input = tokenForm.querySelector('input[name="token"]');
-    const token = String(input?.value ?? "").trim();
-    if (!token) {
-      setError("auth.token_required");
-      return;
-    }
-    return fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: token })
-    })
-      .then(function (response) {
-        return response.json().then(function (body) {
-          return { ok: response.ok, status: response.status, body: body };
-        });
-      })
-      .then(function (result) {
-        if (!result.ok) {
-          throw new Error((result.body && result.body.detail) || "auth.login_failed");
-        }
-        const session = result.body.session;
-        if (!session) {
-          throw new Error("auth.login_failed");
-        }
-        writeToken(session);
-        setLoggedIn("");
-        window.location.href = "/";
-      })
-      .catch(function () {
-        setError("auth.login_failed");
-      });
-  }
-
   function handleLogoutSubmit(event) {
     event.preventDefault();
     if (!logoutForm) return;
@@ -149,9 +112,6 @@
 
   if (loginForm) {
     loginForm.addEventListener("submit", handleLoginSubmit);
-  }
-  if (tokenForm) {
-    tokenForm.addEventListener("submit", handleTokenSubmit);
   }
   if (logoutForm) {
     logoutForm.addEventListener("submit", handleLogoutSubmit);

@@ -1,3 +1,13 @@
+# 2026-11-24
+
+## Changed
+
+- The LODEON story editor now authenticates with username/password logins only: the
+  `LODEON_EDITOR_TOKEN` configuration option and the static editor token login
+  (`POST /api/auth/login`) are removed. Editor login is enabled by the editor users in the
+  editor user database; Preview requires a login when enabled and Publish stays disabled
+  until an editor logs in.
+
 # 2026-11-23
 
 ## Added

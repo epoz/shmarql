@@ -48,7 +48,7 @@ describe("LODEON app shell", () => {
             ? {
                 authEnabled: false,
                 authenticated: true,
-                methods: { token: false, credentials: false, externalProviders: [] },
+                methods: { credentials: false, externalProviders: [] },
                 capabilities: { publish: true }
               }
             : {}

@@ -50,25 +50,19 @@ describe("LODEON app shell", () => {
           JSON.stringify({
             authEnabled: true,
             authenticated: headers.Authorization === "Bearer session-1",
-            ...(headers.Authorization === "Bearer session-1"
-              ? { loginMethod: "token" }
-              : {}),
-            methods: { token: true, credentials: true, externalProviders: [] },
+            ...(headers.Authorization === "Bearer session-1" ? { loginMethod: "credentials" } : {}),
+            methods: { credentials: true, externalProviders: [] },
             capabilities: { publish: headers.Authorization === "Bearer session-1" }
           }),
           { status: 200, headers: { "content-type": "application/json" } }
         );
       }
 
-      if (url.endsWith("/auth/login")) {
+      if (url.endsWith("/token")) {
         return new Response(
           JSON.stringify({
-            authEnabled: true,
-            authenticated: true,
-            loginMethod: "token",
-            methods: { token: true, credentials: true, externalProviders: [] },
-            capabilities: { publish: true },
-            session: "session-1"
+            access_token: "session-1",
+            token_type: "bearer"
           }),
           { status: 200, headers: { "content-type": "application/json" } }
         );
@@ -118,8 +112,11 @@ describe("LODEON app shell", () => {
     expect(view.queryByRole("button", { name: "Preview" })).toBeNull();
     expect(view.queryByRole("button", { name: "Publish" })).toBeNull();
 
-    fireEvent.input(view.getByLabelText("Access token"), {
-      target: { value: "secret" }
+    fireEvent.input(view.getByLabelText("Username"), {
+      target: { value: "editor" }
+    });
+    fireEvent.input(view.getByLabelText("Password"), {
+      target: { value: "editor-password" }
     });
     fireEvent.submit(root.querySelector<HTMLFormElement>("[data-auth-form]")!);
 
@@ -156,7 +153,6 @@ describe("LODEON app shell", () => {
             authEnabled: true,
             authenticated: false,
             methods: {
-              token: true,
               credentials: true,
               externalProviders: [
                 {
@@ -212,7 +208,8 @@ describe("LODEON app shell", () => {
       "/lodeon/assets/auth/sign-in.svg"
     ]);
     expect(providerActions[0]?.classList.contains("ld-auth-provider-accent")).toBe(true);
-    expect(view.getByLabelText("Access token")).toBeTruthy();
+    expect(view.getByLabelText("Username")).toBeTruthy();
+    expect(view.getByLabelText("Password")).toBeTruthy();
     expect(view.getByText("Or")).toBeTruthy();
     expect(
       view.getByText((content) => content.startsWith("The external login exchange is invalid"))
@@ -264,7 +261,7 @@ describe("LODEON app shell", () => {
         JSON.stringify({
           authEnabled: false,
           authenticated: false,
-          methods: { token: false, credentials: false, externalProviders: [] },
+          methods: { credentials: false, externalProviders: [] },
           capabilities: { publish: false }
         }),
         { status: 200, headers: { "content-type": "application/json" } }

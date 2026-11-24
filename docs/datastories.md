@@ -37,9 +37,7 @@ story exactly as this site will render it. **Publish** writes it to
 `DOCS_PATH/story/<slug>/`, where it appears in the navigation; publishing again
 replaces the earlier version.
 
-Publishing requires the site to enable the editor login (either set
-`LODEON_EDITOR_TOKEN` or add editor users to the editor user database); log in via the
-**Login** page (linked from the **Login** button of the site header, top right) with a
-username/password when editor users are configured, or with the editor token via **Login**;
-when a session is active the header shows a **Logout** button next to the logged-in user
-name. See the [configuration](configuration.md).
+Publishing requires the site to enable the editor login (add editor users to the editor
+user database); log in via the **Login** page (linked from the **Login** button of the site
+header, top right) with a username/password; when a session is active the header shows a
+**Logout** button next to the logged-in user name. See the [configuration](configuration.md).

@@ -18,7 +18,7 @@ describe("auth controller", () => {
     expect(controller.getSession()).toEqual({
       authEnabled: true,
       authenticated: false,
-      methods: { token: false, credentials: false, externalProviders: [] },
+      methods: { credentials: false, externalProviders: [] },
       capabilities: { publish: false }
     });
     expect(controller.isAuthorized()).toBe(false);
@@ -31,7 +31,7 @@ describe("auth controller", () => {
         authEnabled: true,
         authenticated: false
       }),
-      login: vi.fn().mockResolvedValue({
+      loginWithCredentials: vi.fn().mockResolvedValue({
         authEnabled: true,
         authenticated: true,
         session: "session-one"
@@ -45,7 +45,7 @@ describe("auth controller", () => {
 
     await controller.initialize();
     expect(controller.isAuthorized()).toBe(false);
-    await controller.login("token-one");
+    await controller.loginWithCredentials("editor", "editor-password");
     expect(controller.getSessionToken()).toBe("session-one");
     expect(controller.isAuthorized()).toBe(true);
     await controller.logout();
@@ -69,7 +69,7 @@ describe("auth controller", () => {
       {
         authEnabled: true,
         authenticated: false,
-        methods: { token: true, credentials: true, externalProviders: [] },
+        methods: { credentials: false, externalProviders: [] },
         capabilities: { publish: false }
       },
       createLocalization(defaultConfig)
@@ -87,7 +87,7 @@ describe("auth controller", () => {
       {
         authEnabled: true,
         authenticated: true,
-        methods: { token: true, credentials: true, externalProviders: [] },
+        methods: { credentials: true, externalProviders: [] },
         capabilities: { publish: false }
       },
       createLocalization(defaultConfig)

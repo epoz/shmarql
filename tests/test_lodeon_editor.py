@@ -17,11 +17,9 @@ from shmarql.auth import create_access_token, create_user
 from shmarql.lodeon.publishing import PreviewStore, StoryPayload, is_allowed_asset_path
 from shmarql.main import create_app
 from shmarql.profiles import ProfileRegistry
-from shmarql.routes.auth import create_session, valid_session
 
 from conftest import FIXTURES, MAIN_ENDPOINT
 
-TOKEN = "s3cret-token"
 PNG = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 )
@@ -56,7 +54,7 @@ def editor_settings(settings, docs, tmp_path):
     return settings.model_copy(
         update={
             "docs_path": docs,
-            "lodeon_editor_token": TOKEN,
+            "users_db_path": tmp_path / "editor_users.sqlite",
             "lodeon_preview_path": tmp_path / "previews",
         }
     )
@@ -64,6 +62,8 @@ def editor_settings(settings, docs, tmp_path):
 
 @pytest.fixture
 def editor(editor_settings, registry, endpoint):
+    """Editor app with username/password login enabled (editor user database)."""
+    create_user("editor", "editor-password", editor_settings.users_db_path)
     app = create_app(settings=editor_settings, registry=registry, transport=endpoint.transport)
     with TestClient(app) as c:
         yield c
@@ -74,7 +74,6 @@ def editor_user_settings(settings, docs, tmp_path):
     return settings.model_copy(
         update={
             "docs_path": docs,
-            "lodeon_editor_token": "",
             "users_db_path": tmp_path / "editor_users.sqlite",
             "lodeon_preview_path": tmp_path / "previews",
         }
@@ -83,7 +82,7 @@ def editor_user_settings(settings, docs, tmp_path):
 
 @pytest.fixture
 def editor_user(editor_user_settings, registry, endpoint):
-    """Editor app with username/password login enabled (no static token)."""
+    """Editor app with username/password login enabled (editor user database)."""
     create_user("editor", "editor-password", editor_user_settings.users_db_path)
     app = create_app(settings=editor_user_settings, registry=registry, transport=endpoint.transport)
     with TestClient(app) as c:
@@ -91,9 +90,10 @@ def editor_user(editor_user_settings, registry, endpoint):
 
 
 def login(client: TestClient) -> dict[str, str]:
-    r = client.post("/api/auth/login", json={"token": TOKEN})
+    """Log in with the editor user credentials and return the bearer access token headers."""
+    r = client.post("/token", data={"username": "editor", "password": "editor-password"})
     assert r.status_code == 200, r.text
-    return {"Authorization": f"Bearer {r.json()['session']}"}
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
 
 def story_json(slug: str = "editor-story", **extra) -> dict:
@@ -185,15 +185,16 @@ def test_welcome_story_uses_default_profile(client):
 
 
 # -- authentication -------------------------------------------------------------------------
-def test_without_token_preview_is_open_and_publish_disabled(client):
+def test_editor_login_disabled_preview_open_publish_disabled(client):
+    """Without editor users, the editor login is disabled: Preview open, Publish off."""
     status = client.get("/api/auth/status").json()
     assert status == {
         "authEnabled": False,
         "authenticated": False,
-        "methods": {"token": False, "credentials": False, "externalProviders": []},
+        "methods": {"credentials": False, "externalProviders": []},
         "capabilities": {"publish": False},
     }
-    assert client.post("/api/auth/login", json={"token": "x"}).status_code == 404
+    # Only username/password logins against the editor user database exist.
     assert (
         client.post(
             "/token", data={"username": "editor", "password": "editor-password"}
@@ -204,28 +205,18 @@ def test_without_token_preview_is_open_and_publish_disabled(client):
     assert client.post("/api/preview", json=story_json()).status_code == 200
 
 
-def test_token_login(editor):
-    status = editor.get("/api/auth/status").json()
+def test_editor_auth_status_with_credentials_login(editor_user):
+    status = editor_user.get("/api/auth/status").json()
     assert status["authEnabled"] is True
-    assert status["methods"]["token"] is True
-    assert editor.post("/api/auth/login", json={"token": "wrong"}).status_code == 401
-    assert editor.post("/api/auth/login", json={}).status_code == 400
-    headers = login(editor)
-    status = editor.get("/api/auth/status", headers=headers).json()
-    assert status["authenticated"] is True
-    assert status["loginMethod"] == "token"
-    assert status["capabilities"]["publish"] is True
-    bad = {"Authorization": "Bearer 99999999999.deadbeef"}
-    assert editor.get("/api/auth/status", headers=bad).json()["authenticated"] is False
+    assert status["authenticated"] is False
+    assert status["methods"] == {"credentials": True, "externalProviders": []}
 
 
 def test_username_password_login_returns_jwt_access_token(editor_user, editor_user_settings):
     status = editor_user.get("/api/auth/status").json()
     assert status["authEnabled"] is True
     assert status["authenticated"] is False
-    assert status["methods"] == {"token": False, "credentials": True, "externalProviders": []}
-    # Without a static token, the token login is not configured.
-    assert editor_user.post("/api/auth/login", json={"token": "s3cret-token"}).status_code == 404
+    assert status["methods"] == {"credentials": True, "externalProviders": []}
 
     r = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
     assert r.status_code == 200, r.text
@@ -338,16 +329,6 @@ def test_login_page_has_no_form_when_login_is_disabled(client):
     assert 'name="username"' not in r.text
 
 
-def test_login_page_renders_the_token_form_for_static_token(editor):
-    """With only a static editor token configured, the login page offers the token login."""
-    r = editor.get("/login")
-    assert r.status_code == 200
-    assert "data-auth-token-form" in r.text
-    assert 'action="/api/auth/login"' in r.text
-    assert 'name="token"' in r.text
-    assert 'action="/token"' not in r.text
-
-
 def test_site_header_renders_the_logout_form_for_authenticated_users(editor_user):
     login = editor_user.post("/token", data={"username": "editor", "password": "editor-password"})
     assert login.status_code == 200, login.text
@@ -369,15 +350,8 @@ def test_site_header_has_no_auth_form_when_login_is_disabled(client):
     assert 'action="/api/auth/logout"' not in r.text
 
 
-def test_sessions_expire_and_are_bound_to_the_token():
-    session = create_session(TOKEN, ttl=60, now=1000)
-    assert valid_session(TOKEN, session, now=1059)
-    assert not valid_session(TOKEN, session, now=1061)
-    assert not valid_session("other-token", session, now=1000)
-    assert not valid_session(TOKEN, "garbage", now=1000)
-
-
-def test_preview_and_publish_require_login_with_token(editor):
+def test_preview_and_publish_require_login(editor):
+    """With editor users configured, Preview and Publish need a username/password login."""
     assert editor.post("/api/preview", json=story_json()).status_code == 401
     r = editor.post("/api/publish", json=story_json())
     assert r.status_code == 401

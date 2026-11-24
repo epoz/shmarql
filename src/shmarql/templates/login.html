@@ -6,7 +6,6 @@
 <div class="login-page">
     <h1>{{ _('auth.login') }}</h1>
     {% if auth_enabled and not authenticated %}
-    {% if auth_credentials_login %}
     <form class="auth-form auth-form-login" method="post" action="/token" data-auth-form>
         <p class="auth-error" data-auth-error hidden></p>
         <label class="auth-field" for="auth-username">
@@ -19,15 +18,6 @@
         </label>
         <button type="submit" class="auth-button" data-auth-login>{{ _('auth.login') }}</button>
     </form>
-    {% elif auth_token_login %}
-    <form class="auth-form auth-form-token" method="post" action="/api/auth/login" data-auth-token-form>
-        <label class="auth-field" for="auth-token">
-            <span class="auth-label">{{ _('auth.token') }}</span>
-            <input type="password" id="auth-token" name="token" autocomplete="off" required />
-        </label>
-        <button type="submit" class="auth-button" data-auth-token-login>{{ _('auth.login') }}</button>
-    </form>
-    {% endif %}
     {% endif %}
 </div>
 {% endblock %}

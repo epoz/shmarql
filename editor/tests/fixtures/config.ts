@@ -69,7 +69,6 @@ export const defaultConfig: LodeonConfig = {
               closeAria: "Close login modal",
               username: "Username",
               password: "Password",
-              accessToken: "Access token",
               or: "Or"
             },
             sparnatural: {
@@ -1293,19 +1292,12 @@ export const defaultConfig: LodeonConfig = {
       showTechnicalDetail: true,
       technicalDetailTemplate: "Local project saving failed with the following error: {externalError}"
     },
-    "auth.token_required": {
-      status: 400,
-      severity: "error",
-      title: "An access token is required",
-      detail: "LODEON cannot log in without an access token.",
-      hint: "Enter the access token and try again."
-    },
     "auth.login_failed": {
       status: 401,
       severity: "error",
       title: "Login failed",
       detail: "LODEON could not complete the login request.",
-      hint: "Check the token and try again.",
+      hint: "Check the username and password and try again.",
       showTechnicalDetail: true,
       technicalDetailTemplate: "Login failed with the following error: {externalError}"
     },

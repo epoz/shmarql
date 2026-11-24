@@ -341,18 +341,8 @@ errors:
   sparnatural.profile_unavailable:
     status: 500
     severity: error
-  auth.invalid_token:
-    status: 401
-    severity: error
-  auth.token_required:
-    status: 400
-    severity: error
   auth.login_failed:
     status: 401
-    severity: error
-    showTechnicalDetail: true
-  auth.login_payload_invalid:
-    status: 400
     severity: error
     showTechnicalDetail: true
   config.auth.methods_invalid:

@@ -7,9 +7,8 @@ Mirrors the login handling of the IC server (``/repos/icserver``, ``src/app/am.p
   access token (HS256, ``sub`` = username, expiring);
 * the access token is used as a bearer token for the protected editor endpoints.
 
-The story editor's static token (``LODEON_EDITOR_TOKEN``) keeps working through its own
-login (``POST /api/auth/login``): it yields a signed, expiring session that is accepted
-as a bearer token as well.
+All editor authentication happens with username/password logins against the editor user
+database.
 """
 
 from __future__ import annotations

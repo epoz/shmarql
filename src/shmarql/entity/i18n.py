@@ -42,7 +42,6 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "auth.logout": "Logout",
         "auth.username": "Username",
         "auth.password": "Password",
-        "auth.token": "Token",
     },
     "nl": {
         "menu.docs": "Documentatie",
@@ -78,7 +77,6 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "auth.logout": "Uitloggen",
         "auth.username": "Gebruikersnaam",
         "auth.password": "Wachtwoord",
-        "auth.token": "Token",
     },
 }
 

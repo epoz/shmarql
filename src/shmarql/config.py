@@ -83,9 +83,6 @@ class Settings(BaseSettings):
     # SQLite database with the editor users (username, name, bcrypt password, activation date).
     users_db_path: Path = Path("editor_users.sqlite")
     lodeon_editor_enabled: bool = True
-    # Access token for the editor. When set, Preview and Publish require a login with it
-    # (POST /api/auth/login with that token); when empty, Preview is open and Publish is disabled.
-    lodeon_editor_token: str = ""
     # Lifetime of an editor login, in seconds.
     lodeon_editor_session_ttl: int = 8 * 3600
     # Published stories are written to DOCS_PATH/<this>/<slug>/index.md.

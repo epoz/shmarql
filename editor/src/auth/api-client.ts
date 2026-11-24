@@ -7,11 +7,10 @@ import { problemFromResponse } from "../errors/problem-details";
 export type AuthStatus = {
   authEnabled: boolean;
   authenticated: boolean;
-  loginMethod?: "token" | "credentials" | "oidc" | "oauth2";
+  loginMethod?: "credentials" | "oidc" | "oauth2";
   loginProvider?: string;
   username?: string;
   methods: {
-    token: boolean;
     credentials: boolean;
     externalProviders: Array<{
       id: string;
@@ -33,12 +32,11 @@ const authStatusSchema = z
   .object({
     authEnabled: z.boolean(),
     authenticated: z.boolean(),
-    loginMethod: z.enum(["token", "credentials", "oidc", "oauth2"]).optional(),
+    loginMethod: z.enum(["credentials", "oidc", "oauth2"]).optional(),
     loginProvider: z.string().min(1).optional(),
     username: z.string().min(1).optional(),
     methods: z
       .object({
-        token: z.boolean(),
         credentials: z.boolean(),
         externalProviders: z.array(
           z
@@ -59,7 +57,6 @@ const authSessionSchema = authStatusSchema.extend({ session: z.string().optional
 
 const authSessionCookieName = "access_token";
 const authStatusUrl = "/api/auth/status";
-const authLoginUrl = "/api/auth/login";
 const authTokenUrl = "/token";
 const authLogoutUrl = "/api/auth/logout";
 const authExternalExchangeUrl = "/api/auth/external/exchange";
@@ -100,36 +97,9 @@ function failClosedAuthStatus(): AuthStatus {
   return {
     authEnabled: true,
     authenticated: false,
-    methods: { token: false, credentials: false, externalProviders: [] },
+    methods: { credentials: false, externalProviders: [] },
     capabilities: { publish: false }
   };
-}
-
-/**
- * Exchanges a validated login token for an API session and persists only the
- * returned opaque session value in browser session storage.
- */
-export async function loginWithToken(token: string, fetcher: typeof fetch = fetch): Promise<AuthSession> {
-  const response = await fetcher(authLoginUrl, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ token })
-  });
-
-  if (!response.ok) {
-    throw await problemFromResponse(response, "auth.login_failed");
-  }
-
-  const payload = authSessionSchema.parse(await response.json());
-
-  if (payload.session) {
-    writeAuthSession(payload.session);
-  }
-
-  return payload;
 }
 
 /**
@@ -166,7 +136,7 @@ export async function loginWithCredentials(
     authEnabled: true,
     authenticated: true,
     loginMethod: "credentials",
-    methods: { token: false, credentials: true, externalProviders: [] },
+    methods: { credentials: true, externalProviders: [] },
     capabilities: { publish: true },
     session: accessToken
   };
@@ -258,10 +228,4 @@ export function authHeaders(session: string | undefined): HeadersInit {
 /** Returns headers for the current process-local browser session. */
 export function currentAuthHeaders(): HeadersInit {
   return authHeaders(readAuthSession());
-}
-
-export function validateLoginToken(token: string): void {
-  if (!token) {
-    throw new LodeonClientError("auth.token_required");
-  }
 }

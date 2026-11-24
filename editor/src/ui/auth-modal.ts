@@ -25,7 +25,6 @@ export function bindAuthModal(
   const modal = root.querySelector<HTMLElement>("[data-auth-modal]");
   const usernameInput = root.querySelector<HTMLInputElement>("[data-auth-username]");
   const passwordInput = root.querySelector<HTMLInputElement>("[data-auth-password]");
-  const tokenInput = root.querySelector<HTMLInputElement>("[data-auth-token]");
   const error = root.querySelector<HTMLElement>("[data-auth-error]");
   const providerList = root.querySelector<HTMLElement>("[data-auth-providers]");
   const divider = root.querySelector<HTMLElement>("[data-auth-divider]");
@@ -33,13 +32,12 @@ export function bindAuthModal(
   const renderMethods = () => {
     const methods = controller.getSession().methods;
     const providers = methods.externalProviders;
-    const showToken = methods.token;
     const showCredentials = methods.credentials;
-    form?.toggleAttribute("hidden", !(showToken || showCredentials));
-    divider?.toggleAttribute("hidden", !(showToken && showCredentials));
+    const showProviders = providers.length > 0;
+    form?.toggleAttribute("hidden", !showCredentials);
+    divider?.toggleAttribute("hidden", !(showCredentials && showProviders));
     usernameInput?.toggleAttribute("hidden", !showCredentials);
     passwordInput?.toggleAttribute("hidden", !showCredentials);
-    tokenInput?.toggleAttribute("hidden", !showToken);
     if (!providerList) return;
 
     providerList.replaceChildren(
@@ -65,7 +63,6 @@ export function bindAuthModal(
   const clear = () => {
     if (usernameInput) usernameInput.value = "";
     if (passwordInput) passwordInput.value = "";
-    if (tokenInput) tokenInput.value = "";
     if (error) {
       error.hidden = true;
       error.textContent = "";
@@ -84,9 +81,7 @@ export function bindAuthModal(
       error.hidden = false;
     }
     modal.hidden = false;
-    if (tokenInput && !tokenInput.hidden) {
-      tokenInput.focus();
-    } else if (usernameInput && !usernameInput.hidden) {
+    if (usernameInput && !usernameInput.hidden) {
       usernameInput.focus();
     } else {
       providerList?.querySelector<HTMLElement>("[data-auth-provider]")?.focus();
@@ -105,11 +100,8 @@ export function bindAuthModal(
     try {
       const username = usernameInput?.value.trim() ?? "";
       const password = passwordInput?.value ?? "";
-      const token = tokenInput?.value.trim() ?? "";
       if (username && password) {
         await controller.loginWithCredentials(username, password);
-      } else if (token) {
-        await controller.login(token);
       }
       close();
       options.onSessionChanged?.();

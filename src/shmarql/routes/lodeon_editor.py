@@ -4,7 +4,7 @@ The editor is LODEON's browser application without the AI Assistant. It talks to
 the same endpoints as in lodeon-core; this module provides them on top of shmarql:
 
 * ``GET  /api/config``                         browser configuration (see ``lodeon.editor_config``)
-* ``GET  /api/auth/status``, ``POST /api/auth/login``, ``POST /api/auth/logout``  (see ``routes.auth``)
+* ``GET  /api/auth/status``, ``POST /token``, ``POST /api/auth/logout``  (see ``routes.auth``)
 * ``GET  /api/welcome-story``                  the initial project (``.lodeon.zip``)
 * ``GET  /api/knowledge-graphs/{ref}/sparnatural``  visual query builder configuration
 * ``POST /api/embed/metadata``                 titles of allow-listed embed URLs
@@ -16,10 +16,9 @@ footer); the rest of ``/lodeon/`` is the built editor, served as static files.
 
 ``/api/sparql/{ref}`` and ``/api/explorer/{ref}/expand`` come from ``lodeon_api``.
 
-Authentication: with ``LODEON_EDITOR_TOKEN`` set, a login with that token yields a
-signed, expiring session (a bearer token) that Preview and Publish require; alternatively
-editors can log in with a username/password (see ``routes.auth``). Without a token Preview
-is open and Publish is disabled.
+Authentication: when editor users are configured, editors log in with a username/password
+(see ``routes.auth``); the login yields a signed, expiring access token (JWT) that Preview and
+Publish require; without editor users, Preview is open and Publish is disabled.
 """
 
 from __future__ import annotations
@@ -228,7 +227,7 @@ async def publish(request: Request) -> Response:
         return problem(
             "auth.publish_access_denied",
             403,
-            "set LODEON_EDITOR_TOKEN or add editor users to publish",
+            "add editor users to enable publishing",
         )
     if not authenticated(request):
         return problem("publish.login_required", 401)

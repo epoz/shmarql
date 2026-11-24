@@ -141,7 +141,6 @@ def render(
             "authenticated": auth["authenticated"],
             "username": auth["username"],
             "login_method": auth["login_method"],
-            "auth_token_login": auth["auth_token_login"],
             "auth_credentials_login": auth["auth_credentials_login"],
         }
     )

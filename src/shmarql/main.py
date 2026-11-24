@@ -109,7 +109,7 @@ def create_app(
     if settings.lodeon_editor_enabled:
         # /lodeon/ itself is rendered in the site template by lodeon_editor.editor_page.
         app.include_router(lodeon_editor.router)
-        # The authentication API (login, sessions, OAuth2 token endpoint) is kept separate
+        # The authentication API (login, access token endpoint) is kept separate
         # from the editor pages themselves, but ships with the editor feature.
         app.include_router(auth.router)
         app.add_api_route("/lodeon", _editor_redirect, methods=["GET"], include_in_schema=False)
@@ -117,10 +117,8 @@ def create_app(
             app.mount("/lodeon", StaticFiles(directory=EDITOR_DIR), name="lodeon_editor")
         else:
             log.warning("LODEON editor is not built (run `npm run build` in editor/)")
-        if not settings.lodeon_editor_token and not has_editor_users(settings):
-            log.info(
-                "LODEON editor: set LODEON_EDITOR_TOKEN or add editor users to enable publishing stories"
-            )
+        if not has_editor_users(settings):
+            log.info("LODEON editor: add editor users to enable publishing stories")
     app.include_router(pages.router)
     # The documentation catch-all must come last.
     app.add_api_route("/", pages.docs_page, methods=["GET"], include_in_schema=False)

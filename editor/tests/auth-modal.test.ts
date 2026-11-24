@@ -28,10 +28,6 @@ function renderModal(methods: AuthStatus["methods"]) {
           <span>Password</span>
           <input type="password" data-auth-password />
         </label>
-        <label>
-          <span>Access token</span>
-          <input type="password" data-auth-token />
-        </label>
       </form>
       <div data-auth-divider hidden></div>
       <div data-auth-providers hidden></div>
@@ -48,7 +44,6 @@ function renderModal(methods: AuthStatus["methods"]) {
     getSession: () => session,
     getSessionToken: () => undefined,
     isAuthorized: () => false,
-    login: vi.fn(async () => session),
     loginWithCredentials: vi.fn(async () => session),
     logout: vi.fn(async () => session)
   };
@@ -59,51 +54,41 @@ function renderModal(methods: AuthStatus["methods"]) {
 }
 
 describe("authentication modal method presentation", () => {
-  it("shows only token login when no external provider is configured", () => {
-    const { root } = renderModal({ token: true, credentials: false, externalProviders: [] });
+  it("shows the username/password form when credentials login is available", () => {
+    const { root } = renderModal({ credentials: true, externalProviders: [] });
 
     expect(root.querySelector<HTMLElement>("[data-auth-form]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-divider]")?.hidden).toBe(true);
+    expect(root.querySelector<HTMLElement>("[data-auth-username]")?.hidden).toBe(false);
+    expect(root.querySelector<HTMLElement>("[data-auth-password]")?.hidden).toBe(false);
     expect(root.querySelector<HTMLElement>("[data-auth-providers]")?.hidden).toBe(true);
-    expect(root.querySelector<HTMLElement>("[data-auth-token]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-username]")?.hidden).toBe(true);
-    expect(root.querySelector<HTMLElement>("[data-auth-password]")?.hidden).toBe(true);
   });
 
-  it("shows only external login when token login is unavailable", () => {
-    const { root } = renderModal({ token: false, credentials: false, externalProviders: [provider] });
+  it("hides the auth form when no login method is available", () => {
+    const { root } = renderModal({ credentials: false, externalProviders: [] });
 
     expect(root.querySelector<HTMLElement>("[data-auth-form]")?.hidden).toBe(true);
-    expect(root.querySelector<HTMLElement>("[data-auth-divider]")?.hidden).toBe(true);
+    expect(root.querySelector<HTMLElement>("[data-auth-providers]")?.hidden).toBe(true);
+  });
+
+  it("shows external login providers when credentials login is unavailable", () => {
+    const { root } = renderModal({ credentials: false, externalProviders: [provider] });
+
+    expect(root.querySelector<HTMLElement>("[data-auth-form]")?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>("[data-auth-providers]")?.hidden).toBe(false);
     expect(root.querySelectorAll("[data-auth-provider]")).toHaveLength(1);
   });
 
-  it("shows token and credentials login with a divider when both are available", () => {
-    const { root } = renderModal({ token: true, credentials: true, externalProviders: [] });
-
-    expect(root.querySelector<HTMLElement>("[data-auth-form]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-divider]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-providers]")?.hidden).toBe(true);
-    expect(root.querySelector<HTMLElement>("[data-auth-token]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-username]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-password]")?.hidden).toBe(false);
-  });
-
   it("shows username and password login when only credentials are available", () => {
-    const { root } = renderModal({ token: false, credentials: true, externalProviders: [] });
+    const { root } = renderModal({ credentials: true, externalProviders: [] });
 
     expect(root.querySelector<HTMLElement>("[data-auth-form]")?.hidden).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-auth-divider]")?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>("[data-auth-providers]")?.hidden).toBe(true);
-    expect(root.querySelector<HTMLElement>("[data-auth-token]")?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>("[data-auth-username]")?.hidden).toBe(false);
     expect(root.querySelector<HTMLElement>("[data-auth-password]")?.hidden).toBe(false);
   });
 
   it("logs in with username and password credentials", async () => {
     const { root, controller, modal } = renderModal({
-      token: false,
       credentials: true,
       externalProviders: []
     });

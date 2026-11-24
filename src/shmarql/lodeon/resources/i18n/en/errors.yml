@@ -765,24 +765,11 @@ messages:
       title: Publishing is not permitted
       detail: Your current LODEON session is not permitted to publish stories.
       hint: Contact the instance operator if you require publishing access.
-    invalid_token:
-      title: The login token is invalid
-      detail: LODEON could not authenticate the submitted login token.
-      hint: Check the token and try again.
-    token_required:
-      title: An access token is required
-      detail: LODEON cannot log in without an access token.
-      hint: Enter the access token and try again.
     login_failed:
       title: Login failed
       detail: LODEON could not complete the login request.
-      hint: Check the token and try again.
+      hint: Check the username and password and try again.
       technicalDetailTemplate: 'Login failed with the following error: {externalError}'
-    login_payload_invalid:
-      title: The login request is invalid
-      detail: LODEON could not process the login request because the payload has the wrong structure.
-      hint: Submit a login request with an access token.
-      technicalDetailTemplate: Invalid login request payload for {field}
     external:
       provider_not_found:
         title: The external login provider is unavailable

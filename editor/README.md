@@ -61,7 +61,7 @@ node or its configuration schema changes.
   Graph Explorer, IIIF, embeds, media assets, Verovio, story metadata)
 - `src/markdown/` — ProseMirror → Markdown export through the renderer mappings
 - `src/project/`, `src/persistence/` — project model, `.lodeon.zip` packages, IndexedDB
-- `src/preview/`, `src/publish/`, `src/auth/` — Preview, Publish, token login
+- `src/preview/`, `src/publish/`, `src/auth/` — Preview, Publish, login
 - `src/configuration/` — the validated `/api/config` contract
 - `tests/` — vitest + jsdom tests (ported from `lodeon-core/tests/frontend/editor`)
 

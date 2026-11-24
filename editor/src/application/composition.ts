@@ -355,10 +355,6 @@ export async function renderApp(
                 <span>${escapeHtml(editorText("modal.auth.password"))}</span>
                 <input type="password" autocomplete="current-password" data-auth-password aria-label="${escapeAttribute(editorText("modal.auth.password"))}" />
               </label>
-              <label>
-                <span>${escapeHtml(editorText("modal.auth.accessToken"))}</span>
-                <input type="password" autocomplete="current-password" data-auth-token aria-label="${escapeAttribute(editorText("modal.auth.accessToken"))}" />
-              </label>
               <div class="ld-auth-actions">
                 <button class="ld-button" type="submit">${escapeHtml(editorText("auth.login"))}</button>
               </div>

@@ -185,10 +185,10 @@ Publishing requires a login.
 
 ## Login And Authentication
 
-When the site operator has configured an access token, use **Login** in the
-top bar and enter it; Preview and Publish are then available for the rest of
-the browser session. Without a configured token, Preview is available to
-everyone and Publish is disabled.
+When the site operator has configured editor users, use **Login** in the
+top bar and log in with your username and password; Preview and Publish are
+then available for the rest of the browser session. Without configured editor
+users, Preview is available to everyone and Publish is disabled.
 
 ## Day And Night Theme
 
