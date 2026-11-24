@@ -22,6 +22,9 @@ log = logging.getLogger("shmarql.docs")
 
 INDEX_NAMES = ("index.md", "README.md", "readme.md")
 
+# The front matter value of a documentation page that is viewable without a login.
+PUBLIC_ACCESS = "public"
+
 
 @dataclass
 class Resolution:
@@ -100,6 +103,49 @@ class DocsSite:
         if target.is_file():
             return Resolution("file", target)
         return Resolution("missing")
+
+    # -- access -----------------------------------------------------------------------
+    def access_of(self, path: Path) -> str:
+        """The ``access`` front matter of the markdown document at ``path`` (``public`` or empty)."""
+        try:
+            meta, _body = extract_front_matter(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError):
+            return ""
+        access = meta.get("access")
+        return str(access).strip().lower() if access is not None else ""
+
+    def _owner_page(self, path: Path) -> Path | None:
+        """The markdown page owning a docs file (the index of its directory), if any."""
+        directory = path.parent
+        root = self.root.resolve()
+        while True:
+            index = self._index_of(directory)
+            if index is not None:
+                return index
+            if directory.resolve() == root:
+                return None
+            parent = directory.parent
+            if parent == directory:
+                return None
+            directory = parent
+
+    def is_public(self, url_path: str) -> bool:
+        """Whether a documentation URL may be viewed without a login.
+
+        Markdown pages with front matter ``access: public`` are public; every other page
+        (and the media files of private pages) requires a login.
+        """
+        if not self.exists:
+            return False
+        resolution = self.resolve(url_path)
+        if resolution.kind == "markdown":
+            return resolution.path is not None and self.access_of(resolution.path) == PUBLIC_ACCESS
+        if resolution.kind == "redirect":
+            return self.is_public(resolution.location)
+        if resolution.kind == "file":
+            owner = self._owner_page(resolution.path) if resolution.path is not None else None
+            return owner is not None and self.access_of(owner) == PUBLIC_ACCESS
+        return False
 
     # -- navigation -------------------------------------------------------------------
     def title_of(self, path: Path) -> str:

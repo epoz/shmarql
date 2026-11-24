@@ -232,6 +232,11 @@ fetched for
 `nodes.embed.allowedOrigins` (set with `LODEON_CONFIG_PATH`). The visual query
 builder is offered for profiles with a `sparnatural` (SHACL, Turtle) file.
 
+When the editor users are configured, the site requires a login: requests that are not
+authenticated are redirected to the **Login** page (`/login`). The documentation is the
+exception — a Markdown page (or the media of such a page) whose front matter sets
+`access: public` stays publicly viewable; all other pages redirect to the login page.
+
 The editor's API, next to `/api/sparql/<profile>` and `/api/explorer/<profile>/expand`:
 `GET /api/config`, `GET /api/auth/status`, `POST /token`,
 `GET /api/welcome-story`, `GET /api/knowledge-graphs/<profile>/sparnatural`,

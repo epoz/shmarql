@@ -1,3 +1,13 @@
+# 2026-11-25
+
+## Changed
+
+- When the editor user database is configured (with `USERS_DB_PATH`), the site now requires a
+  login: all pages redirect to the **Login** page (`/login`) when the visitor is not logged in.
+  Documentation pages (and the media of such pages) whose Markdown front matter sets
+  `access: public` stay publicly accessible; all other documentation redirects to the login
+  page.
+
 # 2026-11-24
 
 ## Changed

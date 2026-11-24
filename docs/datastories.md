@@ -7,8 +7,10 @@ exported (or published) `index.md`, plus its `assets/` folder, anywhere below
 
 Supported:
 
-- **Front matter** — `title`, and the `lodeon:` block whose `htmlMeta`, `openGraph`
-  and `jsonLd` entries become `<meta>` tags and JSON-LD in the page head.
+- **Front matter** — `title`, the `access` key (`public` makes a story publicly
+  viewable without a login; the default is to require a login), and the `lodeon:` block
+  whose `htmlMeta`, `openGraph` and `jsonLd` entries become `<meta>` tags and JSON-LD in
+  the page head.
 - **```` ```shmarql {title="…" kg="profile"} ````** — SPARQL results, run in the
   browser against the profile whose *name* (or key) equals `kg`. Without `kg`
   the default profile is used.
@@ -41,3 +43,6 @@ Publishing requires the site to enable the editor login (add editor users to the
 user database); log in via the **Login** page (linked from the **Login** button of the site
 header, top right) with a username/password; when a session is active the header shows a
 **Logout** button next to the logged-in user name. See the [configuration](configuration.md).
+
+Stories are only served to logged-in visitors, unless their front matter sets `access:
+public` (see [writing documentation](writing-docs.md#access)).

@@ -12,6 +12,22 @@ Links to other Markdown files (`[setup](guide/setup.md)`) are rewritten to these
 URLs, and other files (images, downloads) are served as they are. The page title
 comes from a `title:` in the YAML front matter or from the first `# Heading`.
 
+## Access
+
+When the editor users are configured (editor user database set with `USERS_DB_PATH`),
+the site asks visitors to log in before pages are served: requests that are not
+authenticated are redirected to the **Login** page. A documentation page can opt
+out by setting the `access` key of its YAML front matter to `public`:
+
+```yaml
+---
+access: public
+---
+```
+
+Public pages — and the media files they reference — are served without a login;
+all other pages redirect to the login page.
+
 The usual extensions are available: tables, footnotes, definition lists,
 `attr_list`, `md_in_html`, syntax highlighting, task lists and the
 `pymdownx.blocks` admonitions, details and tabs:

@@ -23,7 +23,7 @@ take precedence. See `.env.example` for a template.
 | `LODEON_EDITOR_ENABLED` | `1` | Serve the [story editor](datastories.md#writing-stories-in-the-editor) at `/lodeon/` |
 | `SECRET_KEY` | `shmarql-dev-secret` | Secret key used to sign the editor access tokens (JWTs, HS256) |
 | `ACCESS_TOKEN_EXPIRE_DAYS` | `30` | Lifetime of an editor access token, in days |
-| `USERS_DB_PATH` | `editor_users.sqlite` | SQLite database with the editor users (username, name, bcrypt password, activation date) |
+| `USERS_DB_PATH` | `editor_users.sqlite` | SQLite database with the editor users (username, name, bcrypt password, activation date); when it holds editor users, the site login is enabled and pages redirect to `/login` when not logged in |
 | `LODEON_EDITOR_SESSION_TTL` | `28800` | Lifetime of an editor login, in seconds |
 | `LODEON_STORY_DIR` | `story` | Folder below `DOCS_PATH` that published stories are written to |
 | `LODEON_PREVIEW_PATH` | temp dir | Where editor previews are kept |

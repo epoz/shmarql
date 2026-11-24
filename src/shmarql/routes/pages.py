@@ -17,6 +17,7 @@ from ..entity.uri_utils import shorten_uri
 from ..entity.view import build_entity_view
 from ..sparql_client import SparqlError
 from ..web import get_state, render
+from .auth import authenticated, login_redirect, site_login_required
 
 log = logging.getLogger("shmarql.pages")
 
@@ -101,6 +102,8 @@ async def query_page(
     query: str = Query(DEFAULT_QUERY),
     profile: str = Query(""),
 ):
+    if site_login_required(request) and not authenticated(request):
+        return login_redirect()
     state = get_state(request)
     selected = state.registry.get(profile) or state.registry.default
     display = state.display_for(selected) if selected is not None else None
@@ -126,6 +129,8 @@ async def entity_page(
     profile: str = Query(""),
     format: str = Query(""),  # noqa: A002 - mirrors ldview's ?format= parameter
 ):
+    if site_login_required(request) and not authenticated(request):
+        return login_redirect()
     state = get_state(request)
     uri = uri.strip()
     if not uri:
@@ -196,6 +201,8 @@ async def spo_page(
     format: str = Query(""),  # noqa: A002 - mirrors ldview's ?format= parameter
 ) -> Response:
     """Browse the knowledge graph: one table of ``?s ?p ?o`` triples, filtered per position."""
+    if site_login_required(request) and not authenticated(request):
+        return login_redirect()
     state = get_state(request)
     target = state.registry.get(profile) if profile else None
     target = target or state.registry.default
@@ -241,6 +248,13 @@ async def spo_page(
 # -- Documentation (catch-all, registered last) ----------------------------------------------
 async def docs_page(request: Request, path: str = ""):
     state = get_state(request)
+    # Documentation is only served to logged-in visitors, except the pages with "access: public".
+    if (
+        site_login_required(request)
+        and not authenticated(request)
+        and not state.docs.is_public(path)
+    ):
+        return login_redirect()
     resolution = state.docs.resolve(path)
     if resolution.kind == "redirect":
         return RedirectResponse(resolution.location, status_code=301)

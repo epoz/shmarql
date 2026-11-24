@@ -295,15 +295,52 @@ def test_access_token_cookie_grants_editor_access(editor_user, editor_user_setti
 
 def test_site_header_links_to_the_separate_login_page(editor_user):
     """The login form lives on its own page; the header only offers the login link."""
-    r = editor_user.get("/")
+    r = editor_user.get("/login")
     assert r.status_code == 200
+    # the header only offers the separate login page, next to the hidden logout form
+    assert "auth-login-link" in r.text
     assert 'href="/login"' in r.text
-    assert 'action="/token"' not in r.text
-    assert 'name="username"' not in r.text
-    assert 'name="password"' not in r.text
+    # the login form itself lives on this page, next to the header
+    assert 'action="/token"' in r.text
     # logged out: the logout form is hidden, the login link is shown
     assert "data-auth-logout-form hidden" in r.text
-    assert 'href="/login">' in r.text
+
+
+def test_site_redirects_to_the_login_page_when_not_authenticated(editor):
+    """With editor users configured, pages other than the login page ask for a login."""
+    for path in ("/", "/query", "/entity", "/spo", "/lodeon/", "/guide/setup", "/story/demo/"):
+        r = editor.get(path, follow_redirects=False)
+        assert r.status_code == 307, path
+        assert r.headers["location"] == "/login", path
+    # the login page itself is served without a login
+    assert editor.get("/login").status_code == 200
+
+
+def test_public_docs_page_is_accessible_without_login(editor, docs):
+    """A docs page with front matter ``access: public`` is viewable without a login."""
+    (docs / "public.md").write_text("---\naccess: public\n---\n# Public\n", encoding="utf-8")
+    r = editor.get("/public", follow_redirects=False)
+    assert r.status_code == 200
+    assert "Public" in r.text
+
+
+def test_public_docs_page_media_is_accessible_without_login(editor, docs):
+    """Media of a publicly accessible docs page are served without a login."""
+    story = docs / "public"
+    (story / "assets").mkdir(parents=True, exist_ok=True)
+    (story / "index.md").write_text("---\naccess: public\n---\n# Public\n", encoding="utf-8")
+    (story / "assets" / "pic.png").write_bytes(b"\x89PNG-fake")
+    r = editor.get("/public/assets/pic.png")
+    assert r.status_code == 200
+    assert r.content == b"\x89PNG-fake"
+
+
+def test_authenticated_editor_can_view_private_docs(editor, docs):
+    """A logged-in editor is served the documentation pages that are not public."""
+    headers = login(editor)
+    r = editor.get("/guide/setup", headers=headers, follow_redirects=False)
+    assert r.status_code == 200
+    assert editor.get("/story/demo/", headers=headers).status_code == 200
 
 
 def test_login_page_renders_the_username_password_form(editor_user):
@@ -372,13 +409,13 @@ def test_publish_writes_story_into_docs(editor, docs):
     assert (docs / "story/editor-story/index.md").read_text() == STORY_MD
     assert (docs / "story/editor-story/assets/pic.png").read_bytes() == PNG
 
-    page = editor.get("/story/editor-story/")
+    page = editor.get("/story/editor-story/", headers=headers)
     assert page.status_code == 200
     assert '<pre class="shmarql-source" title="People" kg="main">' in page.text
     assert '<meta name="description" content="Written in the editor.">' in page.text
-    assert editor.get("/story/editor-story/assets/pic.png").content == PNG
+    assert editor.get("/story/editor-story/assets/pic.png", headers=headers).content == PNG
     # the published story appears in the docs navigation
-    assert 'href="/story/editor-story/"' in editor.get("/").text
+    assert 'href="/story/editor-story/"' in editor.get("/", headers=headers).text
 
 
 def test_republish_replaces_the_story(editor, docs):
@@ -479,7 +516,7 @@ def test_preview_lifecycle(editor, tmp_path):
     assert '<pre class="shmarql-source" title="People" kg="main">' in page.text
     assert "/static/lodeon/scripts/runtime.js" in page.text
     assert editor.get(preview["url"] + "assets/pic.png").content == PNG
-    assert editor.get(preview["url"] + "../../etc/passwd").status_code == 404
+    assert editor.get(preview["url"] + "../../etc/passwd", headers=headers).status_code == 404
 
     cleanup = f"/api/artefacts/{preview['id']}"
     assert editor.delete(cleanup).status_code == 401

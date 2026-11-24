@@ -49,7 +49,7 @@ from ..lodeon.publishing import (
 )
 from ..lodeon.welcome import welcome_story_zip
 from ..web import EDITOR_DIR, get_state, render
-from .auth import authenticated, editor_auth_enabled, problem
+from .auth import authenticated, editor_auth_enabled, login_redirect, problem, site_login_required
 
 log = logging.getLogger("shmarql.lodeon")
 
@@ -87,6 +87,8 @@ def editor_assets(directory: Path = EDITOR_DIR) -> dict[str, list[str]]:
 
 @router.get("/lodeon/", include_in_schema=False)
 async def editor_page(request: Request) -> Response:
+    if site_login_required(request) and not authenticated(request):
+        return login_redirect()
     response = render(request, "lodeon_editor.html", {"editor": editor_assets()})
     response.headers["Cache-Control"] = "no-cache"
     return response

@@ -71,6 +71,20 @@ def authenticated(request: Request) -> bool:
     return authenticated_method(request) is not None
 
 
+def site_login_required(request: Request) -> bool:
+    """Whether the visitor must log in before pages of the site are served.
+
+    True when the editor user database configured with ``USERS_DB_PATH`` holds editor
+    users, so the site login is enabled: every page but the login page redirects to it.
+    """
+    return editor_auth_enabled(get_state(request).settings)
+
+
+def login_redirect() -> RedirectResponse:
+    """The response that sends an unauthenticated visitor to the site login page."""
+    return RedirectResponse("/login", status_code=307)
+
+
 def editor_auth_state(settings: Settings, bearer_token: str) -> dict[str, Any]:
     """The editor authentication state of a bearer token against the given settings."""
     enabled = editor_auth_enabled(settings)
