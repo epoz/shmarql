@@ -1,5 +1,11 @@
 # 2026-11-25
 
+## Added
+
+- The entity page (`/entity?uri=…`) now renders the small SPO links (subject, predicate, object)
+  next to the main entity IRI at the top of the page, like the query results and the `/spo`
+  graph browser: clicking an SPO link uses that value in a browse action.
+
 ## Changed
 
 - When the editor user database is configured (with `USERS_DB_PATH`), the site now requires a

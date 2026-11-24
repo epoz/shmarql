@@ -181,6 +181,7 @@ async def entity_page(
             "shorten_uri": lambda u: shorten_uri(u, display.namespaces),
             "skolem_pattern": display.skolem_uri_pattern,
             "current_lang": lang,
+            "spo_href": lambda position, value: state.spo_href(position, value, target),
             "format_links": [
                 (name, "/entity?" + urlencode({**request.query_params, "format": key}))
                 for key, name in (("turtle", "Turtle"), ("json-ld", "JSON-LD"), ("xml", "RDF/XML"))

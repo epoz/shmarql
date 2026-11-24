@@ -41,6 +41,17 @@ def test_main_subject_table(client):
     assert href in html
 
 
+def test_main_subject_has_spo_links_for_browse(client):
+    """The main entity IRI at the top of the entity page offers the small SPO links."""
+    html = entity(client).text
+    assert 'class="spo-cell"' in html
+    assert 'class="spo-link spo-s"' in html
+    assert 'class="spo-link spo-p"' in html
+    assert 'class="spo-link spo-o"' in html
+    # clicking a SPO uses the entity IRI in a browse action (here: as subject)
+    assert f'href="/spo?s={quote(REMBRANDT, safe="")}&amp;profile=' in html
+
+
 def test_language_tabs_and_preferred_language(client):
     html = entity(client).text
     assert 'class="lang-tab active" data-lang="en"' in html

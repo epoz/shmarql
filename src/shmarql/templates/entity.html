@@ -29,6 +29,14 @@
     {% endif %}
 {%- endmacro %}
 
+{% macro render_spo_cell(value) -%}
+    <span class="spo-cell">
+    {%- for pos in ("s", "p", "o") -%}
+        <a class="spo-link spo-{{ pos }}" href="{{ spo_href(pos, value) }}" title="{% if pos == 's' %}{{ _('spo.as_subject') }}{% elif pos == 'p' %}{{ _('spo.as_predicate') }}{% else %}{{ _('spo.as_object') }}{% endif %}">{{ pos|upper }}</a>
+    {%- endfor -%}
+    </span>
+{%- endmacro -%}
+
 {% macro render_predicate_table(predicate_groups) %}
     {% set ns = namespace(last_predicate=None, tab_index=0) %}
     <table class="properties-table">
@@ -155,7 +163,7 @@
                         {% endif %}
 
                         <div class="uri-line">
-                            <h2><a href="{{ main_subject.subject }}" class="uri-object" title="{{ main_subject.subject }}">&lt;{{ main_subject.subject|zwsp }}&gt;</a></h2>
+                            <h2><a href="{{ main_subject.subject }}" class="uri-object" title="{{ main_subject.subject }}">&lt;{{ main_subject.subject|zwsp }}&gt;</a>{{ render_spo_cell(main_subject.subject) }}</h2>
                             {% if main_subject.types %}
                                 <div class="types">
                                     {% for type in main_subject.types %}
