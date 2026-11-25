@@ -38,7 +38,9 @@ class Settings(BaseSettings):
     debug: bool = False
     host: str = "127.0.0.1"
     port: int = 8000
-    # Public base URL of this application (used for absolute links), optional.
+    # Public base URL of this application (used to resolve entity IRIs and build absolute
+    # links), optional. When set, a request path that matches no documentation page is
+    # resolved as an entity IRI (site URL + path) and served through content negotiation.
     site_uri: str = ""
 
     # --- SPARQL profiles -------------------------------------------------------

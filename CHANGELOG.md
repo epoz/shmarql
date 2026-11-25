@@ -6,6 +6,13 @@
   next to the main entity IRI at the top of the page, like the query results and the `/spo`
   graph browser: clicking an SPO link uses that value in a browse action.
 
+- Return of the `SITE_URI` setting: the public base URL of the application. When set, a request path that
+  matches no documentation page is resolved as an entity IRI (the path combined with the `SITE_URI`)
+  and served through content negotiation: the default profile is asked with an `ASK` query whether
+  that entity exists, HTML requests are redirected to the entity page (`/entity?uri=…`) and RDF
+  requests (RDF/XML, Turtle, N-Triples or JSON-LD) get all triples of that entity serialized in the
+  requested format.
+
 ## Changed
 
 - When the editor user database is configured (with `USERS_DB_PATH`), the site now requires a

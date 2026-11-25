@@ -55,3 +55,10 @@ def test_environment_beats_dotenv(tmp_path, monkeypatch):
     env.write_text("SITE_TITLE=From dotenv\n")
     monkeypatch.setenv("SITE_TITLE", "From environment")
     assert Settings(_env_file=env).site_title == "From environment"
+
+
+def test_site_uri_setting(monkeypatch):
+    monkeypatch.delenv("SITE_URI", raising=False)
+    assert Settings(_env_file=None).site_uri == ""
+    monkeypatch.setenv("SITE_URI", "https://kg.example.org")
+    assert Settings(_env_file=None).site_uri == "https://kg.example.org"

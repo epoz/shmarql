@@ -10,13 +10,14 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import FileResponse, RedirectResponse, Response
 from rdflib import BNode, Graph, Literal, URIRef
 
+from ..config import Settings
 from ..entity.i18n import preferred_language
 from ..entity.negotiation import negotiate, serialize
 from ..entity.source import EntitySource, ResourceNotFound
 from ..entity.uri_utils import shorten_uri
 from ..entity.view import build_entity_view
 from ..sparql_client import SparqlError
-from ..web import get_state, render
+from ..web import AppState, get_state, render
 from .auth import authenticated, login_redirect, site_login_required
 
 log = logging.getLogger("shmarql.pages")
@@ -93,6 +94,76 @@ def _bind_namespaces(graph: Graph, namespaces: dict[str, str] | None) -> Graph:
     for prefix, namespace in (namespaces or {}).items():
         graph.bind(str(prefix), URIRef(str(namespace)), replace=True)
     return graph
+
+
+async def _ask_entity_exists(state: AppState, iri: str) -> bool:
+    """ASK the default profile whether any triple is known about ``iri``."""
+    profile = state.registry.default
+    if profile is None:
+        return False
+    query = f"ASK {{ <{iri}> ?p ?o . }}"
+    try:
+        result = await state.client.select(profile, query)
+    except SparqlError as exc:
+        log.warning("ASK for %s failed on %s: %s", iri, profile.name, exc)
+        return False
+    return bool((result or {}).get("boolean") is True)
+
+
+def _entity_iri(settings: Settings, path: str) -> str | None:
+    """The full IRI of the entity requested through a catch-all path, or ``None``.
+
+    The requested path is combined with the configured ``SITE_URI``: a viewer-prefixed path
+    (``entity/<iri>``) drops the prefix, an IRI carrying a scheme (``http://…``) is used as-is,
+    and anything else is resolved below the site's base URL. The result is the IRI to ask the
+    default SPARQL profile about.
+    """
+    base = settings.site_uri.strip().rstrip("/")
+    clean = path.strip().lstrip("/")
+    for prefix in ("entity/", "entities/"):
+        if clean.startswith(prefix):
+            clean = clean[len(prefix) :]
+            break
+    if not clean or clean == "/":
+        return None
+    if re.match(r"^[a-zA-Z][a-zA-Z0-9+.\-]*:", clean):
+        # The path already is a full IRI (e.g. "/http://example.org/entity/Q42").
+        return clean
+    if not base:
+        return None
+    return f"{base}/{clean}"
+
+
+async def _entity_content_response(request: Request, path: str) -> Response | None:
+    """Content negotiation for an entity IRI requested as a documentation catch-all path.
+
+    The path is resolved to an entity IRI (combined with the ``SITE_URI`` setting) and asked
+    for in the default profile. When the entity exists, the client's content negotiation is
+    honoured: RDF (RDF/XML, Turtle, N-Triples, JSON-LD) is serialized from all triples that
+    belong to the entity, and HTML is redirected to the entity page for that IRI.
+
+    Returns ``None`` when the path is not (or not yet) an entity IRI to serve, so the caller can
+    fall through to its regular 404 handling.
+    """
+    state = get_state(request)
+    iri = _entity_iri(state.settings, path)
+    if iri is None or not await _ask_entity_exists(state, iri):
+        return None
+    rdf_format = negotiate(request.query_params.get("format"), request.headers.get("accept"))
+    if rdf_format is not None:
+        source = EntitySource(
+            state.client, state.registry.default, state.display_for(state.registry.default)
+        )
+        try:
+            graph = await source.get_rdf_for_uri(iri)
+        except (ValueError, ResourceNotFound) as exc:
+            log.warning("RDF fetch for %s failed: %s", iri, exc)
+            return None
+        _bind_namespaces(graph, source.settings.namespaces)
+        content, content_type = serialize(graph, rdf_format)
+        return Response(content, media_type=None, headers={"content-type": content_type})
+    # HTML: hand over to the entity page for this IRI.
+    return RedirectResponse("/entity?" + urlencode({"uri": iri}), status_code=302)
 
 
 # -- Query editor ---------------------------------------------------------------------------
@@ -277,6 +348,12 @@ async def docs_page(request: Request, path: str = ""):
     if path in ("", "/"):
         # No documentation configured: show a small built-in home page.
         return render(request, "home.html", {"profiles": state.registry.public_list()})
+    # The path did not resolve to a documentation page: before giving up with a 404, hand
+    # content negotiation for entity IRIs (the path combined with the SITE_URI) to the entity
+    # viewer.
+    entity_response = await _entity_content_response(request, path)
+    if entity_response is not None:
+        return entity_response
     return render(
         request, "error.html", {"message": "404 - Page not found", "uri": "/" + path}, 404
     )

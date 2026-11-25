@@ -12,6 +12,7 @@ take precedence. See `.env.example` for a template.
 | `DEBUG` | `0` | Verbose logging |
 | `PROFILES_PATH` | `profiles.yaml` | YAML file with the SPARQL [profiles](profiles.md) |
 | `ENDPOINT` | – | Endpoint address of the profile served at `/sparql` (e.g. `https://query.wikidata.org/sparql`); overrides the YAML `default`, and becomes the default used for queries. When no profiles are configured, it adds a single new profile for that backend |
+| `SITE_URI` | – | Public base URL of this application (e.g. `https://kg.example.org`); when set, a request path that matches no documentation page is resolved as an entity IRI (site URL + path) and served via content negotiation (HTML → entity page, RDF/JSON → serialized) |
 | `SPARQL_TIMEOUT` | `30` | Upstream timeout in seconds (per-profile `timeout` overrides) |
 | `SPARQL_USER_AGENT` | `shmarql/…` | User-Agent sent upstream |
 | `CORS_ORIGINS` | – | Comma separated origins allowed to call the API (`*` for all) |

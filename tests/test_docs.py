@@ -180,3 +180,81 @@ def test_docs_site_titles_and_urls():
     assert site.title_of(FIXTURES / "docs" / "guide" / "setup.md") == "Setup"
     assert site.url_of(FIXTURES / "docs" / "guide" / "index.md") == "/guide/"
     assert site.url_of(FIXTURES / "docs" / "guide" / "setup.md") == "/guide/setup"
+
+
+# -- Entity content negotiation via the catch-all path -------------------------------------
+def _app_with_site_uri(settings, registry, endpoint, site_uri: str):
+    settings.site_uri = site_uri
+    return create_app(settings, registry, transport=endpoint.transport)
+
+
+def test_entity_path_without_site_uri_is_not_resolved(settings, registry, endpoint):
+    """Without SITE_URI configured, unknown paths are simply 404 (no entity resolution)."""
+    app = create_app(settings, registry, transport=endpoint.transport)
+    with TestClient(app) as c:
+        assert c.get("/nope").status_code == 404
+
+
+def test_entity_path_redirects_to_entity_page_for_html(settings, registry, endpoint):
+    """An HTML request for an existing entity IRI is redirected to the /entity page."""
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get("/entity/http://example.org/rembrandt", follow_redirects=False)
+        assert r.status_code == 302
+        assert r.headers["location"] == "/entity?uri=http%3A%2F%2Fexample.org%2Frembrandt"
+
+
+def test_entity_path_without_viewer_prefix_is_resolved(settings, registry, endpoint):
+    """A path that is the IRI itself ("/http://…") is resolved below the SITE_URI base."""
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get("/http://example.org/rembrandt", follow_redirects=False)
+        assert r.status_code == 302
+        assert r.headers["location"] == "/entity?uri=http%3A%2F%2Fexample.org%2Frembrandt"
+
+
+def test_entity_path_serves_rdf_for_existing_entity(settings, registry, endpoint):
+    """An RDF request for an existing entity IRI is serialized from its triples."""
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get("/entity/http://example.org/rembrandt", headers={"Accept": "text/turtle"})
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith("text/turtle")
+        ask = [q for q in endpoint.requests if q["query"].lstrip().upper().startswith("ASK")]
+        assert len(ask) == 1
+        assert "<http://example.org/rembrandt>" in ask[0]["query"]
+        # The serialization carries the triples of that entity.
+        assert "@prefix schema:" in r.text
+
+
+def test_entity_path_serves_json_ld_for_existing_entity(settings, registry, endpoint):
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get("/entity/http://example.org/rembrandt", headers={"Accept": "application/ld+json"})
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith("application/ld+json")
+
+
+def test_entity_path_serves_rdf_xml_for_existing_entity(settings, registry, endpoint):
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get("/entity/http://example.org/rembrandt", headers={"Accept": "application/rdf+xml"})
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith("application/rdf+xml")
+
+
+def test_entity_path_serves_n_triples_for_existing_entity(settings, registry, endpoint):
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        r = c.get(
+            "/entity/http://example.org/rembrandt", headers={"Accept": "application/n-triples"}
+        )
+        assert r.status_code == 200
+        assert r.headers["content-type"].startswith("application/n-triples")
+
+
+def test_entity_path_unknown_entity_is_404(settings, registry, endpoint):
+    """An entity IRI that does not exist in the default profile is still a 404."""
+    app = _app_with_site_uri(settings, registry, endpoint, "https://kg.example.org")
+    with TestClient(app) as c:
+        assert c.get("/entity/http://example.org/unknown").status_code == 404

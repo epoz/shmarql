@@ -14,6 +14,9 @@ What you can do here:
   as RDF with `?format=turtle|json-ld|xml`.
 - **[Look up an entity](/entity)** and see it as a readable table, including blank nodes and
   inverse relations.
+- **Content negotiation** for entity IRIs: with `SITE_URI` configured, a request path such as
+  `/entity/<iri>` that matches no documentation page is resolved to the IRI, checked in the
+  default profile, and answered with RDF or redirected to the entity page.
 - Use **`/sparql`** (default profile) or **`/sparql/<key>`** as standard SPARQL endpoints.
 - Publish **[data stories](story/example/index.md)** written with LODEON, or write them
   in the **[story editor](/lodeon/)**.

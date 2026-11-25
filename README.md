@@ -86,6 +86,7 @@ environment variables win over the file. See [`.env.example`](.env.example).
 | `DEBUG`                     | `0`                 | Verbose logging                                                            |
 | `PROFILES_PATH`             | `profiles.yaml`     | YAML file with the SPARQL profiles                                         |
 | `ENDPOINT`                  | –                   | Endpoint address of the profile served at `/sparql` (e.g. `https://query.wikidata.org/sparql`); overrides the YAML `default`, and becomes the default used for queries. When no profiles are configured, it adds a single new profile for that backend |
+| `SITE_URI`                   | –                   | Public base URL of this application (e.g. `https://kg.example.org`); when set, a request path that matches no documentation page is resolved as an entity IRI (site URL + path) and served via content negotiation (HTML → entity page, RDF/JSON → serialized) |
 | `SPARQL_TIMEOUT`            | `30`                | Upstream timeout in seconds                                                |
 | `SPARQL_USER_AGENT`         | `shmarql/0.1 …`     | User-Agent sent upstream                                                   |
 | `CORS_ORIGINS`              | –                   | Comma separated origins allowed to call the API (`*` = all)                |
@@ -176,6 +177,12 @@ Like ldview it shows:
   browser (`/spo`) this downloads the browsed triples.
 
 The CONSTRUCT query falls back to simpler queries for endpoints that can't run it.
+
+With the `SITE_URI` setting configured, the site also serves RDF content negotiation for
+entity IRIs requested as paths: a request like `/entity/<iri>` (or `/<iri>`) that matches no
+documentation page is resolved to that IRI, checked with an `ASK` query in the default profile,
+and then answered with RDF (serialized from all triples of the entity) or redirected to the
+entity page (`/entity?uri=…`) for HTML requests.
 
 ### Data stories (LODEON)
 
