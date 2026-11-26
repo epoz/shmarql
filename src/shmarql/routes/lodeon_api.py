@@ -67,6 +67,10 @@ async def sparql_fragment(request: Request, query: str = Form(...), profile: str
             "results": results,
             "shorten": lambda uri: shorten_uri(uri, display.namespaces),
             "entity_href": lambda uri: state.entity_href(uri, target),
+            # The rendered table offers the subject/predicate/object positions as in the
+            # query editor results and the /spo graph browser.
+            "spo_links": True,
+            "spo_href": lambda position, value: state.spo_href(position, value, target),
         },
     )
 

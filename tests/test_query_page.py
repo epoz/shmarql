@@ -30,6 +30,7 @@ def test_query_page_has_codemirror_and_profile_autocomplete(client):
     # PREFIX namespace auto-suggest uses the vendored show-hint module
     assert "/static/codemirror/show-hint.js" in r.text
     assert "/static/codemirror/show-hint.css" in r.text
+    assert "/static/js/sparql-editor.js" in r.text
     assert '<textarea id="query-editor"' in r.text
     assert 'id="profile-input"' in r.text and 'role="combobox"' in r.text
     # the default profile is pre-selected
@@ -98,6 +99,7 @@ def test_query_page_renders_the_namespaces_for_shortened_iris(client):
 def test_static_assets_are_served(client):
     for path in (
         "/static/js/profile-picker.js",
+        "/static/js/sparql-editor.js",
         "/static/js/spo.js",
         "/static/js/query.js",
         "/static/codemirror/codemirror.js",

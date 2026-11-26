@@ -17,38 +17,153 @@ $(function() {
     $code.append($link);
   });
 
-  $('.shmarql-source, .language-shmarql').each(function() {
-    const $block = $(this);
-    const query  = $block.find('code').text();
-    const knowledgeGraphProfileId = findFenceAttribute($block, 'kg');
+  const messages = window.SHMARQL_I18N || {
+    running: "Running…",
+    rows: "{count} rows",
+    source: "Query source",
+    results: "Results",
+    run: "Run query",
+  };
 
-    if (knowledgeGraphProfileId) {
-      executeLodeonSparql($block, knowledgeGraphProfileId, query);
-      return;
+  function initShmarqlBlock($block, index) {
+    const query = $block.find("code").text();
+    const knowledgeGraphProfileId = findFenceAttribute($block, "kg");
+    const profile = knowledgeGraphProfileId || "";
+
+    const statusId = `lodeon-sparql-status-${index}`;
+    const runId = `lodeon-sparql-run-${index}`;
+    const editorId = `lodeon-sparql-editor-${index}`;
+
+    let currentQuery = query;
+    let currentProfile = profile;
+    let view = "results";
+    let editor = null;
+    let resultsHtml = "";
+
+    const statusEl = $(`<span id="${statusId}" class="query-status" aria-live="polite"></span>`);
+
+    function setStatus(message) {
+      statusEl.text(message ? String(message) : "");
     }
 
-    $.ajax({
-      url: '/shmarql/fragments/sparql',
-      method: 'POST',
-      data: { query: query },
-      dataType: 'html'
-    }).done(function(html) {
+    function renderResults(html) {
+      resultsHtml = html;
+      const $shell = $("<div class='lodeon-sparql-result'>");
+      if (view === "results") {
+        $shell.append(resultBar());
+      }
+      $shell.append(html);
+      $block.empty();
+      $block.append($shell);
+      destroyEditor();
+    }
 
-      // inject SPARQL result table
-      $block.html(html);
+    function destroyEditor() {
+      // The vendored CodeMirror build does not necessarily implement ``destroy``.
+      if (editor && typeof editor.destroy === "function") {
+        editor.destroy();
+      }
+      editor = null;
+    }
 
-      // initialise DataTable plugin
-      $block.find('table').each(function() {
-        if (! $.fn.DataTable.isDataTable(this)) {
-          $(this).DataTable({
-            scrollX: false,
-            paging:   true,
-            ordering: true,
-            info:     true
-          });
+    function resultBar() {
+      const $bar = $("<div class='lodeon-sparql-result-bar'>");
+      const $resultsToggle = $("<button type='button' class='lodeon-sparql-toggle'>").text(messages.results);
+      const $queryToggle = $("<button type='button' class='lodeon-sparql-toggle'>").text(messages.source);
+      $resultsToggle.on("click", function () {
+        if (view !== "results") {
+          view = "results";
+          renderCurrent();
         }
       });
-    });
+      $queryToggle.on("click", function () {
+        if (view !== "query") {
+          view = "query";
+          renderEditor();
+        }
+      });
+      $resultsToggle.toggleClass("lodeon-sparql-toggle-active", view === "results");
+      $queryToggle.toggleClass("lodeon-sparql-toggle-active", view === "query");
+      $bar.append($resultsToggle, $queryToggle);
+      return $bar;
+    }
+
+    function renderEditor() {
+      view = "query";
+      destroyEditor();
+      const $host = $("<div class='lodeon-sparql-query-editor'>");
+      const $bar = resultBar();
+      const $editorBox = $("<div>");
+      const $textarea = $(`<textarea id="${editorId}"></textarea>`);
+      $textarea.val(currentQuery);
+      const $actions = $("<div class='lodeon-sparql-query-actions'>");
+      const $run = $(`<button type="button" class="button-primary" id="${runId}"></button>`).text(messages.run);
+      $actions.append($run);
+      $actions.append(statusEl);
+      $editorBox.append($textarea, $actions);
+      $host.append($bar, $editorBox);
+      $block.empty();
+      $block.append($host);
+      editor = SHmarqlSparqlEditor.create($textarea[0], {
+        hint: SHmarqlSparqlEditor.prefixHint,
+        onRun: runEditor,
+      });
+      $run.on("click", runEditor);
+      setStatus("");
+    }
+
+    function renderCurrent() {
+      if (view === "results") {
+        if (!resultsHtml) {
+          runQuery(currentQuery, currentProfile);
+          return;
+        }
+        renderResults(resultsHtml);
+        return;
+      }
+      renderEditor();
+    }
+
+    function runEditor() {
+      if (!editor) {
+        return;
+      }
+      runQuery(editor.getValue(), currentProfile);
+    }
+
+    function runQuery(nextQuery, nextProfile) {
+      const queryText = (nextQuery || "").trim();
+      if (!queryText) {
+        setStatus("Empty query");
+        return;
+      }
+      currentQuery = nextQuery;
+      currentProfile = nextProfile || "";
+      setStatus(messages.running);
+      $.ajax({
+        url: "/shmarql/fragments/sparql",
+        method: "POST",
+        data: { query: queryText, profile: currentProfile },
+        dataType: "html",
+      }).done(function (html) {
+        resultsHtml = html;
+        view = "results";
+        renderResults(html);
+        setStatus("");
+      }).fail(function (jqXHR) {
+        const detail = readSparqlError(jqXHR);
+        resultsHtml = $("<div>").append($("<p class='sparql-error'>").text(detail)).html();
+        view = "results";
+        renderResults(resultsHtml);
+        setStatus(detail);
+      });
+    }
+
+    renderCurrent();
+  }
+
+  $('.shmarql-source, .language-shmarql').each(function (index) {
+    initShmarqlBlock($(this), index);
   });
 
   $('.lodeon-visualization-source, .language-lodeon-visualization, .language-text.highlight').each(function(index) {
@@ -266,90 +381,6 @@ $(function() {
     }
 
     return String(value).trim();
-  }
-
-  function executeLodeonSparql($block, knowledgeGraphProfileId, query) {
-    const $container = $('<div class="lodeon-sparql-result">');
-    const $status = $('<p class="lodeon-sparql-status">').text('sparql.query.running');
-
-    $container.append($status);
-    $block.html($container);
-
-    $.ajax({
-      url: `/api/sparql/${encodeURIComponent(knowledgeGraphProfileId)}`,
-      method: 'POST',
-      data: query,
-      processData: false,
-      contentType: 'application/sparql-query',
-      headers: {
-        Accept: 'application/sparql-results+json'
-      }
-    }).done(function(result, _textStatus, jqXHR) {
-      const contentType = jqXHR.getResponseHeader('content-type') || '';
-
-      $container.empty();
-      if (contentType.includes('json') && isSparqlSelectResult(result)) {
-        renderLodeonSparqlTable($container, result);
-        return;
-      }
-      if (contentType.includes('json') && typeof result === 'object') {
-        $container.append($('<pre>').text(JSON.stringify(result, null, 2)));
-        return;
-      }
-      $container.append($('<pre>').text(String(result || '')));
-    }).fail(function(jqXHR) {
-      const detail = readSparqlError(jqXHR);
-
-      $container.empty().append(
-        $('<p class="lodeon-sparql-error">').text(detail)
-      );
-    });
-  }
-
-  function isSparqlSelectResult(result) {
-    return Boolean(
-      result &&
-      typeof result === 'object' &&
-      result.head &&
-      Array.isArray(result.head.vars) &&
-      result.results &&
-      Array.isArray(result.results.bindings)
-    );
-  }
-
-  function renderLodeonSparqlTable($container, result) {
-    const variables = result.head.vars || [];
-    const bindings = result.results.bindings || [];
-    const $table = $('<table>');
-    const $thead = $('<thead>');
-    const $tbody = $('<tbody>');
-
-    $thead.append(
-      $('<tr>').append(variables.map((variable) => $('<th>').text(variable)))
-    );
-    bindings.forEach((binding) => {
-      $tbody.append(
-        $('<tr>').append(
-          variables.map((variable) => {
-            const value = binding[variable];
-            const text = value && typeof value.value === 'string' ? value.value : '';
-
-            return $('<td>').text(text);
-          })
-        )
-      );
-    });
-    $table.append($thead, $tbody);
-    $container.append($table);
-
-    if ($.fn.DataTable && !$.fn.DataTable.isDataTable($table[0])) {
-      $table.DataTable({
-        scrollX: false,
-        paging: true,
-        ordering: true,
-        info: true
-      });
-    }
   }
 
   function readSparqlError(jqXHR) {

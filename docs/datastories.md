@@ -14,6 +14,13 @@ Supported:
 - **```` ```shmarql {title="…" kg="profile"} ````** — SPARQL results, run in the
   browser against the profile whose *name* (or key) equals `kg`. Without `kg`
   the default profile is used.
+
+  The results are rendered as a table like the results of the
+  [query editor](/query): a row number column, IRIs shortened with the prefixes
+  of the profile, literals with language tags, and subject/predicate/object
+  positions as clickable links. Below the results sits a **Query** toggle that
+  opens the same editable CodeMirror query editor as the query page; running the
+  edited query replaces the results in place, without reloading the page.
 - **```` ```lodeon-visualization ````, `lodeon-rawgraphs`, `lodeon-iiif`** —
   hydrated in the browser by the LODEON runtime.
 - **```` ```lodeon-embed ````, `lodeon-graph-explorer`, `lodeon-leaflet`,

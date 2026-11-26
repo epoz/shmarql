@@ -336,6 +336,7 @@ async def docs_page(request: Request, path: str = ""):
         text = resolution.path.read_text(encoding="utf-8")
         page = state.markdown.render(text, fallback_title=resolution.path.stem)
         current_url = state.docs.url_of(resolution.path)
+        default_profile = state.registry.default
         return render(
             request,
             "doc.html",
@@ -343,6 +344,11 @@ async def docs_page(request: Request, path: str = ""):
                 "page": page,
                 "nav": state.docs.nav(current_url),
                 "current_url": current_url,
+                # The LODEON browser runtime (``runtime.js``) on ``shmarql`` blocks uses the
+                # namespace hints of the default SPARQL profile for its CodeMirror editor.
+                "namespaces": state.display_for(default_profile).namespaces
+                if default_profile
+                else {},
             },
         )
     if path in ("", "/"):

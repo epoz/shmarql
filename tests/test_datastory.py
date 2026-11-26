@@ -31,8 +31,16 @@ def test_story_page_loads_lodeon_runtime_and_metadata(client):
         "/static/lodeon/vendor/jquery/jquery-3.7.1.min.js",
         "/static/lodeon/vendor/plotly-3.7.0.min.js",
         "/static/lodeon/verovio/lodeon-verovio.js",
+        "/static/codemirror/codemirror.js",
+        "/static/codemirror/sparql.js",
+        "/static/js/sparql-editor.js",
     ):
         assert asset in html
+    # the shmarql blocks hydrate with the same CodeMirror editor as the query page
+    assert "/static/codemirror/show-hint.js" in html
+    assert 'id="shmarql-namespaces"' in html
+    assert "window.SHMARQL_I18N" in html
+    head = html.split("</head>")[0]
     head = html.split("</head>")[0]
     assert '<meta name="description" content="A small data story.">' in head
     assert '<meta property="og:title" content="Demo Story">' in head
@@ -134,8 +142,13 @@ def test_fragments_endpoint_returns_html_table(client):
     )
     assert r.status_code == 200
     assert '<table class="sparql-results">' in r.text
+    # the table has the same rownum column as the query editor results
+    assert '<th class="rownum"></th>' in r.text
     assert "<th>s</th>" in r.text and "Saskia van Uylenburgh" in r.text
+    assert '<td class="rownum">1</td>' in r.text
     assert "/entity?uri=http%3A%2F%2Fexample.org%2Fsaskia" in r.text
+    # cells offer the subject/predicate/object positions as in the query editor results
+    assert 'class="spo-cell"' in r.text and 'class="spo-link spo-s"' in r.text
     bad = client.post("/shmarql/fragments/sparql", data={"query": "SELECT nonsense"})
     assert 'class="sparql-error"' in bad.text
 

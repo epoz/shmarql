@@ -25,14 +25,19 @@
 {%- endif -%}
 {%- endmacro -%}
 {% if results.boolean is defined -%}
-<p class="sparql-boolean">{{ "true" if results.boolean else "false" }}</p>
+<pre class="sparql-text-result">{{ "true" if results.boolean else "false" }}</pre>
 {%- else -%}
 {%- set vars = results.head.vars if results.head and results.head.vars else [] -%}
 <table class="sparql-results">
-    <thead><tr>{% for v in vars %}<th>{{ v }}</th>{% endfor %}</tr></thead>
+    <thead>
+        <tr><th class="rownum"></th>{% for v in vars %}<th>{{ v }}</th>{% endfor %}</tr>
+    </thead>
     <tbody>
     {%- for row in results.results.bindings %}
-        <tr>{% for v in vars %}<td>{{ cell(row.get(v), v) }}</td>{% endfor %}</tr>
+        <tr>
+            <td class="rownum">{{ loop.index }}</td>
+            {%- for v in vars %}<td>{{ cell(row.get(v), v) }}</td>{%- endfor %}
+        </tr>
     {%- endfor %}
     </tbody>
 </table>

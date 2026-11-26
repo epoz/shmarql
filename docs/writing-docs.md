@@ -12,6 +12,22 @@ Links to other Markdown files (`[setup](guide/setup.md)`) are rewritten to these
 URLs, and other files (images, downloads) are served as they are. The page title
 comes from a `title:` in the YAML front matter or from the first `# Heading`.
 
+## Special Blocks for queries 
+
+You can make SPARQL code blocks that execute immediately at page view  with the code-block type `shmarql`
+
+```shmarql
+select * where { ?s ?p ?o } limit 10
+```
+
+or if you make a block with type `sparql` it is just displayed
+(but can be opened in the query editor with one click)
+
+```sparql
+select * where { ?s ?p ?o } limit 10
+```
+
+
 ## Access
 
 When the editor users are configured (editor user database set with `USERS_DB_PATH`),

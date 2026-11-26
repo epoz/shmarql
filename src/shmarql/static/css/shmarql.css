@@ -200,6 +200,21 @@ table.sparql-results tbody tr:nth-child(even) { background: #fafbfc; }
 .sparql-error { color: #b00020; white-space: pre-wrap; }
 .sparql-text-result { background: var(--code-bg); padding: 0.8rem; overflow: auto; }
 
+/* --- shmarql result blocks in documentation: toggle to the editable query editor ---------- */
+.lodeon-sparql-result-bar { display: flex; gap: 0.5rem; align-items: center; margin: 0.6rem 0 0.8rem; }
+.lodeon-sparql-toggle {
+    background: #fff; color: var(--accent); border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.3rem 0.8rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+}
+.lodeon-sparql-toggle:hover { background: #e7ecf8; border-color: var(--accent); }
+.lodeon-sparql-toggle.lodeon-sparql-toggle-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.lodeon-sparql-query-editor { display: block; }
+.lodeon-sparql-query-editor .CodeMirror {
+    height: auto; border: 1px solid var(--border); border-radius: 4px; min-height: 16rem; font-size: 0.95rem;
+}
+.lodeon-sparql-query-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.6rem; }
+.lodeon-sparql-result { overflow-x: auto; }
+
 /* --- graph browser (/spo) ------------------------------------------------------------------ */
 .spo-page .profile-picker { margin-bottom: 1.2rem; }
 .spo-form { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.2rem; }

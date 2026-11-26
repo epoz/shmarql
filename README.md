@@ -203,7 +203,9 @@ fences. Then:
 The runtime's API is provided: `POST /api/sparql/<profile>` (read-only; `kg`
 attributes are resolved as profile _name_ or key, so name your profiles after the
 LODEON knowledge-graph ids), `POST /shmarql/fragments/sparql` (HTML result table
-for `shmarql` fences without `kg`), and `POST /api/explorer/<profile>/expand` for
+for `shmarql` fences, with the profile in the form data — used by the runtime for
+fences without `kg`, and by the editable query box of the `shmarql` result blocks),
+and `POST /api/explorer/<profile>/expand` for
 the graph explorer.
 
 ### Story editor (LODEON)

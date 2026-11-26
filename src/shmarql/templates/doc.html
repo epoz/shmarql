@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="/static/css/pygments.css">
     {% if page.meta.description and not page.head %}<meta name="description" content="{{ page.meta.description }}">{% endif %}
     {% if page.is_datastory %}
+    <link rel="stylesheet" href="/static/codemirror/codemirror.css">
+    <link rel="stylesheet" href="/static/codemirror/show-hint.css">
     <link rel="stylesheet" href="/static/lodeon/vendor/datatables/jquery.dataTables.min.css">
     <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/leaflet.css">
     <link rel="stylesheet" href="/static/lodeon/vendor/leaflet/MarkerCluster.css">
@@ -62,7 +64,15 @@
     <script src="/static/lodeon/vendor/openseadragon-6.0.2.min.js"></script>
     <script src="/static/lodeon/vendor/leaflet/leaflet.js"></script>
     <script src="/static/lodeon/vendor/leaflet/leaflet.markercluster.js"></script>
+    <script src="/static/codemirror/codemirror.js"></script>
+    <script src="/static/codemirror/sparql.js"></script>
+    <script src="/static/codemirror/show-hint.js"></script>
+    <script src="/static/js/sparql-editor.js"></script>
     <script src="/static/lodeon/scripts/runtime.js"></script>
     <script type="module" src="/static/lodeon/verovio/lodeon-verovio.js"></script>
+    <script id="shmarql-namespaces" type="application/json">{{ namespaces|default({})|tojson }}</script>
+    <script>
+        window.SHMARQL_I18N = {{ {"running": _('query.running'), "rows": _('query.rows'), "source": _('query.source'), "results": _('query.results'), "run": _('query.run'), "as_subject": _('spo.as_subject'), "as_predicate": _('spo.as_predicate'), "as_object": _('spo.as_object')}|tojson }};
+    </script>
     {% endif %}
 {% endblock %}
