@@ -31,7 +31,9 @@ def test_spo_page_renders_the_knowledge_graph_table(client, endpoint):
     assert sent["url"].startswith(MAIN_ENDPOINT)
     assert sent["query"].startswith("SELECT ?s ?p ?o")
     assert "?s ?p ?o ." in sent["query"]
-    assert "ORDER BY ?s ?p ?o" in sent["query"]
+    # the object label is fetched through an optional join
+    assert "OPTIONAL" in sent["query"]
+    assert "?label" in sent["query"]
 
 
 def test_spo_subject_filter(client, endpoint):
@@ -165,6 +167,15 @@ def test_spo_static_assets_are_served(client):
         assert client.get(path).status_code == 200, path
 
 
+def test_spo_object_label_is_rendered_in_the_object_cell(client, endpoint):
+    # the label of the ?o item is rendered inside the object cell, after the object itself
+    r = spo(client, s=REMBRANDT, o=SASKIA)
+    assert r.status_code == 200
+    assert "Saskia van Uylenburgh" in r.text
+    row = r.text.split("</tr>")[1]
+    assert row.index(SASKIA) < row.index("Saskia van Uylenburgh")
+
+
 def test_spo_unknown_profile_falls_back_to_default(client, endpoint):
     # like the entity viewer, an unknown profile name falls back to the default profile
     assert spo(client, profile="doesnotexist").status_code == 200
@@ -198,19 +209,53 @@ def test_spo_profile_param_selects_backend(client, endpoint):
 
 
 def test_build_spo_query_without_filters():
-    assert build_spo_query() == "SELECT ?s ?p ?o\nWHERE {\n  ?s ?p ?o .\n}\nORDER BY ?s ?p ?o\n"
+    assert build_spo_query() == (
+        "SELECT ?s ?p ?o ?label\n"
+        "WHERE {\n"
+        "  ?s ?p ?o .\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2004/02/skos/core#prefLabel> ?label }\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#label> ?label }\n"
+        "  OPTIONAL { ?o <http://purl.org/dc/terms/title> ?label }\n"
+        "  OPTIONAL { ?o <http://purl.org/dc/elements/1.1/title> ?label }\n"
+        "  OPTIONAL { ?o <http://schema.org/name> ?label }\n"
+        "  OPTIONAL { ?o <https://schema.org/name> ?label }\n"
+        "  OPTIONAL { ?o <http://xmlns.com/foaf/0.1/name> ?label }\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2004/02/skos/core#altLabel> ?label }\n"
+        "}\n"
+        "LIMIT 999\n"
+    )
 
 
 def test_build_spo_query_adds_one_filter_per_position():
     assert build_spo_query(s=REMBRANDT, p="http://schema.org/knows", o=SASKIA) == (
-        "SELECT ?s ?p ?o\n"
+        "SELECT ?s ?p ?o ?label\n"
         "WHERE {\n"
         "  ?s ?p ?o .\n"
         f"  FILTER(?s = <{REMBRANDT}>)\n"
         "  FILTER(?p = <http://schema.org/knows>)\n"
         f"  FILTER(?o = <{SASKIA}>)\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2004/02/skos/core#prefLabel> ?label }\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#label> ?label }\n"
+        "  OPTIONAL { ?o <http://purl.org/dc/terms/title> ?label }\n"
+        "  OPTIONAL { ?o <http://purl.org/dc/elements/1.1/title> ?label }\n"
+        "  OPTIONAL { ?o <http://schema.org/name> ?label }\n"
+        "  OPTIONAL { ?o <https://schema.org/name> ?label }\n"
+        "  OPTIONAL { ?o <http://xmlns.com/foaf/0.1/name> ?label }\n"
+        "  OPTIONAL { ?o <http://www.w3.org/2004/02/skos/core#altLabel> ?label }\n"
         "}\n"
-        "ORDER BY ?s ?p ?o\n"
+        "LIMIT 999\n"
+    )
+
+
+def test_build_spo_query_adds_the_object_label_optional():
+    query = build_spo_query(
+        o=SASKIA, label_predicates=["http://www.w3.org/2000/01/rdf-schema#label"]
+    )
+    assert f"FILTER(?o = <{SASKIA}>)" in query
+    assert "OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#label> ?label }" in query
+    # no optional is added when no label predicates are configured
+    assert build_spo_query(label_predicates=[]) == (
+        "SELECT ?s ?p ?o ?label\nWHERE {\n  ?s ?p ?o .\n}\nLIMIT 999\n"
     )
 
 

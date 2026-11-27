@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Sequence
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Query, Request
@@ -13,6 +14,7 @@ from rdflib import BNode, Graph, Literal, URIRef
 from ..config import Settings
 from ..entity.i18n import preferred_language
 from ..entity.negotiation import negotiate, serialize
+from ..entity.settings import DEFAULT_LABEL_PREDICATES
 from ..entity.source import EntitySource, ResourceNotFound
 from ..entity.uri_utils import shorten_uri
 from ..entity.view import build_entity_view
@@ -47,8 +49,11 @@ def _sparql_term(value: str) -> str | None:
     return f"<{text}>"
 
 
-def build_spo_query(s: str = "", p: str = "", o: str = "") -> str:
-    """Build the browse query: a BGP ``?s ?p ?o`` with one FILTER per provided position."""
+def build_spo_query(
+    s: str = "", p: str = "", o: str = "", label_predicates: Sequence[str] | None = None
+) -> str:
+    """Build the browse query: a BGP ``?s ?p ?o`` with one FILTER per provided position, plus an
+    OPTIONAL join that fetches the label of the object (``?o``) when it has one."""
     filters: list[str] = []
     values: dict[str, str] = {"s": s, "p": p, "o": o}
     for var in SPO_POSITIONS:
@@ -56,9 +61,14 @@ def build_spo_query(s: str = "", p: str = "", o: str = "") -> str:
         if term is None:
             continue
         filters.append(f"FILTER(?{var} = {term})")
-    lines = ["SELECT ?s ?p ?o", "WHERE {"]
+    if label_predicates is None:
+        label_preds = list(DEFAULT_LABEL_PREDICATES)
+    else:
+        label_preds = [lp for lp in label_predicates if lp]
+    lines = ["SELECT ?s ?p ?o ?label", "WHERE {"]
     lines.append("  ?s ?p ?o .")
     lines.extend(f"  {filter_}" for filter_ in filters)
+    lines.extend(f"  OPTIONAL {{ ?o <{lp}> ?label }}" for lp in label_preds)
     lines.append("}")
     lines.append("LIMIT 999")
     return "\n".join(lines) + "\n"
@@ -281,14 +291,14 @@ async def spo_page(
     if target is None:
         return render(request, "error.html", {"message_key": "error.no_profile", "uri": ""}, 404)
 
-    query = build_spo_query(s, p, o)
+    display = state.display_for(target)
+    query = build_spo_query(s, p, o, display.label_predicates)
     log.debug(query)
     try:
         results = await state.client.select(target, query)
     except SparqlError as exc:
         return render(request, "error.html", {"message": str(exc), "uri": ""}, exc.status_code)
 
-    display = state.display_for(target)
     rdf_format = negotiate(format, request.headers.get("accept"))
     if rdf_format:
         graph = _bind_namespaces(_results_graph(results), display.namespaces)

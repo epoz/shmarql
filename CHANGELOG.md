@@ -1,3 +1,11 @@
+# 2026-11-27
+
+## Changed
+
+- The graph browser (`/spo?s=…&p=…&o=…`) also queries for labels of the item in the object position, 
+  and shows them in the o column if found
+
+
 # 2026-11-25
 
 ## Added

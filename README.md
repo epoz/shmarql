@@ -10,9 +10,9 @@ Documentation here: https://shmarql.com/
 - **Query page** (`/query`) with a [CodeMirror](https://codemirror.net/5/) SPARQL
   editor and an autocomplete text box to pick the profile to query.
 - **Graph browser** (`/spo?s=…&p=…&o=…`): browse the knowledge graph as one table of
-  subject-predicate-object triples, with an optional filter per position, and an autocomplete
-  text box to pick the profile to browse. Like the entity viewer it offers RDF downloads of the
-  browsed triples (`?format=turtle|json-ld|xml`).
+  subject-predicate-object triples, with an optional filter per position, the label of the
+  object when it has one, and an autocomplete text box to pick the profile to browse. Like the
+  entity viewer it offers RDF downloads of the browsed triples (`?format=turtle|json-ld|xml`).
 - **Documentation**: a directory of Markdown files rendered off the root URL.
 - **Entity viewer** (`/entity?uri=…`): a human-friendly, tabular view of an RDF
   resource including its blank nodes, inverse relations, images and map — ported

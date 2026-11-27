@@ -28,15 +28,22 @@
 <pre class="sparql-text-result">{{ "true" if results.boolean else "false" }}</pre>
 {%- else -%}
 {%- set vars = results.head.vars if results.head and results.head.vars else [] -%}
+{%- set ordered = namespace(cols=[]) -%}
+{%- for v in vars -%}
+    {%- if v != "label" -%}
+        {%- set _ = ordered.cols.append(v) -%}
+    {%- endif -%}
+{%- endfor -%}
+{%- set columns = ordered.cols -%}
 <table class="sparql-results">
     <thead>
-        <tr><th class="rownum"></th>{% for v in vars %}<th>{{ v }}</th>{% endfor %}</tr>
+        <tr><th class="rownum"></th>{% for v in columns %}<th>{{ v }}</th>{% endfor %}</tr>
     </thead>
     <tbody>
     {%- for row in results.results.bindings %}
         <tr>
             <td class="rownum">{{ loop.index }}</td>
-            {%- for v in vars %}<td>{{ cell(row.get(v), v) }}</td>{%- endfor %}
+            {%- for v in columns %}<td>{{ cell(row.get(v), v) }}{% if v == "o" and row.get("label") %}<br />{{ cell(row.get("label"), "label") }}{% endif %}</td>{%- endfor %}
         </tr>
     {%- endfor %}
     </tbody>
